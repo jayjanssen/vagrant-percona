@@ -57,6 +57,12 @@ vagrant ssh
 
 ## Cleanup
 
+### Shutdown the vagrant instance
+
+```
+vagrant destroy -f
+```
+
 ### Packer AMIs
 
 Packer creates an AMI on your AWS account, so you need to clean it up so you don't need to pay for it.
