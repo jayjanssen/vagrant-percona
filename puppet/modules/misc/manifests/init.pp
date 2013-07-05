@@ -2,7 +2,6 @@ class misc {
 	package {
 		'screen': ensure => 'present';
 		'telnet': ensure => 'present';
-		'man': ensure => 'present';
 		'unzip': ensure => 'present';
 		'lsof': ensure => 'present';
 		'ntp': ensure => 'present';
