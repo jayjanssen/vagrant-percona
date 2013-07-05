@@ -1,0 +1,66 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+require 'yaml'
+
+Vagrant.configure("2") do |config|
+
+	config.vm.define :node1 do |node1_config|
+		node1_config.vm.box = "ubuntu-aws-us-east"
+
+		node1_config.vm.provider :aws do |aws, override|
+			aws_config = YAML::load_file(File.join(Dir.home, ".aws_secrets"))
+			aws.access_key_id = aws_config.fetch("access_key_id")
+			aws.secret_access_key = aws_config.fetch("secret_access_key")
+			aws.keypair_name = aws_config.fetch("keypair_name")
+			override.ssh.username = "ubuntu"
+			override.ssh.private_key_path = aws_config.fetch("keypair_path")
+		end
+
+	  node1_config.vm.provision :puppet do |puppet|
+			puppet.manifests_path = "puppet/manifests"
+			puppet.manifest_file  = "pxc.pp"
+			puppet.module_path = "puppet/modules"
+			puppet.options = "--verbose"
+		end
+	end
+
+	config.vm.define :node2 do |node2_config|
+		node2_config.vm.box = "ubuntu-aws-us-east"
+
+		node2_config.vm.provider :aws do |aws, override|
+			aws_config = YAML::load_file(File.join(Dir.home, ".aws_secrets"))
+			aws.access_key_id = aws_config.fetch("access_key_id")
+			aws.secret_access_key = aws_config.fetch("secret_access_key")
+			aws.keypair_name = aws_config.fetch("keypair_name")
+			override.ssh.username = "ubuntu"
+			override.ssh.private_key_path = aws_config.fetch("keypair_path")
+		end
+
+	  node2_config.vm.provision :puppet do |puppet|
+			puppet.manifests_path = "puppet/manifests"
+			puppet.manifest_file  = "pxc.pp"
+			puppet.module_path = "puppet/modules"
+			puppet.options = "--verbose"
+		end
+	end
+
+	config.vm.define :node3 do |node3_config|
+		node3_config.vm.box = "ubuntu-aws-us-east"
+
+		node3_config.vm.provider :aws do |aws, override|
+			aws_config = YAML::load_file(File.join(Dir.home, ".aws_secrets"))
+			aws.access_key_id = aws_config.fetch("access_key_id")
+			aws.secret_access_key = aws_config.fetch("secret_access_key")
+			aws.keypair_name = aws_config.fetch("keypair_name")
+			override.ssh.username = "ubuntu"
+			override.ssh.private_key_path = aws_config.fetch("keypair_path")
+		end
+
+	  node3_config.vm.provision :puppet do |puppet|
+			puppet.manifests_path = "puppet/manifests"
+			puppet.manifest_file  = "pxc.pp"
+			puppet.module_path = "puppet/modules"
+			puppet.options = "--verbose"
+		end
+	end
+end
