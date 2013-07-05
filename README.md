@@ -47,5 +47,5 @@ vagrant ssh
 # Future Stuff
 
 * Multi node coordination (need support from vagrant-aws)
-** Multi-AZ/Region coordination??
+ * Multi-AZ/Region coordination??
 * CentOS support (pending packer merge: https://github.com/mitchellh/packer/pull/138)
