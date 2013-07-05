@@ -16,7 +16,8 @@ Vagrant.configure("2") do |config|
 		aws.secret_access_key = aws_config.fetch("secret_access_key")
 		aws.keypair_name = aws_config.fetch("keypair_name")
 		override.ssh.username = "ubuntu"
-    override.ssh.private_key_path = aws_config.fetch("keypair_path")
+		override.ssh.private_key_path = aws_config.fetch("keypair_path")
+		#aws.instance_type="m3.xlarge"
 	end
 
   config.vm.provision :puppet do |puppet|
