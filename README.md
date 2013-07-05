@@ -44,6 +44,21 @@ vagrant ssh
 ```
 
 
+## Cleanup
+
+### Packer AMIs
+
+Packer creates an AMI on your AWS account, so you need to clean it up so you don't need to pay for it.
+
+* AWS Console -> Images -> AMIs -> Select AMI -> Actions -> Deregister
+* AWS Console -> Elastic Block Store -> Snapshots -> Select Snapshot -> Delete
+
+
+### Vagrant EBS volumes
+
+* AWS Console -> Elastic Block Store -> Volumes -> Select Volumes -> Actions -> Delete Volume
+
+
 # Future Stuff
 
 * Multi node coordination (need support from vagrant-aws)
