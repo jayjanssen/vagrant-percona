@@ -23,10 +23,17 @@ export AWS_SECRET_ACCESS_KEY=THE_ASSOCIATED_SECRET_KEY
 
 * Vagrant 1.2+: http://vagrantup.com
 * Packer 0.1.4+: http://packer.io
-* Vagrant AWS Plugin: vagrant plugin install vagrant-aws
+* Vagrant AWS Plugin:
 
+```
+ vagrant plugin install vagrant-aws
+```
 
 ### Create your own AMI with an associated Vagrant box
+
+* Modify packer/ubuntu.json 
+ * Source AMI
+ * Region
 
 ```bash
 cd packer
@@ -37,6 +44,10 @@ cd ..
 ```
 
 ### Launch the box
+
+* Modify Vagrantfile 
+ * Instance size
+ 
 
 ```bash
 vagrant up --provider=aws
@@ -64,3 +75,4 @@ Packer creates an AMI on your AWS account, so you need to clean it up so you don
 * Multi node coordination (need support from vagrant-aws)
  * Multi-AZ/Region coordination??
 * CentOS support (pending packer merge: https://github.com/mitchellh/packer/pull/138)
+* Virtualbox support
