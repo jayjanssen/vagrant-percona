@@ -1,0 +1,28 @@
+[mysqld]
+datadir                         = /var/lib/mysql
+log_error                       = error.log
+
+binlog_format                   = ROW
+
+innodb_buffer_pool_size			= 256M
+innodb_log_file_size            = 64M
+innodb_flush_method				= O_DIRECT
+innodb_file_per_table
+
+wsrep_cluster_name              = mycluster
+wsrep_cluster_address			= gcomm://
+wsrep_node_name                 = <%= hostname %>
+
+wsrep_provider                  = /usr/lib64/libgalera_smm.so
+
+wsrep_sst_method                = xtrabackup
+wsrep_sst_auth                  = sst:secret
+
+innodb_locks_unsafe_for_binlog  = 1
+innodb_autoinc_lock_mode        = 2
+
+[mysql]
+prompt                          = "<%=hostname %> mysql> "
+
+[client]
+user                            = root
