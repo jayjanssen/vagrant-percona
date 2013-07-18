@@ -1,20 +1,24 @@
 class percona::cluster {
 	case $operatingsystem {
 		centos: {
-			# package {
-			# 	"Percona-Server-server-55.$hardwaremodel":
-			# 		alias => "MySQL-server";
-			# 	"Percona-Server-client-55.$hardwaremodel":
-			# 		alias => "MySQL-client";
-			# 	"mysql-libs":
-			# 		ensure => "absent";
-			# 	"Percona-Server-shared-55.$hardwaremodel":
-			# 		alias => "MySQL-shared";
-			# 	"Percona-Server-shared-compat":
-			# 		require => [ Package['mysql-libs'], Package['MySQL-client'] ],
-			# 		alias => "MySQL-shared-compat",
-			# 		ensure => "installed";
-			# }
+			package {
+				"Percona-XtraDB-Cluster-server.$hardwaremodel":
+					require => [ Yumrepo['percona'], Package['MySQL-shared-compat'] ],
+					alias => "MySQL-server",
+					ensure => "installed";
+				"Percona-XtraDB-Cluster-client.$hardwaremodel":
+					require => [ Yumrepo['percona']],
+					alias => "MySQL-client",
+					ensure => "installed";
+				"rsync":
+					ensure => "present";  
+				"Percona-Server-shared-compat":
+					require => [ Yumrepo['percona'], Package['MySQL-client'] ],
+					alias => "MySQL-shared-compat",
+					ensure => "installed";
+				# "mysql-libs":
+				# 	ensure => "absent";
+			}
 		}
 		ubuntu: {
 			package {
