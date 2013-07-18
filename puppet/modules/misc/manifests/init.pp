@@ -56,5 +56,12 @@ class misc {
 		require => [ Package['xfsprogs'], Exec['noatime_fstab'] ],
 		onlyif => 'test -b /dev/xvdb';
 	}
+	
+	exec {
+		"disable-selinux":
+			path    => ["/usr/bin","/bin"],
+			command => "echo 0 >/selinux/enforce",
+			unless => "grep 0 /selinux/enforce";
+  }
 }
 
