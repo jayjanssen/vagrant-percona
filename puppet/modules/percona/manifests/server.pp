@@ -30,7 +30,9 @@ class percona::server {
 		"mysql":
 			enable  => true,
 			ensure  => 'running',
-			require => Package['MySQL-server'],
+			require => [File['/etc/my.cnf'],Package['MySQL-server']],
+			subscribe => File['/etc/my.cnf'];
+			
 	}
 	
 	
