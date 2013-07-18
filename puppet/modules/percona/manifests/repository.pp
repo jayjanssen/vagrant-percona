@@ -24,12 +24,11 @@ deb-src http://repo.percona.com/apt precise main
 		}
 		centos: {
 			$releasever = "6"
-			$basearch = "i386"
 			yumrepo {
 				"percona":
 				descr       => "Percona",
 				enabled     => 1,
-				baseurl     => "http://repo.percona.com/centos/$releasever/os/$basearch/",
+				baseurl     => "http://repo.percona.com/centos/$releasever/os/$hardwaremodel/",
 				gpgcheck    => 0;
 			 }
 		}
