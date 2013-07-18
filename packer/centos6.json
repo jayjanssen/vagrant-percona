@@ -1,0 +1,22 @@
+{
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "us-east-1",
+    "source_ami": "ami-eb6b0182",
+    "instance_type": "t1.micro",
+    "ssh_username": "root",
+	"ssh_timeout": "5m",
+    "ami_name": "centos-vagrant {{.CreateTime}}"
+  }],
+  "provisioners": [{
+	"type": "shell",
+	"inline": [
+		"yum localinstall -y http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm",
+		"yum install -y puppet perl",
+		"rpm -ql perl",
+		"perl -pi -e 's/^(Defaults.*requiretty)/#$1/' /etc/sudoers",
+		"rm -f /root/.ssh/authorized_keys"
+	]
+  }],
+  "post-processors": ["vagrant"]
+}
