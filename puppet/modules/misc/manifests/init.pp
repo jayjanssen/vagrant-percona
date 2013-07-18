@@ -7,6 +7,7 @@ class misc {
 		'ntp': ensure => 'present';
 		'ntpdate': ensure => 'present';
 		'xfsprogs': ensure => 'present';
+		'wget': ensure => 'present';
 	}
 	
 	$ntpservice = $operatingsystem ? {
@@ -30,14 +31,16 @@ class misc {
 				command => "mkdir /root/bin 2> /dev/null; wget -O myq_gadgets-latest.tgz https://github.com/jayjanssen/myq_gadgets/tarball/master && tar xvzf myq_gadgets-latest.tgz -C /root/bin --strip-components=1",
 				cwd => "/tmp",
 				creates => "/root/bin/myq_status",
-				path => ['/bin','/usr/bin','/usr/local/bin'];
+				path => ['/bin','/usr/bin','/usr/local/bin'],
+				require => Package['wget'];
 	}
 	
 	exec {
 			"wget http://downloads.mysql.com/docs/sakila-db.zip":
 				cwd => "/root",
 				creates => "/root/sakila-db.zip",
-				path => ['/bin','/usr/bin','/usr/local/bin'];
+				path => ['/bin','/usr/bin','/usr/local/bin'],
+				require => Package['wget'];
 	}
 	
 	exec { 'noatime_fstab':
