@@ -1,4 +1,4 @@
-class percona::cluster_config {
+class percona::cluster::config {
 	file {
 		"/etc/my.cnf":
 			ensure  => present,
