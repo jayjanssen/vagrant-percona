@@ -23,6 +23,11 @@ class misc {
 			service {
 				'iptables': ensure => 'stopped', enable => false;
 			}
+			exec{ 'stop-iptables':
+				command => '/etc/init.d/iptables stop',
+				path => ['/bin','/usr/bin','/usr/local/bin', '/sbin'],
+				onlyif => 'iptables -L -v | grep REJECT';
+			}
 		}
 	}
 	
