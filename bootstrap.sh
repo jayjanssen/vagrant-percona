@@ -15,3 +15,4 @@ vagrant ssh node3 -c "$wsrep_cluster_address"
 
 # restart nodes2 and 3
 vagrant ssh node2 -c "service mysql restart"
+vagrant ssh node3 -c "service mysql restart"
