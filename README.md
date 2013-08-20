@@ -75,6 +75,17 @@ Packer creates an AMI on your AWS account, so you need to clean it up so you don
 
 * AWS Console -> Elastic Block Store -> Volumes -> Select Volumes -> Actions -> Delete Volume
 
+# PXC 
+
+To install PXC, symlink Vagrantfile to Vagrantfile.pxc and do 'vagrant up --provider=aws'.  Alternatively, you can launch and provision the instances in parallel like this:
+
+```bash
+vagrant up node1 --provider=aws &
+vagrant up node2 --provider=aws &
+vagrant up node3 --provider=aws
+
+./bootstrap.sh
+````
 
 # Future Stuff
 
