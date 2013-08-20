@@ -10,7 +10,6 @@ innodb_flush_method				= O_DIRECT
 innodb_file_per_table
 
 wsrep_cluster_name              = mycluster
-wsrep_cluster_address			= gcomm://
 wsrep_node_name                 = <%= hostname %>
 
 wsrep_provider                  = /usr/lib64/libgalera_smm.so
@@ -26,3 +25,6 @@ prompt                          = "<%=hostname %> mysql> "
 
 [client]
 user                            = root
+
+!include /etc/my-pxc.cnf
+

@@ -4,5 +4,7 @@ class percona::cluster::service {
 			enable  => true,
 			ensure  => 'running',
 			require => Package['MySQL-server'],
+			subscribe => File["/etc/my.cnf"];
+		
 	}
 }
