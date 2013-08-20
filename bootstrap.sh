@@ -18,5 +18,8 @@ vagrant ssh node2 -c "$wsrep_cluster_address"
 vagrant ssh node3 -c "$wsrep_cluster_address"
 
 # restart nodes2 and 3
-vagrant ssh node2 -c "service mysql stop; rm /var/lib/mysql/grastate.dat; service mysql start"
-vagrant ssh node3 -c "service mysql stop; rm /var/lib/mysql/grastate.dat; service mysql start"
+vagrant ssh node2 -c "service mysql stop; rm /var/lib/mysql/grastate.dat"
+vagrant ssh node3 -c "service mysql stop; rm /var/lib/mysql/grastate.dat"
+
+vagrant ssh node2 -c "service mysql start"
+vagrant ssh node3 -c "service mysql start"
