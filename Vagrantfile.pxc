@@ -21,6 +21,8 @@ Vagrant.configure("2") do |config|
 			aws.tags = {
 				'Name' => name
 			}
+         # aws.instance_type="m3.xlarge"
+			
 		end
 
 	  node1_config.vm.provision :puppet do |puppet|
@@ -48,6 +50,8 @@ Vagrant.configure("2") do |config|
 			aws.tags = {
 				'Name' => name
 			}
+         # aws.instance_type="m3.xlarge"
+			
 		end
 
 	  node2_config.vm.provision :puppet do |puppet|
@@ -75,6 +79,8 @@ Vagrant.configure("2") do |config|
 			aws.tags = {
 				'Name' => name
 			}
+         # aws.instance_type="m3.xlarge"
+			
 		end
 
 	  node3_config.vm.provision :puppet do |puppet|
