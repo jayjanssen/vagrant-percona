@@ -87,6 +87,14 @@ vagrant up node3 --provider=aws
 ./bootstrap.sh
 ````
 
+[Re-]provisioning in parallel:
+```bash
+vagrant provision node1 &
+vagrant provision node2 &
+vagrant provision node3
+````
+
+
 # Future Stuff
 
 * Multi node coordination (need support from vagrant-aws)
