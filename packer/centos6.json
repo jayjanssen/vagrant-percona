@@ -5,8 +5,20 @@
     "source_ami": "ami-eb6b0182",
     "instance_type": "t1.micro",
     "ssh_username": "root",
-	"ssh_timeout": "5m",
-    "ami_name": "centos-vagrant {{.CreateTime}}"
+    "ssh_timeout": "5m",
+    "ami_name": "centos-vagrant {{timestamp}}",
+    "ami_block_device_mappings": [
+      {
+        "device_name": "/dev/sda",
+        "delete_on_termination": true
+      },
+      {
+        "device_name": "/dev/sdf",
+        "virtual_name": "mysql_data",
+        "volume_size": 20,
+        "delete_on_termination": true
+      }
+    ]
   }],
   "provisioners": [{
 	"type": "shell",
