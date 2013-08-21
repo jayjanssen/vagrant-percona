@@ -1,1 +1,0 @@
-Vagrantfile.single_node
