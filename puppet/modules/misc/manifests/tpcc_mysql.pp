@@ -20,9 +20,9 @@ class misc::tpcc_mysql {
 			unless => "test -d /root/tpcc-mysql";
 		"tpcc_build":
 			command => 'make all',
-			cwd => "/root/tpcc-mysql",
+			cwd => "/root/tpcc-mysql/src",
 			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
-			require => [ Package['openssl-devel'], Exec['build-essentials', 'tpcc_checkout']],
+			require => [ Package['openssl-devel', 'MySQL-devel'], Exec['build-essentials', 'tpcc_checkout']],
 			unless => "test -f /root/tpcc-mysql/tpcc_load";
 	}
 }
