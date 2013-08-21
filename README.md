@@ -95,6 +95,12 @@ vagrant provision node3
 ````
 
 
+# Using this repo to create benchmarks
+
+I use a system where I define this repo as a submodule in a test-specific git repo and do all the customization for the test there.
+
+
+
 # Future Stuff
 
 * Multi node coordination (need support from vagrant-aws)
