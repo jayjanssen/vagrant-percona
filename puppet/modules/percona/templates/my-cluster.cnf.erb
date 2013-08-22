@@ -8,11 +8,15 @@ innodb_buffer_pool_size			= <%= innodb_buffer_pool_size %>
 innodb_log_file_size            = <%= innodb_log_file_size %>
 innodb_flush_method				= O_DIRECT
 innodb_file_per_table
+innodb_flush_log_at_trx_commit	= 0
 
 wsrep_cluster_name              = mycluster
 wsrep_node_name                 = <%= hostname %>
 
 wsrep_provider                  = /usr/lib64/libgalera_smm.so
+wsrep_provider_options          = "<%= wsrep_provider_options %>"
+
+wsrep_slave_threads				= <%= wsrep_slave_threads %>
 
 wsrep_sst_method                = xtrabackup
 wsrep_sst_auth                  = sst:secret
