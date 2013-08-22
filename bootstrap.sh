@@ -17,6 +17,9 @@ vagrant ssh node1 -c "$wsrep_cluster_address"
 vagrant ssh node2 -c "$wsrep_cluster_address"
 vagrant ssh node3 -c "$wsrep_cluster_address"
 
+# Setup SST user on node1
+vagrant ssh node1 -c "mysql -e \"GRANT RELOAD, LOCK TABLES, REPLICATION CLIENT ON *.* TO 'sst'@'localhost' IDENTIFIED BY 'secret'\""
+
 # restart nodes2 and 3
 vagrant ssh node2 -c "service mysql stop; rm /var/lib/mysql/grastate.dat"
 vagrant ssh node3 -c "service mysql stop; rm /var/lib/mysql/grastate.dat"
