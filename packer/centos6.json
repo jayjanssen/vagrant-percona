@@ -15,7 +15,9 @@
       {
         "device_name": "/dev/sdf",
         "virtual_name": "mysql_data",
-        "volume_size": 20,
+        "volume_size": 100,
+        "volume_type": "io1",
+        "iops": 1000,
         "delete_on_termination": true
       }
     ]

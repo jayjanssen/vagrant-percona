@@ -6,11 +6,11 @@ class misc::mysql_datadir {
 
 	exec {
 		"mkfs_mysql_datadir":
-			command => "mkfs.xfs -f /dev/xvdf",
+			command => "mkfs.xfs -f /dev/xvdj",
 			require => Package['xfsprogs'],
 			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
 ",
-			unless => "mount | grep xvdf";
+			unless => "mount | grep xvdj";
 		"mkdir_mysql_datadir":
 			command => "mkdir /var/lib/mysql",
 			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
@@ -23,7 +23,7 @@ class misc::mysql_datadir {
 	mount {
 		"/var/lib/mysql":
 			ensure => "mounted",
-			device => "/dev/xvdf",
+			device => "/dev/xvdj",
 			fstype => "xfs",
 			options => "noatime",
 			atboot => "true",
@@ -44,10 +44,10 @@ class misc::mysql_datadir {
 
 	# IO scheduler
 	exec {
-		"xvdf_noop":
-			command => "echo 'noop' > /sys/block/xvdf/queue/scheduler",
+		"xvdj_noop":
+			command => "echo 'noop' > /sys/block/xvdj/queue/scheduler",
 			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
-			unless => "grep '\\[noop\\]' /sys/block/xvdf/queue/scheduler";
+			unless => "grep '\\[noop\\]' /sys/block/xvdj/queue/scheduler";
 	}
 
 	# mount
