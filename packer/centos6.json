@@ -3,7 +3,6 @@
     { "type": "virtualbox",
       "guest_os_type": "RedHat_64",
       "iso_urls": [
-        "CentOS-6.4-x86_64-minimal.iso",
         "http://mirror.cisp.com/CentOS/6.4/isos/x86_64/CentOS-6.4-x86_64-minimal.iso",
         "http://mirror.ubiquityservers.com/centos/6.4/isos/x86_64/CentOS-6.4-x86_64-minimal.iso",
         "http://mirrors.arsc.edu/centos/6.4/isos/x86_64/CentOS-6.4-x86_64-minimal.iso"
@@ -17,27 +16,28 @@
       "output_directory": "/tmp/packer"
     },
     {
-      "type": "amazon-ebs",
-      "region": "us-east-1",
-      "source_ami": "ami-eb6b0182",
-      "instance_type": "t1.micro",
-      "ssh_username": "root",
-      "ssh_timeout": "5m",
-      "ami_name": "centos-vagrant {{timestamp}}",
-      "ami_block_device_mappings": [
-        {
-          "device_name": "/dev/sda",
-          "delete_on_termination": true
-        },
-        {
-          "device_name": "/dev/sdf",
-          "virtual_name": "mysql_data",
-          "volume_size": 20,
-          "delete_on_termination": true
-        }
-      ]
-    }
-  ],
+    "type": "amazon-ebs",
+    "region": "us-east-1",
+    "source_ami": "ami-eb6b0182",
+    "instance_type": "t1.micro",
+    "ssh_username": "root",
+    "ssh_timeout": "5m",
+    "ami_name": "centos-vagrant {{timestamp}}",
+    "ami_block_device_mappings": [
+      {
+        "device_name": "/dev/sda",
+        "delete_on_termination": true
+      },
+      {
+        "device_name": "/dev/sdf",
+        "virtual_name": "mysql_data",
+        "volume_size": 100,
+        "volume_type": "io1",
+        "iops": 1000,
+        "delete_on_termination": true
+      }
+    ]
+  }],
   "provisioners": [{
 	"type": "shell",
 	"inline": [

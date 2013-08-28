@@ -7,6 +7,7 @@ class percona::cluster::config {
 			
 		"/etc/my-pxc.cnf":
 			ensure => present,
+			replace => false,
 			content => "[mysqld]
 wsrep_cluster_address = gcomm://
 
