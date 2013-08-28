@@ -1,3 +1,4 @@
 .vagrant
-packer/packer__aws.box
-packer/packer_amazon-ebs_aws.box
+packer/*.box
+packer/packer_cache
+packer/crash.log

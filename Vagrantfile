@@ -1,1 +1,1 @@
-Vagrantfile.single_node
+Vagrantfile.pxc

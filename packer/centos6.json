@@ -1,28 +1,47 @@
 {
-  "builders": [{
-    "type": "amazon-ebs",
-    "region": "us-east-1",
-    "source_ami": "ami-eb6b0182",
-    "instance_type": "t1.micro",
-    "ssh_username": "root",
-    "ssh_timeout": "5m",
-    "ami_name": "centos-vagrant {{timestamp}}",
-    "ami_block_device_mappings": [
-      {
-        "device_name": "/dev/sda",
-        "delete_on_termination": true
-      },
-      {
-        "device_name": "/dev/sdf",
-        "virtual_name": "mysql_data",
-        "volume_size": 20,
-        "delete_on_termination": true
-      }
-    ]
-  }],
+  "builders": [
+    { "type": "virtualbox",
+      "guest_os_type": "RedHat_64",
+      "iso_urls": [
+        "CentOS-6.4-x86_64-minimal.iso",
+        "http://mirror.cisp.com/CentOS/6.4/isos/x86_64/CentOS-6.4-x86_64-minimal.iso",
+        "http://mirror.ubiquityservers.com/centos/6.4/isos/x86_64/CentOS-6.4-x86_64-minimal.iso",
+        "http://mirrors.arsc.edu/centos/6.4/isos/x86_64/CentOS-6.4-x86_64-minimal.iso"
+      ],
+      "iso_checksum": "4a5fa01c81cc300f4729136e28ebe600",
+      "iso_checksum_type": "md5",
+      "floppy_files": ["ks.cfg"],
+      "ssh_username": "root",
+      "ssh_password": "vagrant",
+      "boot_command": ["<tab> ks=floppy<enter>"],
+      "output_directory": "/tmp/packer"
+    },
+    {
+      "type": "amazon-ebs",
+      "region": "us-east-1",
+      "source_ami": "ami-eb6b0182",
+      "instance_type": "t1.micro",
+      "ssh_username": "root",
+      "ssh_timeout": "5m",
+      "ami_name": "centos-vagrant {{timestamp}}",
+      "ami_block_device_mappings": [
+        {
+          "device_name": "/dev/sda",
+          "delete_on_termination": true
+        },
+        {
+          "device_name": "/dev/sdf",
+          "virtual_name": "mysql_data",
+          "volume_size": 20,
+          "delete_on_termination": true
+        }
+      ]
+    }
+  ],
   "provisioners": [{
 	"type": "shell",
 	"inline": [
+    "sleep 10",
 		"yum localinstall -y http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm",
 		"yum install -y puppet perl",
 		"rpm -ql perl",
@@ -30,5 +49,10 @@
 		"rm -f /root/.ssh/authorized_keys"
 	]
   }],
-  "post-processors": ["vagrant"]
+  "post-processors": [ 
+    { 
+      "type": "vagrant",
+      "output": "centos6_percona_{{.Provider}}.box"
+    }
+  ]
 }
