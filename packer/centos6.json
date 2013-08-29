@@ -3,17 +3,23 @@
     { "type": "virtualbox",
       "guest_os_type": "RedHat_64",
       "iso_urls": [
-        "http://mirror.cisp.com/CentOS/6.4/isos/x86_64/CentOS-6.4-x86_64-minimal.iso",
-        "http://mirror.ubiquityservers.com/centos/6.4/isos/x86_64/CentOS-6.4-x86_64-minimal.iso",
-        "http://mirrors.arsc.edu/centos/6.4/isos/x86_64/CentOS-6.4-x86_64-minimal.iso"
+        "http://mirror.cisp.com/CentOS/6.4/isos/x86_64/CentOS-6.4-x86_64-netinstall.iso",
+        "http://mirror.ubiquityservers.com/centos/6.4/isos/x86_64/CentOS-6.4-x86_64-netinstall.iso",
+        "http://mirrors.arsc.edu/centos/6.4/isos/x86_64/CentOS-6.4-x86_64-netinstall.iso"
       ],
-      "iso_checksum": "4a5fa01c81cc300f4729136e28ebe600",
+      "iso_checksum": "bb9af2aea1344597e11070abe6b1fcd3",
       "iso_checksum_type": "md5",
-      "floppy_files": ["ks.cfg"],
+      "disk_size": 40000,
+      "http_directory": "./http_directory",
+      "boot_wait": "5s",
+      "boot_command": [
+          "<esc>",
+          "<wait>linux ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/anaconda-ks.cfg<enter>"
+      ],
       "ssh_username": "root",
       "ssh_password": "vagrant",
-      "boot_command": ["<tab> ks=floppy<enter>"],
-      "output_directory": "/tmp/packer"
+      "output_directory": "/tmp/packer",
+      "shutdown_command": "shutdown -P now"
     },
     {
     "type": "amazon-ebs",
@@ -38,21 +44,29 @@
       }
     ]
   }],
-  "provisioners": [{
-	"type": "shell",
-	"inline": [
-    "sleep 10",
-		"yum localinstall -y http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm",
-		"yum install -y puppet perl",
-		"rpm -ql perl",
-		"perl -pi -e 's/^(Defaults.*requiretty)/#$1/' /etc/sudoers",
-		"rm -f /root/.ssh/authorized_keys"
-	]
-  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "provisioners/prepare-vagrant-ssh-key.sh",
+      "override": {
+          "amazon-ebs": {
+            "script": "provisioners/prepare-ec2-ssh-key.sh"
+          }
+      }
+    },
+    {
+      "type": "shell",
+      "script": "provisioners/install-guest-additions.sh"
+    },
+    {
+      "type": "shell",
+      "script": "provisioners/clean-empty-space.sh"
+    }
+  ],
   "post-processors": [ 
     { 
       "type": "vagrant",
-      "output": "centos6_percona_{{.Provider}}.box"
+      "output": "centos-6_4-64_percona_{{.Provider}}.box"
     }
   ]
 }
