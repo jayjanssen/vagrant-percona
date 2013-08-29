@@ -1,9 +1,22 @@
-# Vagrant + AWS + Percona Server
+# Vagrant + Percona 
+
+## Introduction
+
+This repository contains tools to build consistent environments for testing Percona software on a variety of platforms.  This includes EC2 and Virtualbox for now, but more are possible going forward.
 
 ## Walkthrough
+
+This section should get you up and running.
+
+### Build Vagrant boxes to use
+
+https://github.com/jayjanssen/packer-percona
+
 ### AWS Setup
 
-Need AWS setup with the following information in a file called ~/.aws_secrets:
+You can skip this section if you aren't planning on using AWS.  
+
+You'll need an AWS account setup with the following information in a file called ~/.aws_secrets:
 
 ```yaml
 access_key_id: YOUR_ACCESS_KEY
@@ -12,36 +25,22 @@ keypair_name: KEYPAIR_ID
 keypair_path: PATH_TO_KEYPAIR_PEM
 ```
 
-ALSO put your access and secret keys in environment variables in your .bashrc or similar (for packer):
-
-```bash
-export AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY
-export AWS_SECRET_ACCESS_KEY=THE_ASSOCIATED_SECRET_KEY
-```
-
 ### Software Requirements
 
 * Vagrant 1.2+: http://vagrantup.com
-* Packer 0.1.4+: http://packer.io
-* Vagrant AWS Plugin:
+* Vagrant AWS Plugin (optional):
 
 ```
  vagrant plugin install vagrant-aws
 ```
 
-### Create your own AMI with an associated Vagrant box
+* VirtualBox: https://www.virtualbox.org (optional)
+* VMware Fusion (not supported yet, but feasible)
 
-* Modify packer/ubuntu.json 
- * Source AMI
- * Region
+#### For local VMs
 
-```bash
-cd packer
-packer validate ubuntu.json
-packer build ubuntu.json
-vagrant box add ubuntu-aws-us-east packer__aws.box
-cd ..
-```
+If you want local VMs, be sure to install VirtualBox 
+
 
 ### Launch the box
 
