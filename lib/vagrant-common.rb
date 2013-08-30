@@ -1,14 +1,12 @@
 
-def puppet( config, datadir_dev )
+def puppet( config, manifest_file, facter = {} )
 	config.vm.provision :puppet do |puppet|
 		puppet.manifests_path = "puppet/manifests"
-		puppet.manifest_file  = "init.pp"
+		puppet.manifest_file  = manifest_file
 		puppet.module_path = "puppet/modules"
 		puppet.options = "--verbose"
 
-		puppet.facter = {
-			"datadir_dev" => datadir_dev
-		}
+		puppet.facter = facter
 	end
 end
 

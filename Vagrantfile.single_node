@@ -3,7 +3,7 @@
 
 # Assumes a box from https://github.com/jayjanssen/packer-percona
 
-require './vagrant-common.rb'
+require './lib/vagrant-common.rb'
 
 Vagrant.configure("2") do |config|
 	# Every Vagrant virtual environment requires a box to build off of.
@@ -15,11 +15,15 @@ Vagrant.configure("2") do |config|
 
 		# The instance_type and EBS device name seem intertwined
 		aws.instance_type = "m1.small"
-		puppet( override, "xvdo" )
+		puppet( override, 'percona_server.pp', {
+			'datadir_dev' => 'xvdo'
+		})
 	end
 
 	config.vm.provider :virtualbox do |vb, override|
 	    vb.customize ["modifyvm", :id, "--memory", "256", "--ioapic", "on" ]
-		puppet( override, "dm-2")
+		puppet( override, 'percona_server.pp', {
+			'datadir_dev' => 'dm-2'
+		})
 	end	
 end
