@@ -5,8 +5,6 @@ include percona::config
 include percona::service
 include percona::client
 
-
-
 include misc
 include misc::mysql_datadir
 include misc::sysbench
