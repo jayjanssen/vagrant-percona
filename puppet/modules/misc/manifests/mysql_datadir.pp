@@ -1,16 +1,17 @@
 class misc::mysql_datadir {	
 
+	# Need to set $datadir_dev from Vagrantfile for this to work right
 	package {
 		'xfsprogs': ensure => 'present';
 	}
 
 	exec {
 		"mkfs_mysql_datadir":
-			command => "mkfs.xfs -f /dev/xvdj",
+			command => "mkfs.xfs -f /dev/$datadir_dev",
 			require => Package['xfsprogs'],
 			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
 ",
-			unless => "mount | grep xvdj";
+			unless => "mount | grep '/var/lib/mysql'";
 		"mkdir_mysql_datadir":
 			command => "mkdir /var/lib/mysql",
 			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
@@ -23,7 +24,7 @@ class misc::mysql_datadir {
 	mount {
 		"/var/lib/mysql":
 			ensure => "mounted",
-			device => "/dev/xvdj",
+			device => "/dev/$datadir_dev",
 			fstype => "xfs",
 			options => "noatime",
 			atboot => "true",
@@ -44,10 +45,10 @@ class misc::mysql_datadir {
 
 	# IO scheduler
 	exec {
-		"xvdj_noop":
-			command => "echo 'noop' > /sys/block/xvdj/queue/scheduler",
+		"datadir_dev_noop":
+			command => "echo 'noop' > /sys/block/$datadir_dev/queue/scheduler",
 			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
-			unless => "grep '\\[noop\\]' /sys/block/xvdj/queue/scheduler";
+			unless => "grep -E '\\[noop\\]|none' /sys/block/$datadir_dev/queue/scheduler";
 	}
 
 	# mount

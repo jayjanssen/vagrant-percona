@@ -2,14 +2,25 @@
 # vi: set ft=ruby :
 require 'yaml'
 
-Vagrant.configure("2") do |config|
-  # All Vagrant configuration is done here. The most common configuration
-  # options are documented and commented below. For a complete reference,
-  # please see the online documentation at vagrantup.com.
+# Assumes a box from https://github.com/jayjanssen/packer-percona
 
-  # Every Vagrant virtual environment requires a box to build off of.
-  # config.vm.box = "ubuntu-aws-us-east"
-	config.vm.box = "centos6-aws-us-east"
+def puppet( config, datadir_dev )
+	config.vm.provision :puppet do |puppet|
+		puppet.manifests_path = "puppet/manifests"
+		puppet.manifest_file  = "init.pp"
+		puppet.module_path = "puppet/modules"
+		puppet.options = "--verbose"
+
+		puppet.facter = {
+			"datadir_dev" => datadir_dev
+		}
+	end
+end
+
+Vagrant.configure("2") do |config|
+	# Every Vagrant virtual environment requires a box to build off of.
+	config.vm.box = "centos-6_4-64_percona"
+	config.ssh.username = "root"
 
 	config.vm.provider :aws do |aws, override|
 		aws_config = YAML::load_file(File.join(Dir.home, ".aws_secrets"))
@@ -20,17 +31,14 @@ Vagrant.configure("2") do |config|
 		aws.tags = {
 			'Name' => name
 		}
-		override.ssh.username = "root"
 		override.ssh.private_key_path = aws_config.fetch("keypair_path")
-		#aws.instance_type="m3.xlarge"
+
+		# The instance_type and EBS device name seem intertwined
+		aws.instance_type = "m1.small"
+		puppet( override, "xvdo" )
 	end
 
-  config.vm.provision :puppet do |puppet|
-		puppet.manifests_path = "puppet/manifests"
-		puppet.manifest_file  = "init.pp"
-		puppet.module_path = "puppet/modules"
-		puppet.options = "--verbose"
-  end
-
-
+	config.vm.provider :virtualbox do |vb, override|
+		puppet( override, "dm-2")
+	end	
 end
