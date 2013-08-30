@@ -3,15 +3,16 @@
 
 # Bootstrap the cluster after 'vagrant up'.  This is required because we won't know the IPs of the nodes until then (on AWS).
 
-nic='eth0'
-node_address=''
-
-vagrant status | grep -v aws > /dev/null
-not_aws=$?
-if [ not_aws ]
+vagrant status | grep ws > /dev/null
+using_aws=$?
+if [ using_aws ]
 then
+	nic='eth0'
+else
 	nic='eth1'
 fi
+
+echo "Assuming $nic is the Galera communication nic"
 
 
 node1_ip=`vagrant ssh node1 -c "ip a l | grep $nic | grep inet | awk '{print \\$2}' | awk -F/ '{print \\$1}'"`
