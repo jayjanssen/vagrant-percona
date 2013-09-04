@@ -17,7 +17,7 @@ Vagrant.configure("2") do |config|
 		# The instance_type and EBS device name seem intertwined
 		aws.instance_type = "m1.small"
 		puppet( override, 'percona_server.pp', {
-			'datadir_dev' => 'xvdo'
+			'datadir_dev' => 'xvdl'
 		})
 
 		aws.block_device_mapping = [
