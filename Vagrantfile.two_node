@@ -27,10 +27,11 @@ Vagrant.configure("2") do |config|
 			})
 
 			aws.block_device_mapping = [
-            {
-                'DeviceName' => "/dev/sdb",
-                'VirtualName' => "ephemeral0"
-            }
+	            {
+	                'DeviceName' => "/dev/sdb",
+	                'VirtualName' => "ephemeral0"
+	            }
+            ]
         ]
 		end
 
@@ -58,10 +59,11 @@ Vagrant.configure("2") do |config|
 			})
 
 			aws.block_device_mapping = [
-            {
-                'DeviceName' => "/dev/sdb",
-                'VirtualName' => "ephemeral0"
-            }
+	            {
+	                'DeviceName' => "/dev/sdb",
+	                'VirtualName' => "ephemeral0"
+	            }
+            ]
 		end
 
 		node2_config.vm.provider :virtualbox do |vb, override|
