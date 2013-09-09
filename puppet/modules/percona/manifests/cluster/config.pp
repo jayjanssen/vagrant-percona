@@ -6,6 +6,9 @@ class percona::cluster::config {
 	if( $wsrep_slave_threads == undef ) {
 		$wsrep_slave_threads = 4
 	}
+	if( $wsrep_auto_increment_control == undef ) {
+		$wsrep_auto_increment_control = ON
+	}
 
 	file {
 		"/etc/my.cnf":
