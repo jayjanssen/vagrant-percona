@@ -32,7 +32,6 @@ Vagrant.configure("2") do |config|
 	                'VirtualName' => "ephemeral0"
 	            }
             ]
-        ]
 		end
 
 		node1_config.vm.provider :virtualbox do |vb, override|
