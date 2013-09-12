@@ -2,14 +2,12 @@
 
 
 # Bootstrap the cluster after 'vagrant up'.  This is required because we won't know the IPs of the nodes until then (on AWS).
-
-vagrant status | grep ws > /dev/null
-using_aws=$?
-if [ using_aws ]
+nic='eth1'
+using_aws=false
+if vagrant status | grep aws > /dev/null
 then
+	using_aws=true
 	nic='eth0'
-else
-	nic='eth1'
 fi
 
 echo "Assuming $nic is the Galera communication nic"
@@ -29,7 +27,7 @@ vagrant ssh node1 -c "$wsrep_cluster_address"
 vagrant ssh node2 -c "$wsrep_cluster_address"
 vagrant ssh node3 -c "$wsrep_cluster_address"
 
-if [ not_aws ] 
+if ! $using_aws
 then
 	# Set the wsrep_node_address too
 	vagrant ssh node1 -c "echo -e \"wsrep_node_address = $node1_ip\n\" >> /etc/my-pxc.cnf"
