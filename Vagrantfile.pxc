@@ -30,8 +30,7 @@ Vagrant.configure("2") do |config|
 			node_config.vm.hostname = node
 			node_config.vm.network :private_network, ip: ip
 
-			provider_aws( node_config, "PXC #{node}", 'm1.small') 
-			{ |aws, override|
+			provider_aws( node_config, "PXC #{node}", 'm1.small') { |aws, override|
 				aws.block_device_mapping = [
 					{
 						'DeviceName' => "/dev/sdb",
