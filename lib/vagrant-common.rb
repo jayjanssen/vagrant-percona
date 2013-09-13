@@ -35,14 +35,17 @@ end
 # Provision this node with Puppet
 # -- config: vm config from Vagrantfile
 # -- manifest_file: puppet manifest to use (under puppet/manifests)
-# -- facter: hash of facter parameters to pass into puppet
-def provision_puppet( config, manifest_file, facter = {} )
+# -- facter: hash of facter parameters to pass into puppet (not modified!)
+# -- extra_facter: just like facter, but merged with facter in a local copy 
+# 	 	here.  This is necessary because of how Vagrant does provider-specific 
+# 		overrides.  These will override any common settings in the facter arg.
+def provision_puppet( config, manifest_file, facter = {}, extra_facter = {} )
 	config.vm.provision :puppet do |puppet|
 		puppet.manifests_path = "puppet/manifests"
 		puppet.manifest_file  = manifest_file
 		puppet.module_path = "puppet/modules"
 		puppet.options = "--verbose"
 
-		puppet.facter = facter
+		puppet.facter = facter.merge( extra_facter )
 	end
 end

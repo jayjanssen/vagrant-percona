@@ -1,9 +1,9 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Assumes a box from https://github.com/jayjanssen/packer-percona
-# Requires vagrant-aws 0.3.0+
+# Example of a beefier EC2 instance
 
+# Assumes a box from https://github.com/jayjanssen/packer-percona
 require './lib/vagrant-common.rb'
 
 Vagrant.configure("2") do |config|
@@ -11,15 +11,9 @@ Vagrant.configure("2") do |config|
 	config.vm.box = "centos-6_4-64_percona"
 	config.ssh.username = "root"
 
-	config.vm.provider :aws do |aws, override|
-		aws_provider( aws, override, "Vagrant Percona Server" )
-
-		# The instance_type and EBS device name seem intertwined
-		aws.instance_type = "m1.small"
-		puppet( override, 'percona_server.pp', {
-			'datadir_dev' => 'xvdl'
-		})
-
+	# We are assuming AWS, create a 'm1.xlarge' and name it 
+	provider_aws( config, "Beefy Percona Server", 'm1.xlarge') { |aws, override|
+		# Setup the 1k provisioned iops 100G EBS drive under sdl
 		aws.block_device_mapping = [
             {
                 'DeviceName' => "/dev/sdl",
@@ -30,12 +24,15 @@ Vagrant.configure("2") do |config|
                 'Ebs.Iops' => 1000
             }
         ]
-	end
 
-	config.vm.provider :virtualbox do |vb, override|
-	    vb.customize ["modifyvm", :id, "--memory", "256", "--ioapic", "on" ]
-		puppet( override, 'percona_server.pp', {
-			'datadir_dev' => 'dm-2'
+		# Provision this node with puppet and the 'percona_server.pp' manifest.
+		# - We use 'xvdl' instead of 'sdl' because of how /sys/block presents 
+		# 	the device on EC2, but this is our ephemeral drive above.
+		# - We override the buffer pool here because m1.small has 1.5G of RAM
+		provision_puppet( override, 'percona_server.pp', puppet_config, { 
+			'datadir_dev' => 'xvdl',
+			'innodb_buffer_pool_size' => '12G',
+			'innodb_log_file_size' => '4G'
 		})
-	end	
+	}
 end
