@@ -4,6 +4,10 @@ class percona::config {
 		$server_id = 1
 	}
 
+	if( $innodb_buffer_pool_size == undef ) {
+		$innodb_buffer_pool_size = '128M'
+	}
+
 	if( $innodb_log_file_size == undef ) {
 		$innodb_log_file_size = '64M'
 	}
