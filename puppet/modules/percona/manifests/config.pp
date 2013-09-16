@@ -12,6 +12,10 @@ class percona::config {
 		$innodb_log_file_size = '64M'
 	}
 
+	if( $extra_mysqld_config == undef ) {
+		$extra_mysqld_config = ''
+	}
+
 
 	file {
 		"/etc/my.cnf":
