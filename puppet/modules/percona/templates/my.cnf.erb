@@ -9,6 +9,7 @@ innodb_log_file_size            = <%= innodb_log_file_size %>
 innodb_flush_method				= O_DIRECT
 innodb_file_per_table
 
+<%=extra_mysqld_config %>
 
 [mysql]
 prompt                          = "<%=hostname %> mysql> "
@@ -16,3 +17,4 @@ prompt                          = "<%=hostname %> mysql> "
 [client]
 user                            = root
 
+!include /etc/my-extra.cnf
