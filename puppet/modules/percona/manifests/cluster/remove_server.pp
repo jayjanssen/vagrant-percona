@@ -5,9 +5,7 @@ class percona::cluster::remove_server {
 			ensure => 'absent';
 		"Percona-Server-client-55.$hardwaremodel":
 			require => Yumrepo['percona'],
-			ensure => 'absent';
-		"mysql-libs":
-			ensure => "absent";
+			ensure => 'absent'; 
 		"Percona-Server-shared-55.$hardwaremodel":
 			require => Yumrepo['percona'],    
 			ensure => 'absent'; 
@@ -24,7 +22,10 @@ class percona::cluster::remove_server {
 			 ];
 		'remove_sysbench':
 			command => "rpm -e sysbench",
-			path => "/usr/bin:/usr/sbin:/bin:/sbin";
+			path => "/usr/bin:/usr/sbin:/bin:/sbin",
+			onlyif => [
+				"rpm -q Percona-Server-server-55"
+			];
 	}      
 
 	Exec['remove_sysbench'] -> Package["Percona-Server-devel-55.$hardwaremodel"] -> Package["Percona-Server-server-55.$hardwaremodel"] -> Package["Percona-Server-client-55.$hardwaremodel"] -> Package["Percona-Server-shared-55.$hardwaremodel"] -> Exec['remove_master_info']
