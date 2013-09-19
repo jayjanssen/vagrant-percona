@@ -14,18 +14,23 @@ puppet_config = {
 }
 
 # Node names and ips (for local VMs)
+# Security groups are 'default' (22 open) and 'pxc' (3306, 4567-4568,4444 open) for each respective region
 pxc_nodes = {
 	'node1' => {
 	   'aws_region' => 'us-east-1',
 	   'local_vm_ip' => '192.168.70.2',
+	   'security_groups' => ['default','pxc']
 	},
 	'node2' => {
 	   'aws_region' => 'us-west-1',
-	   'local_vm_ip' => '192.168.70.3'
+	   'local_vm_ip' => '192.168.70.3',
+      'security_groups' => ['default','pxc']
+      
 	},
 	'node3' => {
 	   'aws_region' => 'eu-west-1',
-	   'local_vm_ip' => '192.168.70.4'
+	   'local_vm_ip' => '192.168.70.4',
+      'security_groups' => ['default','pxc']
 	}
 }
 
@@ -39,7 +44,7 @@ Vagrant.configure("2") do |config|
 			node_config.vm.hostname = node
 			node_config.vm.network :private_network, ip: node_params['local_vm_ip']
 
-			provider_aws( node_config, "PXC #{node}", 'm1.small', node_params['aws_region'] ) { |aws, override|
+			provider_aws( node_config, "PXC #{node}", 'm1.small', node_params['aws_region'], node_params['security_groups'] ) { |aws, override|
 				aws.block_device_mapping = [
 					{
 						'DeviceName' => "/dev/sdb",

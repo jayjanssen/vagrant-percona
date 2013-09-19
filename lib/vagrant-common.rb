@@ -3,7 +3,7 @@
 # -- name: name for the node displayed on the aws console
 # -- instance_type: http://aws.amazon.com/ec2/instance-types/
 # -- region: defaults to 'us-east-1'
-def provider_aws( config, name, instance_type, region = nil )
+def provider_aws( config, name, instance_type, region = nil, security_groups = nil )
 	require 'yaml'
 
 	config.vm.provider :aws do |aws, override|
@@ -24,6 +24,10 @@ def provider_aws( config, name, instance_type, region = nil )
 			aws.region = region
 			aws.keypair_name = aws_config['regions'][region]["keypair_name"]
 			override.ssh.private_key_path = aws_config['regions'][region]["keypair_path"]
+		end
+		
+		if security_groups != nil
+			aws.security_groups = security_groups
 		end
 		
 		yield( aws, override )
