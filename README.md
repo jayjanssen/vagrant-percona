@@ -25,6 +25,28 @@ keypair_name: KEYPAIR_ID
 keypair_path: PATH_TO_KEYPAIR_PEM
 ```
 
+AWS Multi-region can be supported by adding a 'regions' hash to the .aws_secrets file:
+
+```yaml
+access_key_id: YOUR_ACCESS_KEY
+secret_access_key: THE_ASSOCIATED_SECRET_KEY
+keypair_name: jay
+keypair_path: /Users/jayj/.ssh/jay-us-east-1.pem
+instance_name_prefix: Jay
+regions:
+  us-east-1:
+    keypair_name: jay
+    keypair_path: /Users/jayj/.ssh/jay-us-east-1.pem
+  us-west-1:
+    keypair_name: jay
+    keypair_path: /Users/jayj/.ssh/jay-us-west-1.pem
+  eu-west-1:
+    keypair_name: jay
+    keypair_path: /Users/jayj/.ssh/jay-eu-west-1.pem
+```
+
+Note that the default 'keypair_name' and 'keypair_path' can still be used.  Region will default to 'us-east-1' unless you specifically override it.    
+
 ### Software Requirements
 
 * Vagrant 1.2+: http://vagrantup.com
