@@ -6,6 +6,15 @@ class mha::manager {
 			unless => "/bin/rpm -q mha4mysql-manager",
 			require => [Package['MySQL-shared-compat'], File['/tmp/sysbench.rpm']];
 	}
+	
+	if( $master_ip_failover_script == undef ) {
+		$master_ip_failover_script = "/usr/local/bin/master_ip_failover"
+	}
+	
+	if( $master_ip_online_change_script == undef ) {
+		$master_ip_online_change_script = "/usr/local/bin/master_ip_online_change_script"
+	}
+	
 	file {
 		"/etc/mha.cnf":
 			ensure => 'present',

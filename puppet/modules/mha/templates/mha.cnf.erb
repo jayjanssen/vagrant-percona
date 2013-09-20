@@ -18,8 +18,8 @@ manager_workdir=/var/log/masterha/app1
 remote_workdir=/var/log/masterha/app1
 
 # Failover scripts
-master_ip_failover_script=/usr/local/bin/master_ip_failover
-master_ip_online_change_script=/usr/local/bin/master_ip_online_change_script
+master_ip_failover_script=<%=master_ip_failover_script%>
+master_ip_online_change_script=<%=master_ip_online_change_script%>
 
 # Hardcoded for Vbox for now
 [serverd1n1]
