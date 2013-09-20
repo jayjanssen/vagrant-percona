@@ -14,6 +14,15 @@ class mha::node {
 			home => "/home/mha",
 			managehome => true;
 	}
+	
+	file {
+		'/etc/sudoers.d/mha_sudo':
+			ensure => present,
+			content => 'Cmnd_Alias VIP_MGMT = /sbin/ip
+
+mha     ALL=(root)      NOPASSWD: VIP_MGMT
+';
+	}
 
 	file {
 		'/var/log/masterha':
