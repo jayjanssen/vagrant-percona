@@ -5,7 +5,7 @@
 
 # This sets up 3 nodes with a common PXC, but you need to run bootstrap.sh to connect them.
 
-require './lib/vagrant-common.rb'
+require '../../lib/vagrant-common.rb'
 
 # Our puppet config
 puppet_config = {
