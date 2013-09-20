@@ -2,9 +2,10 @@ class percona::client {
 	case $operatingsystem {
 		centos: {
 			package {
-				"Percona-Server-client-55.$hardwaremodel":
+				"Percona-Server-client-$percona_server_version.$hardwaremodel":
 					alias => "MySQL-client";
-				"Percona-Server-devel-55.$hardwaremodel":					require => [ Package['MySQL-client'] ],
+				"Percona-Server-devel-$percona_server_version.$hardwaremodel":
+					require => [ Package['MySQL-client'] ],
 					alias => "MySQL-devel";
 				"Percona-Server-shared-compat":
 					require => [ Package['MySQL-client'] ],

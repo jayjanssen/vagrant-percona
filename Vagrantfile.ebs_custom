@@ -4,7 +4,7 @@
 # Example of a beefier EC2 instance
 
 # Assumes a box from https://github.com/jayjanssen/packer-percona
-require '../../lib/vagrant-common.rb'
+require './lib/vagrant-common.rb'
 
 Vagrant.configure("2") do |config|
 	# Every Vagrant virtual environment requires a box to build off of.

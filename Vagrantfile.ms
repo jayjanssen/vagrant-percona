@@ -4,10 +4,13 @@
 # Assumes a box from https://github.com/jayjanssen/packer-percona
 
 # This sets up 2 nodes for replication.  Run 'ms-setup.pl' after these are provisioned.
-require '../../lib/vagrant-common.rb'
+require './lib/vagrant-common.rb'
 
 # Our puppet config
-$puppet_config = {}
+$puppet_config = {
+        "experimental_repo"             => "no",
+        "percona_server_version"        => "55"
+}
 
 def build_box( config, name, ip, server_id )
 	config.vm.define name do |node_config|

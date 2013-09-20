@@ -84,16 +84,13 @@ vagrant ssh
 vagrant destroy -f
 ```
 
-# Different Environments
+# PXC 
 
-
-## PXC 
-
-To install PXC, go to 'environments/pxc' (or 'environments/pxc_multi_region')  and do 'vagrant up --provider=aws'.  
+To install PXC, symlink Vagrant.pxc to Vagrant and do 'vagrant up --provider=aws'.  
 
 Alternatively, you can launch and provision the instances in parallel with 'vagrant up --provider=aws --parallel'
 
-After you have launched the instances, run '../../pxc-bootstrap.sh' in the root repository to finish the cluster bootstrap.
+After you have launched the instances, run './pxc-bootstrap.sh' in the root repository to finish the cluster bootstrap.
 
 [Re-]provisioning in parallel:
 ```bash
