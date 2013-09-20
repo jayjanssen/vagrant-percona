@@ -4,6 +4,9 @@ user=mha
 password=mha
 ssh_user=mha
 
+repl_user=repl
+repl_password=repl
+
 # Keep failing over even if a slave fails to failover
 ignore_fail=1
 
@@ -13,6 +16,10 @@ log_level=debug
 manager_workdir=/var/log/masterha/app1
 # working directory on MySQL servers
 remote_workdir=/var/log/masterha/app1
+
+# Failover scripts
+master_ip_failover_script=/usr/local/bin/master_ip_failover
+master_ip_online_change_script=/usr/local/bin/master_ip_online_change_script
 
 # Hardcoded for Vbox for now
 [serverd1n1]

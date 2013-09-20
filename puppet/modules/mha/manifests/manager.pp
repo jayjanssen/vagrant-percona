@@ -8,8 +8,13 @@ class mha::manager {
 	}
 	file {
 		"/etc/mha.cnf":
-		ensure => 'present',
-		content => template("mha/mha.cnf.erb"),
-
+			ensure => 'present',
+			content => template("mha/mha.cnf.erb");
+		"/usr/local/bin/master_ip_failover":
+			ensure => 'present',
+			source => 'puppet:///modules/mha/master_ip_failover';
+		"/usr/local/bin/master_ip_online_change_script":
+			ensure => 'present',
+			source => 'puppet:///modules/mha/master_ip_online_change';
 	}
 }
