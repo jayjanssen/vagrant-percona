@@ -3,7 +3,7 @@
 
 # Assumes a box from https://github.com/jayjanssen/packer-percona
 
-require './lib/vagrant-common.rb'
+require '../../lib/vagrant-common.rb'
 
 # Define a set of parameters to pass into puppet for configuring the box.
 puppet_config = {
