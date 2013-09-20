@@ -6,4 +6,10 @@ class mha::manager {
 			unless => "/bin/rpm -q mha4mysql-manager",
 			require => [Package['MySQL-shared-compat'], File['/tmp/sysbench.rpm']];
 	}
+	file {
+		"/etc/mha.cnf":
+		ensure => 'present',
+		content => template("mha/mha.cnf.erb"),
+
+	}
 }

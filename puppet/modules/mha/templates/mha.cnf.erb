@@ -1,0 +1,29 @@
+[server default]
+# mysql user and password
+user=mha
+password=mha
+ssh_user=mha
+
+# Keep failing over even if a slave fails to failover
+ignore_fail=1
+
+log_level=debug
+
+# working directory on the manager
+manager_workdir=/var/log/masterha/app1
+# working directory on MySQL servers
+remote_workdir=/var/log/masterha/app1
+
+# Hardcoded for Vbox for now
+[serverd1n1]
+hostname=192.168.70.2
+
+[serverd1n2]
+hostname=192.168.70.3
+
+[serverd2n1]
+hostname=192.168.70.4
+
+[serverd2n2]
+hostname=192.168.70.5
+

@@ -2,21 +2,34 @@
 # -- config: vm config from Vagrantfile
 # -- name: name for the node displayed on the aws console
 # -- instance_type: http://aws.amazon.com/ec2/instance-types/
-def provider_aws( config, name, instance_type )
+# -- region: defaults to 'us-east-1'
+def provider_aws( config, name, instance_type, region = nil, security_groups = nil )
 	require 'yaml'
 
 	config.vm.provider :aws do |aws, override|
 		aws.instance_type = instance_type
-
+		
 		aws_config = YAML::load_file(File.join(Dir.home, ".aws_secrets"))
 		aws.access_key_id = aws_config.fetch("access_key_id")
 		aws.secret_access_key = aws_config.fetch("secret_access_key")
-		aws.keypair_name = aws_config.fetch("keypair_name") 
+
 		aws.tags = {
 			'Name' => aws_config.fetch("instance_name_prefix") + " " + name
 		}
-		override.ssh.private_key_path = aws_config.fetch("keypair_path")
-
+		
+		if region == nil
+			aws.keypair_name = aws_config["keypair_name"]
+			override.ssh.private_key_path = aws_config["keypair_path"]
+		else
+			aws.region = region
+			aws.keypair_name = aws_config['regions'][region]["keypair_name"]
+			override.ssh.private_key_path = aws_config['regions'][region]["keypair_path"]
+		end
+		
+		if security_groups != nil
+			aws.security_groups = security_groups
+		end
+		
 		yield( aws, override )
 	end
 end
