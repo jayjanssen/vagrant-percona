@@ -54,9 +54,9 @@ end
 # 		overrides.  These will override any common settings in the facter arg.
 def provision_puppet( config, manifest_file, facter = {}, extra_facter = {} )
 	config.vm.provision :puppet do |puppet|
-		puppet.manifests_path = "puppet/manifests"
+		puppet.manifests_path = "./puppet/manifests"
 		puppet.manifest_file  = manifest_file
-		puppet.module_path = "puppet/modules"
+		puppet.module_path = "./puppet/modules"
 		puppet.options = "--verbose"
 
 		puppet.facter = facter.merge( extra_facter )

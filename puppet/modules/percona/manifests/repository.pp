@@ -7,19 +7,26 @@ class percona::repository {
 				unless => "apt-key list | grep -i percona",
 				path => "/usr/bin:/bin";
 			}
-			
-			$repo = "deb http://repo.percona.com/apt precise main
+		
+			case $experimental_repo {
+				'no', default: { $repo = "deb http://repo.percona.com/apt precise main
 deb-src http://repo.percona.com/apt precise main
-			"
+"}
+				'yes': { $repo = "deb http://repo.percona.com/apt precise experimental
+deb-src http://repo.percona.com/apt precise experimental
+" }
+			}
+
 			file { "/etc/apt/sources.list.d/percona-repo.list":
-				content => $repo
+				content => $repo,
+				notify  => Exec["percona-apt-update"]
 			}
 			
 			exec { "percona-apt-update":
-				command => "apt-get update && touch /tmp/apt-update-percona-repo",
+				command => "apt-get update",
 				require => [File['/etc/apt/sources.list.d/percona-repo.list'], Exec['apt-key']],
 				path => "/usr/bin:/bin",
-				creates => "/tmp/apt-update-percona-repo";
+				refreshonly => true
 			}
 		}
 		centos: {
@@ -28,9 +35,21 @@ deb-src http://repo.percona.com/apt precise main
 				"percona":
 				descr       => "Percona",
 				enabled     => 1,
-				baseurl     => "http://repo.percona.com/centos/$releasever/os/$hardwaremodel/",
-				gpgcheck    => 0;
+				baseurl     => $experimental_repo ? {
+					/(^no|undef)$/  => "http://repo.percona.com/centos/$releasever/os/$hardwaremodel/",
+					yes 		=> "http://repo.percona.com/testing/centos/$releasever/os/$hardwaremodel/"
+				},
+				gpgcheck    => 0,
+				notify	    => Exec["yumupdate"];
 			 }
+
+			exec {
+			     "yumupdate":
+				command	=> "/usr/bin/yum update",
+				refreshonly => true
+			}
+
+
 		}
 	}
 
