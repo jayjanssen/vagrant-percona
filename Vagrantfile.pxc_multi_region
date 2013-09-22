@@ -9,8 +9,10 @@ require './lib/vagrant-common.rb'
 
 # Our puppet config
 puppet_config = {
-	'innodb_buffer_pool_size' => '128M',
-	'innodb_log_file_size' => '64M'
+	'innodb_buffer_pool_size' 	=> '128M',
+	'innodb_log_file_size' 		=> '64M',
+        "experimental_repo"             => "no",
+        "percona_server_version"        => "55"
 }
 
 # Node names and ips (for local VMs)

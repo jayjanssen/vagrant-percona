@@ -86,15 +86,11 @@ vagrant destroy -f
 
 # PXC 
 
-To install PXC, symlink Vagrantfile to Vagrantfile.pxc and do 'vagrant up --provider=aws'.  Alternatively, you can launch and provision the instances in parallel like this:
+To install PXC, symlink Vagrant.pxc to Vagrant and do 'vagrant up --provider=aws'.  
 
-```bash
-vagrant up node1 --provider=aws &
-vagrant up node2 --provider=aws &
-vagrant up node3 --provider=aws
+Alternatively, you can launch and provision the instances in parallel with 'vagrant up --provider=aws --parallel'
 
-./bootstrap.sh
-````
+After you have launched the instances, run './pxc-bootstrap.sh' in the root repository to finish the cluster bootstrap.
 
 [Re-]provisioning in parallel:
 ```bash

@@ -7,8 +7,10 @@ require './lib/vagrant-common.rb'
 
 # Define a set of parameters to pass into puppet for configuring the box.
 puppet_config = {
-	"innodb_buffer_pool_size" => "128M",
-	"innodb_log_file_size" => "64M"
+	"innodb_buffer_pool_size"	=> "128M",
+	"innodb_log_file_size"		=> "64M",
+	"experimental_repo"		=> "no",
+	"percona_server_version"	=> "55"
 }
 
 Vagrant.configure("2") do |config|
