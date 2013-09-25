@@ -1,4 +1,8 @@
 class percona::repository {
+	
+	if( $experimental_repo == undef ) {
+		$experimental_repo = 'no'
+	}
 
 	case $operatingsystem {
 		ubuntu: {
