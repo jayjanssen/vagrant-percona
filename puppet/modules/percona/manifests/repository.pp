@@ -43,17 +43,8 @@ deb-src http://repo.percona.com/apt precise experimental
 					/(^no|undef)$/  => "http://repo.percona.com/centos/$releasever/os/$hardwaremodel/",
 					yes 		=> "http://repo.percona.com/testing/centos/$releasever/os/$hardwaremodel/"
 				},
-				gpgcheck    => 0,
-				notify	    => Exec["yumupdate"];
+				gpgcheck    => 0;
 			 }
-
-			exec {
-			     "yumupdate":
-				command	=> "/usr/bin/yum update",
-				refreshonly => true
-			}
-
-
 		}
 	}
 
