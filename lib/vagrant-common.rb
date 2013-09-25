@@ -6,31 +6,37 @@
 def provider_aws( config, name, instance_type, region = nil, security_groups = nil )
 	require 'yaml'
 
-	config.vm.provider :aws do |aws, override|
-		aws.instance_type = instance_type
+	aws_secrets_file = File.join( Dir.home, '.aws_secrets' )
+	
+	if( File.readable?( aws_secrets_file ))
+		config.vm.provider :aws do |aws, override|
+			aws.instance_type = instance_type
 		
-		aws_config = YAML::load_file(File.join(Dir.home, ".aws_secrets"))
-		aws.access_key_id = aws_config.fetch("access_key_id")
-		aws.secret_access_key = aws_config.fetch("secret_access_key")
+			aws_config = YAML::load_file( aws_secrets_file )
+			aws.access_key_id = aws_config.fetch("access_key_id")
+			aws.secret_access_key = aws_config.fetch("secret_access_key")
 
-		aws.tags = {
-			'Name' => aws_config.fetch("instance_name_prefix") + " " + name
-		}
+			aws.tags = {
+				'Name' => aws_config.fetch("instance_name_prefix") + " " + name
+			}
 		
-		if region == nil
-			aws.keypair_name = aws_config["keypair_name"]
-			override.ssh.private_key_path = aws_config["keypair_path"]
-		else
-			aws.region = region
-			aws.keypair_name = aws_config['regions'][region]["keypair_name"]
-			override.ssh.private_key_path = aws_config['regions'][region]["keypair_path"]
+			if region == nil
+				aws.keypair_name = aws_config["keypair_name"]
+				override.ssh.private_key_path = aws_config["keypair_path"]
+			else
+				aws.region = region
+				aws.keypair_name = aws_config['regions'][region]["keypair_name"]
+				override.ssh.private_key_path = aws_config['regions'][region]["keypair_path"]
+			end
+		
+			if security_groups != nil
+				aws.security_groups = security_groups
+			end
+		
+			yield( aws, override )
 		end
-		
-		if security_groups != nil
-			aws.security_groups = security_groups
-		end
-		
-		yield( aws, override )
+	else
+		puts "Skipping AWS because of missing/non-readable ~/.aws_secrets file.  Read https://github.com/jayjanssen/vagrant-percona/blob/master/README.md#aws-setup for more information about setting up AWS."
 	end
 end
 
