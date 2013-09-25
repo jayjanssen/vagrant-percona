@@ -23,6 +23,7 @@ access_key_id: YOUR_ACCESS_KEY
 secret_access_key: THE_ASSOCIATED_SECRET_KEY
 keypair_name: KEYPAIR_ID
 keypair_path: PATH_TO_KEYPAIR_PEM
+instance_name_prefix: SOME_NAME_PREFIX
 ```
 
 AWS Multi-region can be supported by adding a 'regions' hash to the .aws_secrets file:
