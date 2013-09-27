@@ -13,7 +13,7 @@ class percona::repository {
 			}
 		
 			case $experimental_repo {
-				'no', default: { $repo = "deb http://repo.percona.com/apt precise main
+				'no': { $repo = "deb http://repo.percona.com/apt precise main
 deb-src http://repo.percona.com/apt precise main
 "}
 				'yes': { $repo = "deb http://repo.percona.com/apt precise experimental
