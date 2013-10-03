@@ -4,7 +4,7 @@
 # Bootstrap the cluster after 'vagrant up'.  This is required because we won't know the IPs of the nodes until then (on AWS).
 nic='eth1'
 using_aws=false
-get_ip_cmd="ip a l | grep $nic | grep inet | awk '{print \\$2}' | awk -F/ '{print \\$1}'"
+get_ip_cmd="ip -o -f inet addr show $nic | awk '{split(\$4,arr,\"/\"); print arr[1]}'"
 
 if vagrant status | grep aws > /dev/null
 then
