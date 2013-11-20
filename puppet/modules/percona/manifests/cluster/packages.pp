@@ -1,12 +1,35 @@
 class percona::cluster::packages {
+	# Default PS version is 55 for now
+	if( $percona_server_version == undef or $percona_server_version == 55 ) {
+		$percona_server_version = ''
+	} elsif( $percona_server_version == 56 ) {
+		$percona_server_version = '-56'
+	}
+
+	# ugly way of making sure the version we want to use doesn't conflict with the old one
+	# (oh boy this whole thing might need refactoring)
+	if $percona_server_version == '' {
+		$other_percona_server_version="-56"
+	} elsif $percona_server_version == "-56" {
+		$other_percona_server_version=""
+	}
+
+
 	case $operatingsystem {
 		centos: {
 			package {
-				"Percona-XtraDB-Cluster-server.$hardwaremodel":
+				"Percona-XtraDB-Cluster-server$other_percona_server_version.$hardwaremodel":
+					ensure => "absent";
+				"Percona-XtraDB-Cluster-client$other_percona_server_version.$hardwaremodel":
+					ensure => "absent";
+				"Percona-XtraDB-Cluster-shared$other_percona_server_version.$hardwaremodel":
+					ensure => "absent";
+
+				"Percona-XtraDB-Cluster-server$percona_server_version.$hardwaremodel":
 					require => [ Yumrepo['percona'], Package['MySQL-shared-compat'] ],
 					alias => "MySQL-server",
 					ensure => "installed";
-				"Percona-XtraDB-Cluster-client.$hardwaremodel":
+				"Percona-XtraDB-Cluster-client$percona_server_version.$hardwaremodel":
 					require => [ Yumrepo['percona']],
 					alias => "MySQL-client",
 					ensure => "installed";
