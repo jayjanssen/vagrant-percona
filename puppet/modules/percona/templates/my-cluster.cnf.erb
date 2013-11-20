@@ -25,6 +25,8 @@ wsrep_sst_auth                  = sst:secret
 innodb_locks_unsafe_for_binlog  = 1
 innodb_autoinc_lock_mode        = 2
 
+<%=extra_mysqld_config %>
+
 [mysql]
 prompt                          = "<%=hostname %> mysql> "
 
