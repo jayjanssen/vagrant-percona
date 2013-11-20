@@ -7,6 +7,7 @@ class misc {
 		'ntp': ensure => 'present';
 		'ntpdate': ensure => 'present';
 		'wget': ensure => 'present';
+		'sysstat': ensure => 'present';
 	}
 	
 	$ntpservice = $operatingsystem ? {
