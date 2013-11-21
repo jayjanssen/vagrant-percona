@@ -10,6 +10,10 @@ class percona::cluster::config {
 		$wsrep_auto_increment_control = ON
 	}
 
+        if( $extra_mysqld_config == undef ) {
+                $extra_mysqld_config = ''
+        }
+
 	file {
 		"/etc/my.cnf":
 			ensure  => present,
