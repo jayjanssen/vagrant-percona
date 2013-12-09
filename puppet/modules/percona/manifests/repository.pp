@@ -45,6 +45,13 @@ deb-src http://repo.percona.com/apt precise experimental
 				},
 				gpgcheck    => 0;
 			 }
+
+			# Install shared-campat right away to take precedence over any other wack-job dependencies
+			package {
+				"Percona-Server-shared-compat":
+					alias => 'MySQL-shared-compat',
+					ensure => present;
+			}
 		}
 	}
 
