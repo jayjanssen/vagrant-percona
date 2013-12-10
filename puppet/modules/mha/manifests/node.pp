@@ -4,7 +4,7 @@ class mha::node {
 			command => "/usr/bin/yum localinstall -y https://mysql-master-ha.googlecode.com/files/mha4mysql-node-0.54-0.el6.noarch.rpm",
 			cwd => "/tmp",
 			unless => "/bin/rpm -q mha4mysql-node",
-			require => [Package['MySQL-shared-compat'], File['/tmp/sysbench.rpm']];
+			require => [Package['MySQL-shared'], File['/tmp/sysbench.rpm']];
 	}
 
 	user {

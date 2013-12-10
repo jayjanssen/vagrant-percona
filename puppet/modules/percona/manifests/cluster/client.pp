@@ -8,10 +8,6 @@ class percona::cluster::client {
 					alias => "MySQL-devel";
 				"Percona-XtraDB-Cluster-shared-55.$hardwaremodel":
 					alias => "MySQL-shared";
-				"Percona-Server-shared-compat":
-					require => [ Package['MySQL-client'] ],
-					alias => "MySQL-shared-compat",
-					ensure => "installed";
 			}
 		}
 		ubuntu: {

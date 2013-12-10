@@ -1,7 +1,7 @@
 class percona::cluster::packages {
 	# Default PS version is 55 for now
 	if( $percona_server_version == undef or $percona_server_version == 55 ) {
-		$percona_server_version = ''
+		$percona_server_version = '-55'
 	} elsif( $percona_server_version == 56 ) {
 		$percona_server_version = '-56'
 	}
@@ -11,7 +11,7 @@ class percona::cluster::packages {
 	if $percona_server_version == '' {
 		$other_percona_server_version="-56"
 	} elsif $percona_server_version == "-56" {
-		$other_percona_server_version=""
+		$other_percona_server_version="-55"
 	}
 
 
@@ -26,21 +26,21 @@ class percona::cluster::packages {
 					ensure => "absent";
 
 				"Percona-XtraDB-Cluster-server$percona_server_version.$hardwaremodel":
-					require => [ Yumrepo['percona'], Package['MySQL-shared-compat'] ],
+					require => [ Yumrepo['percona'], Package['MySQL-shared'], Package['mysql-libs']],
 					alias => "MySQL-server",
 					ensure => "installed";
 				"Percona-XtraDB-Cluster-client$percona_server_version.$hardwaremodel":
 					require => [ Yumrepo['percona']],
 					alias => "MySQL-client",
 					ensure => "installed";
-				"rsync":
-					ensure => "present";  
-				"Percona-Server-shared-compat":
-					require => [ Yumrepo['percona'], Package['MySQL-client'] ],
-					alias => "MySQL-shared-compat",
+				"Percona-XtraDB-Cluster-shared$percona_server_version.$hardwaremodel":
+					require => [ Yumrepo['percona']],
+					alias => "MySQL-shared",
 					ensure => "installed";
-				# "mysql-libs":
-				# 	ensure => "absent";
+				# replaces mysql-libs
+				"Percona-Server-shared-51":
+					alias => "mysql-libs",
+					ensure => "present";
 			}
 		}
 		ubuntu: {

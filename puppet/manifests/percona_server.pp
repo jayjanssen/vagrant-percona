@@ -12,3 +12,4 @@ Class['misc::mysql_datadir'] -> Class['percona::server']
 
 Class['percona::repository'] -> Class['percona::config'] -> Class['percona::server'] -> Class['percona::service']
 
+Class['percona::repository'] -> Class['percona::toolkit']

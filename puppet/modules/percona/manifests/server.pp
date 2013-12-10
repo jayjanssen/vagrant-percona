@@ -36,6 +36,11 @@ class percona::server {
 				"Percona-Server-server-$other_percona_server_version.$hardwaremodel":
 					before => Package["Percona-Server-server-$percona_server_version.$hardwaremodel"],
 					ensure => absent;
+				"Percona-Server-shared-$percona_server_version.$hardwaremodel":
+					alias => "MySQL-shared",
+					ensure => latest;
+				"Percona-Server-shared-$other_percona_server_version.$hardwaremodel":
+					ensure => absent;
 			}
 		}
 		ubuntu: {
