@@ -12,6 +12,10 @@ class percona::config {
 		$innodb_log_file_size = '64M'
 	}
 
+	if( $innodb_flush_log_at_trx_commit == undef ) {
+		$innodb_flush_log_at_trx_commit = '1'
+	}
+
 	if( $extra_mysqld_config == undef ) {
 		$extra_mysqld_config = ''
 	}
