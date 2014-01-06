@@ -8,7 +8,7 @@ class misc::sysbench {
 	}
 	file {
 		"/tmp/sysbench.rpm":
-			source => "puppet:///modules/misc/sysbench-0.5-3.el6_.x86_64.rpm",
+			source => "puppet:///modules/misc/sysbench-0.5-4.el6_.x86_64.rpm",
 			ensure => present;
 		"/root/sysbench_tests":
 			ensure => link,
