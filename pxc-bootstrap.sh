@@ -38,9 +38,10 @@ then
 	vagrant ssh node2 -c "echo -e \"wsrep_sst_receive_address = $node2_ip\n\" >> /etc/my-pxc.cnf"
 	vagrant ssh node3 -c "echo -e \"wsrep_sst_receive_address = $node3_ip\n\" >> /etc/my-pxc.cnf"
 
-	vagrant ssh node1 -c "echo -e \"wsrep_provider_options = 'ist.recv_addr=$node1_ip'\n\" >> /etc/my-pxc.cnf"
-	vagrant ssh node2 -c "echo -e \"wsrep_provider_options = 'ist.recv_addr=$node2_ip'\n\" >> /etc/my-pxc.cnf"
-	vagrant ssh node3 -c "echo -e \"wsrep_provider_options = 'ist.recv_addr=$node3_ip'\n\" >> /etc/my-pxc.cnf"
+	vagrant ssh node1 -c "grep wsrep_provider_options /etc/my.cnf | sed 's/\"$/; ist.recv_addr=$node1_ip\"/' >> /etc/my-pxc.cnf"
+	vagrant ssh node2 -c "grep wsrep_provider_options /etc/my.cnf | sed 's/\"$/; ist.recv_addr=$node2_ip\"/' >> /etc/my-pxc.cnf"
+	vagrant ssh node3 -c "grep wsrep_provider_options /etc/my.cnf | sed 's/\"$/; ist.recv_addr=$node3_ip\"/' >> /etc/my-pxc.cnf"
+	
 else
 	# Set the wsrep_node_address too
 	echo "Setting wsrep_node_address"
