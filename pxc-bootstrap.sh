@@ -15,12 +15,12 @@ else
 	echo "Assuming $nic is the Galera communication nic"
 fi
 
-node1_ip=`vagrant ssh node1 -c "$get_ip_cmd"`
-echo "Node1: $node1_ip";
-node2_ip=`vagrant ssh node2 -c "$get_ip_cmd"`
-echo "Node2: $node2_ip";
-node3_ip=`vagrant ssh node3 -c "$get_ip_cmd"`
-echo "Node3: $node3_ip";
+node1_ip=`vagrant ssh node1 -c "$get_ip_cmd" | sed 's/.$//'`
+echo "Node1: '$node1_ip'";
+node2_ip=`vagrant ssh node2 -c "$get_ip_cmd" | sed 's/.$//'`
+echo "Node2: '$node2_ip'";
+node3_ip=`vagrant ssh node3 -c "$get_ip_cmd" | sed 's/.$//'`
+echo "Node3: '$node3_ip'";
 
 
 echo "Adding configuration to /etc/my-pxc.cnf on all nodes"
