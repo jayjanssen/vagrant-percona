@@ -36,7 +36,7 @@ print "Master node will be: $master->{name}\n";
 
 # Get Master binlog file and position
 my $master_status =<<END;
-mysql -e \\"show master status\\"
+mysql --batch -e \\"show master status\\" | tail -n 1
 END
 my @master_status_str = `vagrant ssh $master->{name} -c \"$master_status\"`;
 my $master_log_file;
@@ -64,7 +64,7 @@ Replication coordinates:
 END
 
 my $change_master =<<END;
-mysql -e \\"CHANGE MASTER TO master_host='$master_ip', master_log_file='$master_log_file', master_log_pos=$master_log_pos, master_user='repl', master_password='repl'; slave start;\\"
+mysql -e \\"CHANGE MASTER TO master_host='$master_ip', master_log_file='$master_log_file', master_log_pos=$master_log_pos, master_user='repl', master_password='repl'; start slave;\\"
 END
 foreach my $slave( @running_nodes ) {
 	print "Executing CHANGE MASTER on $slave->{name}\n";
