@@ -9,7 +9,7 @@ require './lib/vagrant-common.rb'
 # Our puppet config
 $puppet_config = {
         "experimental_repo"             => "no",
-        "percona_server_version"        => "55"
+        "percona_server_version"        => "56"
 }
 
 def build_box( config, name, ip, server_id )
