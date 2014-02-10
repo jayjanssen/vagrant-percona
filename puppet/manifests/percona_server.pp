@@ -7,6 +7,7 @@ include percona::service
 include misc
 include misc::mysql_datadir
 include misc::sysbench
+include misc::tpcc_mysql
 
 Class['misc::mysql_datadir'] -> Class['percona::server']
 
