@@ -3,6 +3,7 @@
 
 # curl -s http://169.254.169.254/latest/meta-data/public-hostname | sed -re 's/[ tab]$//'
 
+HOSTARCH=`uname`
 
 
 # Bootstrap the cluster after 'vagrant up'.  This is required because we won't know the IPs of the nodes until then (on AWS).
@@ -19,11 +20,21 @@ else
 	echo "Assuming $nic is the Galera communication nic"
 fi
 
-node1_ip=`vagrant ssh node1 -c "$get_ip_cmd" | sed -r 's/[ tab]$//'`
+case "$HOSTARCH" in
+	Linux )
+		node1_ip=`vagrant ssh node1 -c "$get_ip_cmd" | sed -r 's/[ tab]$//'`
+		node2_ip=`vagrant ssh node2 -c "$get_ip_cmd" | sed -r 's/[ tab]$//'`
+		node3_ip=`vagrant ssh node3 -c "$get_ip_cmd" | sed -r 's/[ tab]$//'`
+	;;
+	Darwin )
+		node1_ip=`vagrant ssh node1 -c "$get_ip_cmd" | sed -E 's/[ tab]$//'`
+		node2_ip=`vagrant ssh node2 -c "$get_ip_cmd" | sed -E 's/[ tab]$//'`
+		node3_ip=`vagrant ssh node3 -c "$get_ip_cmd" | sed -E 's/[ tab]$//'`
+	;;
+esac
+
 echo "Node1: '$node1_ip'";
-node2_ip=`vagrant ssh node2 -c "$get_ip_cmd" | sed -r 's/[ tab]$//'`
 echo "Node2: '$node2_ip'";
-node3_ip=`vagrant ssh node3 -c "$get_ip_cmd" | sed -r 's/[ tab]$//'`
 echo "Node3: '$node3_ip'";
 
 
