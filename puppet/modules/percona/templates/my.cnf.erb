@@ -1,17 +1,15 @@
 [mysqld]
+datadir                         = /var/lib/mysql
+log_error                       = error.log
 
-datadir = /var/lib/mysql
-log-bin
-server-id = <%= server_id %>
+query_cache_size=0
+query_cache_type=0
 
 innodb_buffer_pool_size			= <%= innodb_buffer_pool_size %>
 innodb_log_file_size            = <%= innodb_log_file_size %>
 innodb_flush_method				= O_DIRECT
 innodb_file_per_table
 innodb_flush_log_at_trx_commit	= <%= innodb_flush_log_at_trx_commit %>
-
-query_cache_size=0
-query_cache_type=0
 
 <%=extra_mysqld_config %>
 
@@ -20,5 +18,3 @@ prompt                          = "<%=hostname %> mysql> "
 
 [client]
 user                            = root
-
-!include /etc/my-extra.cnf

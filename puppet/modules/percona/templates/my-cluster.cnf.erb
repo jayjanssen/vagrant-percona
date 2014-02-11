@@ -2,6 +2,9 @@
 datadir                         = /var/lib/mysql
 log_error                       = error.log
 
+query_cache_size=0
+query_cache_type=0
+
 binlog_format                   = ROW
 
 innodb_buffer_pool_size			= <%= innodb_buffer_pool_size %>
