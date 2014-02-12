@@ -9,7 +9,7 @@ HOSTARCH=`uname`
 # Bootstrap the cluster after 'vagrant up'.  This is required because we won't know the IPs of the nodes until then (on AWS).
 nic='eth1'
 using_aws=false
-get_ip_cmd="ip -o -f inet addr show $nic | awk '{split(\$4,arr,\"/\"); print arr[1]}'"
+get_ip_cmd="ip -o -f inet addr show $nic | awk '{split(\$4,arr,\"/\"); print arr[1]}' |  perl -i -pe 's/[^\d\.]//g'"
 
 if vagrant status | grep aws > /dev/null
 then
@@ -20,23 +20,13 @@ else
 	echo "Assuming $nic is the Galera communication nic"
 fi
 
-case "$HOSTARCH" in
-	Linux )
-		node1_ip=`vagrant ssh node1 -c "$get_ip_cmd" | sed -r 's/[ tab]$//'`
-		node2_ip=`vagrant ssh node2 -c "$get_ip_cmd" | sed -r 's/[ tab]$//'`
-		node3_ip=`vagrant ssh node3 -c "$get_ip_cmd" | sed -r 's/[ tab]$//'`
-	;;
-	Darwin )
-		node1_ip=`vagrant ssh node1 -c "$get_ip_cmd" | sed -E 's/[ tab]$//'`
-		node2_ip=`vagrant ssh node2 -c "$get_ip_cmd" | sed -E 's/[ tab]$//'`
-		node3_ip=`vagrant ssh node3 -c "$get_ip_cmd" | sed -E 's/[ tab]$//'`
-	;;
-esac
+node1_ip=`vagrant ssh node1 -c "$get_ip_cmd"`
+node2_ip=`vagrant ssh node2 -c "$get_ip_cmd"`
+node3_ip=`vagrant ssh node3 -c "$get_ip_cmd"`
 
 echo "Node1: '$node1_ip'";
 echo "Node2: '$node2_ip'";
 echo "Node3: '$node3_ip'";
-
 
 echo "Adding configuration to /etc/my-pxc.cnf on all nodes"
 wsrep_cluster_address="echo -e \"[mysqld]\n\nwsrep_cluster_address = gcomm://$node1_ip,$node2_ip,$node3_ip\n\" > /etc/my-pxc.cnf"
