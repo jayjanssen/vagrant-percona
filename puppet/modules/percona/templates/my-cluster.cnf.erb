@@ -12,6 +12,8 @@ innodb_log_file_size            = <%= innodb_log_file_size %>
 innodb_flush_method				= O_DIRECT
 innodb_file_per_table
 innodb_flush_log_at_trx_commit	= <%= innodb_flush_log_at_trx_commit %>
+innodb_autoinc_lock_mode        = 2
+innodb_locks_unsafe_for_binlog  = ON
 
 wsrep_cluster_name              = mycluster
 wsrep_node_name                 = <%= hostname %>
@@ -24,8 +26,6 @@ wsrep_auto_increment_control	= <%= wsrep_auto_increment_control %>
 
 wsrep_sst_method                = xtrabackup
 wsrep_sst_auth                  = sst:secret
-
-innodb_autoinc_lock_mode        = 2
 
 <%=extra_mysqld_config %>
 
