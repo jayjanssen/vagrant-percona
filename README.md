@@ -78,10 +78,11 @@ vagrant ssh
 
 ### Create Environments with create-new-env.sh
 
-When you create a lot of vagrant environment with vagrant-percona, creating/renaming those Virtualbox files can get quite messy easily.
+When you create a lot of vagrant environments with vagrant-percona, creating/renaming those Vagrantfile files can get quite messy easily.
 
-The repository contains a small script that allows you to create a new environment, which will build a new directory with the proper Virtualbox files and links to the puppet code. 
-This allows you to have many many Vagrant environments up and running.
+The repository contains a small script that allows you to create a new environment, which will build a new directory with the proper Virtualbox files and links to the puppet code. If you're setting up a PXC environment, symlinks will also be provided to the necessary pxc-bootstrap.sh script
+
+This allows you to have many many Vagrant environments configured simultaneously.
 
 ```bash
 vagrant-percona$ ./create-new-env.sh single_node ~/vagrant/percona-toolkit-ptosc-plugin-ptheartbeat
