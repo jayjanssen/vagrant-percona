@@ -86,10 +86,9 @@ This allows you to have many many Vagrant environments up and running.
 ```bash
 vagrant-percona$ ./create-new-env.sh single_node ~/vagrant/percona-toolkit-ptosc-plugin-ptheartbeat
 Creating 'single_node' Environment
-percona-toolkit-ptosc-plugin-ptheartbeat gryp$
 
-vagrant up --provider=aws
-vagrant ssh
+percona-toolkit-ptosc-plugin-ptheartbeat gryp$ vagrant up --provider=aws
+percona-toolkit-ptosc-plugin-ptheartbeat gryp$ vagrant ssh
 ```
 
 ## Cleanup
