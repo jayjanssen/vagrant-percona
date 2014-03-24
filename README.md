@@ -76,6 +76,21 @@ vagrant up --provider=aws
 vagrant ssh
 ```
 
+### Create Environments with create-new-env.sh
+
+When you create a lot of vagrant environment with vagrant-percona, creating/renaming those Virtualbox files can get quite messy easily.
+
+The repository contains a small script that allows you to create a new environment, which will build a new directory with the proper Virtualbox files and links to the puppet code. 
+This allows you to have many many Vagrant environments up and running.
+
+```bash
+vagrant-percona$ ./create-new-env.sh single_node ~/vagrant/percona-toolkit-ptosc-plugin-ptheartbeat
+Creating 'single_node' Environment
+percona-toolkit-ptosc-plugin-ptheartbeat gryp$
+
+vagrant up --provider=aws
+vagrant ssh
+```
 
 ## Cleanup
 
