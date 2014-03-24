@@ -50,13 +50,13 @@ case $type in
 	ebs_custom)
 	;;
 	ms)
-		cp ms-setup.pl $destdir/
+		ln -s $pwd/ms-setup.pl $destdir/
 	;;
 	pxc)
-		cp pxc-bootstrap.sh $destdir/
+		ln -s $pwd/pxc-bootstrap.sh $destdir/
 	;;
 	pxc_multi_region)
-		cp pxc-bootstrap.sh $destdir/
+		ln -s $pwd/pxc-bootstrap.sh $destdir/
 	;;
 	single_node)
 	;;
