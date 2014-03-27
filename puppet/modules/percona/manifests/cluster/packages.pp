@@ -42,15 +42,15 @@ class percona::cluster::packages {
 				"Percona-XtraDB-Cluster-galera-$other_galera_version":
 					ensure => "absent";
 				"Percona-XtraDB-Cluster-server$percona_server_version.$hardwaremodel":
-					require => [ Yumrepo['percona'], Package['MySQL-shared'], Package['mysql-libs'], Package['galera']],
+					require => [ Yumrepo['Percona'], Package['MySQL-shared'], Package['mysql-libs'], Package['galera']],
 					alias => "MySQL-server",
 					ensure => "installed";
 				"Percona-XtraDB-Cluster-client$percona_server_version.$hardwaremodel":
-					require => [ Yumrepo['percona']],
+					require => [ Yumrepo['Percona']],
 					alias => "MySQL-client",
 					ensure => "installed";
 				"Percona-XtraDB-Cluster-shared$percona_server_version.$hardwaremodel":
-					require => [ Yumrepo['percona']],
+					require => [ Yumrepo['Percona']],
 					alias => "MySQL-shared",
 					ensure => "installed";
 				"Percona-XtraDB-Cluster-galera-$galera_version":
