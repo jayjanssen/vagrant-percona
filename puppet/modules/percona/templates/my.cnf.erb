@@ -2,6 +2,9 @@
 datadir                         = /var/lib/mysql
 log_error                       = error.log
 
+log-bin
+server-id = <%= server_id %>
+
 query_cache_size=0
 query_cache_type=0
 
