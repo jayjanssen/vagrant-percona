@@ -8,9 +8,9 @@ This repository contains tools to build consistent environments for testing Perc
 
 This section should get you up and running.
 
-### Build Vagrant boxes to use
+### Vagrant boxes to use
 
-https://github.com/jayjanssen/packer-percona
+The vagrant boxes are linked to Vagrantcloud and will auto-download when you run vagrant up.  
 
 ### AWS Setup
 
