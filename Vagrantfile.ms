@@ -44,7 +44,7 @@ def build_box( config, name, ip, server_id )
 end
 
 Vagrant.configure("2") do |config|
-	config.vm.box = "centos-6_4-64_percona"
+	config.vm.box = "perconajayj/centos-x86_64"
 	config.ssh.username = "root"
 
 	build_box( config, 'master', '192.168.70.2', '1' )
