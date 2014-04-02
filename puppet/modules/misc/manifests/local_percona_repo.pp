@@ -17,6 +17,7 @@ class misc::local_percona_repo {
 			command => "/usr/bin/yum install --downloadonly --downloaddir=/var/repo -y Percona-XtraDB-Cluster-56;
 /usr/bin/yum install --downloadonly --downloaddir=/var/repo -y Percona-Server-server-56;
 /usr/bin/yum install --downloadonly --downloaddir=/var/repo -y percona-xtrabackup;
+/usr/bin/yum install --downloadonly --downloaddir=/var/repo -y percona-nagios-plugins;
 /usr/bin/yum install --downloadonly --downloaddir=/var/repo -y Percona-Server-shared-51;
 /usr/bin/yum install --downloadonly --downloaddir=/var/repo -y haproxy xinetd keepalived;
 touch /tmp/repo_downloaded",
