@@ -1,15 +1,22 @@
 class mysql::repository(
-	$55_enabled = '0',
-	$56_enabled = '1',
-	$57_enabled = '0'
-
+	$55_enabled = 0,
+	$56_enabled = 1,
+	$57_enabled = 0
 ) {
 	case $operatingsystem {
 		centos: {
 			package { 
 				'mysql-community-release-el6-5':
-				source => 'https://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm',
-				ensure => 'installed';
+				ensure => 'installed',
+				require => Exec['mysql-community-release-el6-5'];
+				
+			}
+			
+			exec {  
+				"mysql-community-release-el6-5":
+					command => "/usr/bin/yum localinstall -y https://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm",
+					cwd => "/tmp",
+					unless => "/bin/rpm -q mysql-community-release-el6-5";
 			}
 			
 			yumrepo {
