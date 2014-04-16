@@ -3,7 +3,7 @@ class misc::tpcc_mysql {
 		"build-essentials":
 			command => '/usr/bin/yum groupinstall "Development Tools" -y',
 			cwd => "/tmp",
-			unless => "/bin/rpm -q make";
+			unless => "/bin/rpm -q gcc";
 	}
 	package { 
 		"openssl-devel": ensure => 'installed'; 
