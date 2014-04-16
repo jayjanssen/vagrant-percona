@@ -1,13 +1,13 @@
 class percona::cluster::remove_server {
 	package {
 		"Percona-Server-server-55.$hardwaremodel":
-			require => Yumrepo['percona'],
+			require => Yumrepo['Percona'],
 			ensure => 'absent';
 		"Percona-Server-client-55.$hardwaremodel":
-			require => Yumrepo['percona'],
+			require => Yumrepo['Percona'],
 			ensure => 'absent'; 
 		"Percona-Server-shared-55.$hardwaremodel":
-			require => Yumrepo['percona'],    
+			require => Yumrepo['Percona'],    
 			ensure => 'absent'; 
 		"Percona-Server-devel-55.$hardwaremodel":
 			ensure => 'absent';

@@ -24,7 +24,7 @@ wsrep_provider_options          = "<%= wsrep_provider_options %>"
 wsrep_slave_threads				= <%= wsrep_slave_threads %>
 wsrep_auto_increment_control	= <%= wsrep_auto_increment_control %>
 
-wsrep_sst_method                = xtrabackup
+wsrep_sst_method                = xtrabackup-v2
 wsrep_sst_auth                  = sst:secret
 
 <%=extra_mysqld_config %>
