@@ -36,7 +36,7 @@ deb-src http://repo.percona.com/apt precise experimental
 		centos: {
 			$releasever = "6"
 			yumrepo {
-				"percona":
+				"Percona":
 				descr       => "Percona",
 				enabled     => 1,
 				baseurl     => $experimental_repo ? {
