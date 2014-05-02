@@ -15,7 +15,7 @@ puppet_config = {
 
 Vagrant.configure("2") do |config|
 	# Every Vagrant virtual environment requires a box to build off of.
-	config.vm.box = "centos-6_4-64_percona"
+	config.vm.box = "centos-6_5-64_percona"
 	config.ssh.username = "root"
 
 	# If we use AWS, create a 'm1.small' and name it 

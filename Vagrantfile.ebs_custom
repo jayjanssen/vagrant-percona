@@ -8,7 +8,7 @@ require './lib/vagrant-common.rb'
 
 Vagrant.configure("2") do |config|
 	# Every Vagrant virtual environment requires a box to build off of.
-	config.vm.box = "centos-6_4-64_percona"
+	config.vm.box = "centos-6_5-64_percona"
 	config.ssh.username = "root"
 
 	# We are assuming AWS, create a 'm1.xlarge' and name it 
