@@ -1,0 +1,67 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Assumes a box from https://github.com/jayjanssen/packer-percona
+
+# This sets up 2 nodes for replication.  Run 'ms-setup.pl' after these are provisioned.
+require './lib/vagrant-common.rb'
+
+# Our puppet config
+$puppet_config = {
+	'innodb_buffer_pool_size' => '2G',
+	'extra_mysqld_config' => '
+log-slave-updates
+gtid_mode = ON
+enforce-gtid-consistency
+sync-binlog=1
+'
+}
+
+def build_box( config, name, ip, server_id, region, extra_mysqld_conf )
+	config.vm.define name do |node_config|
+		node_config.vm.hostname = name
+		node_config.vm.network :private_network, ip: ip
+
+		node_puppet_config = $puppet_config.merge({
+			:server_id => server_id
+		})
+        
+        node_puppet_config['extra_mysqld_config'] = $puppet_config['extra_mysqld_config'] + extra_mysqld_conf
+
+		provider_aws( node_config, name, 'm3.medium', region, ['default','pxc']) { |aws, override|
+			aws.block_device_mapping = [
+				{
+					'DeviceName' => "/dev/sdb",
+					'VirtualName' => "ephemeral0"
+				}
+			]
+			provision_puppet( override, 'mysql_server57.pp', 
+				node_puppet_config.merge( 'datadir_dev' => 'xvdb' )
+			)
+		}
+
+		provider_virtualbox( node_config, '256' ) { |vb, override|		
+			provision_puppet( override, 'mysql_server57.pp', 
+				node_puppet_config.merge('datadir_dev' => 'dm-2')
+			)
+
+		}
+
+	end
+end
+
+Vagrant.configure("2") do |config|
+	config.vm.box = "perconajayj/centos-x86_64"
+	config.ssh.username = "root"
+
+	build_box( config, 'master', '192.168.70.2', '1', 'us-east-1', '
+plugin-load=rpl_semi_sync_master=semisync_master.so
+rpl_semi_sync_master_enabled = 1
+' )
+	build_box( config, 'slave', '192.168.70.3', '2', 'us-west-1', '
+plugin-load=rpl_semi_sync_slave=semisync_slave.so    
+rpl_semi_sync_slave_enabled = 1
+' )
+end
+
+

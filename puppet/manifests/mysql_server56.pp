@@ -1,6 +1,6 @@
 class { 'mysql::repository':
-	56_enabled => 0,
-	57_enabled => 1
+	56_enabled => 1,
+	57_enabled => 0
 }
 
 include mysql::server
