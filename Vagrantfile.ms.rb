@@ -59,8 +59,6 @@ Vagrant.configure("2") do |config|
 	config.ssh.username = "root"
   
 	build_box( config, 'master', '192.168.70.2', '1' )
-	build_box( config, 'slave', '192.168.70.3', '2' ) { |config|
-	  # MS
-	}
+	build_box( config, 'slave', '192.168.70.3', '2' )
 end
 
