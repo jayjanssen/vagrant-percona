@@ -59,9 +59,10 @@ end
 # -- manifest_file: puppet manifest to use (under puppet/manifests)
 def provision_puppet( config, manifest_file )
   config.vm.provision "puppet", id: manifest_file, preserve_order: true do |puppet|
-		puppet.manifest_file  = manifest_file
-		puppet.module_path = "modules"
-		puppet.options = "--verbose"
+		puppet.manifest_file = manifest_file
+    puppet.manifests_path = ["vm", "/vagrant/manifests"]
+    puppet.options = "--verbose --modulepath /vagrant/modules"
+    # puppet.options = "--verbose"
     if block_given?  
       yield( puppet )
     end

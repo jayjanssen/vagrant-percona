@@ -32,22 +32,24 @@ Vagrant.configure("2") do |config|
   
   # Providers
   provider_virtualbox( name, config, 256 ) { |vb, override|
-    override.vm.provision "puppet", id: "percona_server.pp", preserve_order: true do |ps|
-      ps.facter = { "datadir_dev" => "dm-2" }
-    end
+    # If we are using Virtualbox, override percona_server.pp with the right device for the datadir
+    provision_puppet( override, "percona_server.pp" ) {|puppet|
+      puppet.facter = {"datadir_dev" => "dm-2"}
+    }
   }
   
 	provider_aws( name, config, 'm1.small') { |aws, override|
+    # For AWS, we want to map the proper device for this instance type
 		aws.block_device_mapping = [
 			{
 				'DeviceName' => "/dev/sdb",
 				'VirtualName' => "ephemeral0"
 			}
 		]
-    override.vm.provision "puppet", id: "percona_server.pp", preserve_order: true do |ps|
-      ps.facter = { "datadir_dev" => "xvdb" }
-      
-    end
+    # Also override the percona_server.pp manifest with the right datadir device
+    provision_puppet( override, "percona_server.pp" ) {|puppet|
+      puppet.facter = {"datadir_dev" => "xvdb"}
+    }
 	}
 
   
