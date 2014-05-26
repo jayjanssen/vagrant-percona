@@ -1,10 +1,10 @@
-class misc::sysbench {	
+class test::sysbench {	
 	exec {
 		"sysbench":
 			command => "/usr/bin/yum localinstall -y /tmp/sysbench.rpm",
 			cwd => "/tmp",
 			unless => "/bin/rpm -q sysbench",
-			require => [Package['MySQL-shared'], File['/tmp/sysbench.rpm']];
+			require => [File['/tmp/sysbench.rpm']];
 	}
 	file {
 		"/tmp/sysbench.rpm":

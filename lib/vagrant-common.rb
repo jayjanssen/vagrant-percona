@@ -3,7 +3,7 @@
 # -- name: name for the node displayed on the aws console
 # -- instance_type: http://aws.amazon.com/ec2/instance-types/
 # -- region: defaults to 'us-east-1'
-def provider_aws( config, name, instance_type, region = nil, security_groups = nil )
+def provider_aws( name, config, instance_type, region = nil, security_groups = nil )
 	require 'yaml'
 
 	aws_secrets_file = File.join( Dir.home, '.aws_secrets' )
@@ -43,28 +43,27 @@ end
 # Configure this node for Virtualbox
 # -- config: vm config from Vagrantfile
 # -- ram: amount of RAM (in MB)
-def provider_virtualbox ( config, ram )
-	config.vm.provider :virtualbox do |vb, override|
+def provider_virtualbox ( name, config, ram )
+	config.vm.provider "virtualbox" do |vb, override|
+        vb.name = name
         vb.customize ["modifyvm", :id, "--memory", ram, "--ioapic", "on" ]
 
-        yield( vb, override )
+        if block_given?
+          yield( vb, override )
+        end
 	end	
 end
 
 # Provision this node with Puppet
 # -- config: vm config from Vagrantfile
 # -- manifest_file: puppet manifest to use (under puppet/manifests)
-# -- facter: hash of facter parameters to pass into puppet (not modified!)
-# -- extra_facter: just like facter, but merged with facter in a local copy 
-# 	 	here.  This is necessary because of how Vagrant does provider-specific 
-# 		overrides.  These will override any common settings in the facter arg.
-def provision_puppet( config, manifest_file, facter = {}, extra_facter = {} )
-	config.vm.provision :puppet do |puppet|
-		puppet.manifests_path = "./puppet/manifests"
+def provision_puppet( config, manifest_file )
+  config.vm.provision "puppet", id: manifest_file, preserve_order: true do |puppet|
 		puppet.manifest_file  = manifest_file
-		puppet.module_path = "./puppet/modules"
+		puppet.module_path = "modules"
 		puppet.options = "--verbose"
-
-		puppet.facter = facter.merge( extra_facter )
+    if block_given?  
+      yield( puppet )
+    end
 	end
 end
