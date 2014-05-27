@@ -1,17 +1,17 @@
-class percona::cluster::packages {
-	# Default PS version is 55 for now
-	if( $percona_server_version == undef or $percona_server_version == 55 ) {
-		$percona_server_version = '-55'
-	} elsif( $percona_server_version == 56 ) {
+class percona::cluster::server {
+	# Default PS version is 56
+	if( $percona_server_version == undef or $percona_server_version == 56 ) {
 		$percona_server_version = '-56'
+	} elsif( $percona_server_version == 55 ) {
+		$percona_server_version = '-55'
 	}
 
 	# ugly way of making sure the version we want to use doesn't conflict with the old one
 	# (oh boy this whole thing might need refactoring)
 	if $percona_server_version == '' {
-		$other_percona_server_version="-56"
-	} elsif $percona_server_version == "-56" {
 		$other_percona_server_version="-55"
+	} elsif $percona_server_version == "-55" {
+		$other_percona_server_version="-56"
 	}
 	
 	# You can set the $galera_version to 2 or 3 for either 55 or 56, but if it is not set it defaults like this:
@@ -35,23 +35,11 @@ class percona::cluster::packages {
 			package {
 				"Percona-XtraDB-Cluster-server$other_percona_server_version.$hardwaremodel":
 					ensure => "absent";
-				"Percona-XtraDB-Cluster-client$other_percona_server_version.$hardwaremodel":
-					ensure => "absent";
-				"Percona-XtraDB-Cluster-shared$other_percona_server_version.$hardwaremodel":
-					ensure => "absent";
 				"Percona-XtraDB-Cluster-galera-$other_galera_version":
 					ensure => "absent";
 				"Percona-XtraDB-Cluster-server$percona_server_version.$hardwaremodel":
-					require => [ Yumrepo['Percona'], Package['MySQL-shared'], Package['mysql-libs'], Package['galera']],
+					require => [ Yumrepo['Percona'], Package['galera']],
 					alias => "MySQL-server",
-					ensure => "installed";
-				"Percona-XtraDB-Cluster-client$percona_server_version.$hardwaremodel":
-					require => [ Yumrepo['Percona']],
-					alias => "MySQL-client",
-					ensure => "installed";
-				"Percona-XtraDB-Cluster-shared$percona_server_version.$hardwaremodel":
-					require => [ Yumrepo['Percona']],
-					alias => "MySQL-shared",
 					ensure => "installed";
 				"Percona-XtraDB-Cluster-galera-$galera_version":
 					alias => "galera",
