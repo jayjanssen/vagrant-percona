@@ -4,7 +4,7 @@
 require File.dirname(__FILE__) + '/lib/vagrant-common.rb'
 
 mysql_version = "56"
-name = "5.7-community-tpcc"
+name = "57-community-tpcc"
 
 Vagrant.configure("2") do |config|
 	# Every Vagrant virtual environment requires a box to build off of.
