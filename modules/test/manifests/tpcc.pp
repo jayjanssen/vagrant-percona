@@ -1,4 +1,4 @@
-class misc::tpcc_mysql {	
+class test::tpcc {	
 	exec {
 		"build-essentials":
 			command => '/usr/bin/yum groupinstall "Development Tools" -y',
@@ -22,7 +22,7 @@ class misc::tpcc_mysql {
 			command => 'make all',
 			cwd => "/root/tpcc-mysql/src",
 			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
-			require => [ Package['openssl-devel', 'MySQL-devel'], Exec['build-essentials', 'tpcc_checkout']],
+			require => [ Package['openssl-devel'], Exec['build-essentials', 'tpcc_checkout']],
 			unless => "test -f /root/tpcc-mysql/tpcc_load";
 	}
 }
