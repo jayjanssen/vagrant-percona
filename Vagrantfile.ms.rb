@@ -10,9 +10,7 @@ def build_box( config, name, ip, server_id )
 		node_config.vm.network :private_network, ip: ip
     
     # Provisioners
-    provision_puppet( config, "base.pp" ) { |puppet|
-      puppet.facter = { 'foo' => 'bar' }
-    }
+    provision_puppet( config, "base.pp" )
     provision_puppet( config, "percona_server.pp" ) { |puppet|  
       puppet.facter = {
       	"percona_server_version"	=> mysql_version,
