@@ -10,21 +10,37 @@ require File.dirname(__FILE__) + '/lib/vagrant-common.rb'
 mysql_version = "56"
 
 # Node names and ips (for local VMs)
+# (Amazon) aws_region is where to bring up the node
+# (Amazon) Security groups are 'default' (22 open) and 'pxc' (3306, 4567-4568,4444 open) for each respective region
+# Don't worry about amazon config if you are not using that provider.
 pxc_nodes = {
-	'node1' => '192.168.70.2',
-	'node2' => '192.168.70.3',
-	'node3' => '192.168.70.4',
+	'node1' => {
+     'local_vm_ip' => '192.168.70.2',
+	   'aws_region' => 'us-east-1',
+	   'security_groups' => ['default','pxc']
+	},
+  'node2' => {
+     'local_vm_ip' => '192.168.70.3',
+	   'aws_region' => 'us-west-1',
+     'security_groups' => ['default','pxc'] 
+	},
+	'node3' => {
+	   'local_vm_ip' => '192.168.70.4',
+	   'aws_region' => 'eu-west-1',
+     'security_groups' => ['default','pxc']
+	}
 }
+
 
 Vagrant.configure("2") do |config|
 	config.vm.box = "perconajayj/centos-x86_64"
 	config.ssh.username = "root"
 
 	# Create all three nodes identically except for name and ip
-	pxc_nodes.each_pair { |name, ip|
+	pxc_nodes.each_pair { |name, node_params|
 		config.vm.define name do |node_config|
 			node_config.vm.hostname = name
-			node_config.vm.network :private_network, ip: ip
+			node_config.vm.network :private_network, ip: node_params['local_vm_ip']
       
       # Provisioners
       provision_puppet( config, "base.pp" )
@@ -52,7 +68,7 @@ Vagrant.configure("2") do |config|
         }
       }
   
-    	provider_aws( name, config, 'm1.small') { |aws, override|
+    	provider_aws( "PXC #{name}", config, 'm1.small', node_params['aws_region'], node_params['security_groups']) { |aws, override|
     		aws.block_device_mapping = [
     			{
     				'DeviceName' => "/dev/sdb",
