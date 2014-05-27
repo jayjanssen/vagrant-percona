@@ -1,1 +1,1 @@
-include test::sysbench
+include test::sysbench_pkg
