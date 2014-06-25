@@ -36,7 +36,7 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 			yield( aws, override )
 		end
 	else
-		puts "Skipping AWS because of missing/non-readable ~/.aws_secrets file.  Read https://github.com/jayjanssen/vagrant-percona/blob/master/README.md#aws-setup for more information about setting up AWS."
+		puts "Skipping AWS because of missing/non-readable #{aws_secrets_file} file.  Read https://github.com/jayjanssen/vagrant-percona/blob/master/README.md#aws-setup for more information about setting up AWS."
 	end
 end
 
