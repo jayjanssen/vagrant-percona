@@ -11,23 +11,25 @@ mysql_version = "56"
 
 # Node names and ips (for local VMs)
 # (Amazon) aws_region is where to bring up the node
-# (Amazon) Security groups are 'default' (22 open) and 'pxc' (3306, 4567-4568,4444 open) for each respective region
+# (Amazon) Security groups are 'default' (23 open) and 'pxc' (3306, 4567-4568,4444 open) for each respective region
+# (Amazon) HAproxy also needs the 'haproxy' security group (3307-3309, 8080, 8000) for each respective region
 # Don't worry about amazon config if you are not using that provider.
 pxc_nodes = {
 	'node1' => {
 		'local_vm_ip' => '192.168.70.2',
 		'aws_region' => 'us-east-1',
-		'security_groups' => ['default','pxc']
+		'security_groups' => ['default','pxc', 'haproxy'],
+		'haproxy_primary' => true
 	},
 	'node2' => {
 		'local_vm_ip' => '192.168.70.3',
 		'aws_region' => 'us-west-1',
-		'security_groups' => ['default','pxc'] 
+		'security_groups' => ['default','pxc', 'haproxy'] 
 	},
 	'node3' => {
 		'local_vm_ip' => '192.168.70.4',
 		'aws_region' => 'eu-west-1',
-		'security_groups' => ['default','pxc']
+		'security_groups' => ['default','pxc', 'haproxy']
 	}
 }
 
@@ -63,6 +65,12 @@ Vagrant.configure("2") do |config|
 			provision_puppet( config, "sysbench.pp" )
 			provision_puppet( config, "percona_toolkit.pp" )
 			provision_puppet( config, "myq_gadgets.pp" )
+			provision_puppet( config, "haproxy-pxc.pp" ) { |puppet|
+				puppet.facter = {
+					"haproxy_servers"       => pxc_nodes.map{|k,v| "#{k}"}.join(','),
+					"haproxy_servers_primary" => pxc_nodes.select{|k,v| ! v.select{|k2,v2| k2=="haproxy_primary" && v2==true}.empty? }.map{|k3,v3| "#{k3}"}.join(',')
+				}
+			}
 	
 			# Providers
 			provider_virtualbox( name, config, 256 ) { |vb, override|
