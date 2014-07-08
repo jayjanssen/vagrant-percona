@@ -11,7 +11,8 @@ mysql_version = "56"
 
 # Node names and ips (for local VMs)
 # (Amazon) aws_region is where to bring up the node
-# (Amazon) Security groups are 'default' (22 open) and 'pxc' (3306, 4567-4568,4444 open) for each respective region
+# (Amazon) Security groups are 'default' (23 open) and 'pxc' (3306, 4567-4568,4444 open) for each respective region
+# (Amazon) HAproxy also needs the 'haproxy' security group (3307-3309, 8000) for each respective region
 # Don't worry about amazon config if you are not using that provider.
 pxc_nodes = {
 	'node1' => {
