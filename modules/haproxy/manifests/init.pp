@@ -1,4 +1,4 @@
-class haproxy::server-pxc {
+class haproxy::server {
 
 	package { 
 		'haproxy':
