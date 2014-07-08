@@ -37,6 +37,11 @@ This section should get you up and running.
 
 * VirtualBox: https://www.virtualbox.org (optional)
 * VMware Fusion (not supported yet, but feasible)
+* Vagrant Host Manager Plugin
+
+```
+ vagrant plugin install vagrant-hostmanager
+```
 
 
 ### AWS Setup
