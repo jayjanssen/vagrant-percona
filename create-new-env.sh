@@ -9,7 +9,7 @@ infofile=$destdir/vagrant-percona-info
 
 
 if [ $# -ne 2 ]; then
-	echo "Usage $0 (ebs_custom|ms|pxc|pxc_multi_region|single_node) destinationdirectory"
+	echo "Usage $0 (ec2_provisioned_iops|ms|mysql57|pxc|ps_sysbench) destinationdirectory"
 	echo ""
 	exit 1
 fi
@@ -22,7 +22,7 @@ fi
 
 
 case $type in
-	ebs_custom|ms|pxc|pxc_multi_region|single_node)
+	ec2_provisioned_iops|ms|mysql57|pxc|ps_sysbench)
 		echo "Creating '$type' Environment"
 	;;
 	*)
@@ -35,9 +35,10 @@ esac
 mkdir -p $destdir
 
 # For every type, we need these
-cp Vagrantfile.$type $destdir/Vagrantfile
-ln -s $pwd/lib $destdir/
-ln -s $pwd/puppet $destdir/
+cp Vagrantfile.$type.rb $destdir/Vagrantfile
+cp -R $pwd/lib $destdir/
+cp -R $pwd/modules $destdir/
+cp -R $pwd/manifests $destdir/
 
 
 cat << EOF > $infofile
