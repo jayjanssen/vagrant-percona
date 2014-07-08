@@ -35,6 +35,9 @@ pxc_nodes = {
 Vagrant.configure("2") do |config|
 	config.vm.box = "perconajayj/centos-x86_64"
 	config.ssh.username = "root"
+	config.hostmanager.enabled = true
+	config.hostmanager.include_offline = true
+
 
 	# Create all three nodes identically except for name and ip
 	pxc_nodes.each_pair { |name, node_params|
