@@ -63,6 +63,7 @@ Vagrant.configure("2") do |config|
 			provision_puppet( config, "sysbench.pp" )
 			provision_puppet( config, "percona_toolkit.pp" )
 			provision_puppet( config, "myq_gadgets.pp" )
+			provision_puppet( config, "haproxy-pxc.pp" )
 	
 			# Providers
 			provider_virtualbox( name, config, 256 ) { |vb, override|
