@@ -1,0 +1,2 @@
+include haproxy::server-pxc
+
