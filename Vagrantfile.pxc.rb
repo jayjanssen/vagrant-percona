@@ -18,7 +18,8 @@ pxc_nodes = {
 	'node1' => {
 		'local_vm_ip' => '192.168.70.2',
 		'aws_region' => 'us-east-1',
-		'security_groups' => ['default','pxc']
+		'security_groups' => ['default','pxc'],
+		'haproxy_primary' => true
 	},
 	'node2' => {
 		'local_vm_ip' => '192.168.70.3',
@@ -64,7 +65,12 @@ Vagrant.configure("2") do |config|
 			provision_puppet( config, "sysbench.pp" )
 			provision_puppet( config, "percona_toolkit.pp" )
 			provision_puppet( config, "myq_gadgets.pp" )
-			provision_puppet( config, "haproxy-pxc.pp" )
+			provision_puppet( config, "haproxy-pxc.pp" ) { |puppet|
+				puppet.facter = {
+					"haproxy_servers"       => pxc_nodes.map{|k,v| "#{k}"}.join(','),
+					"haproxy_servers_primary" => pxc_nodes.select{|k,v| ! v.select{|k2,v2| k2=="haproxy_primary" && v2==true}.empty? }.map{|k3,v3| "#{k3}"}.join(',')
+				}
+			}
 	
 			# Providers
 			provider_virtualbox( name, config, 256 ) { |vb, override|

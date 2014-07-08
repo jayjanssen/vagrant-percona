@@ -25,7 +25,7 @@ class haproxy::server-pxc {
 		'/etc/haproxy/haproxy.cfg':
 			ensure => 'present',
 			require => Package['haproxy'],
-			source => 'puppet:///modules/haproxy/haproxy.cfg';
+			content => template('haproxy/haproxy.cfg.erb');
 	}
 
 }

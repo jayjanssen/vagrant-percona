@@ -26,26 +26,26 @@ listen 3307-active-active 0.0.0.0:3307
     mode tcp
     balance roundrobin
 
-    server node1 node1:3306 check port 8000 inter 12000 rise 3 fall 3
-    server node2 node2:3306 check port 8000 inter 12000 rise 3 fall 3
-    server node3 node3:3306 check port 8000 inter 12000 rise 3 fall 3
+<%- haproxy_servers.split(',').each do |node| %>
+    server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3
+<%- end %>
 
 ## active-passive
-listen 3308-active-passive 0.0.0.0:3308
+listen 3308-active-passive-writes 0.0.0.0:3308
     mode tcp
     balance leastconn
 
-    server node1 node1:3306 check port 8000 inter 12000 rise 3 fall 3
-    server node2 node2:3306 check port 8000 inter 12000 rise 3 fall 3 backup
-    server node3 node3:3306 check port 8000 inter 12000 rise 3 fall 3 backup
+<%- haproxy_servers.split(',').each do |node| %>
+    server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3  <%- if haproxy_servers_primary.split(',').select{|v| v==node }.empty? then %> backup <%- end %>
+<%- end %>
 
 listen 3309-active-passive-reads 0.0.0.0:3309
     mode tcp
     balance leastconn
 
-    server node1 node1:3306 check port 8000 inter 12000 rise 3 fall 3 backup
-    server node2 node2:3306 check port 8000 inter 12000 rise 3 fall 3 
-    server node3 node3:3306 check port 8000 inter 12000 rise 3 fall 3 
+<%- haproxy_servers.split(',').each do |node| %>
+    server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3 <%- if ! haproxy_servers_primary.split(',').select{|v| v==node }.empty? then %> backup <%- end %>
+<%- end %>
 
 
 listen stats :8080
