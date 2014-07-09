@@ -37,6 +37,11 @@ This section should get you up and running.
 
 * VirtualBox: https://www.virtualbox.org (optional)
 * VMware Fusion (not supported yet, but feasible)
+* Vagrant Host Manager Plugin
+
+```
+ vagrant plugin install vagrant-hostmanager
+```
 
 
 ### AWS Setup
@@ -108,6 +113,21 @@ vagrant up
 vagrant ssh
 ```
 
+### Create Environments with create-new-env.sh
+
+When you create a lot of vagrant environments with vagrant-percona, creating/renaming those Vagrantfile files can get quite messy easily.
+
+The repository contains a small script that allows you to create a new environment, which will build a new directory with the proper Vagrantfile files and links to the puppet code. If you're setting up a PXC environment, symlinks will also be provided to the necessary pxc-bootstrap.sh script.
+
+This allows you to have many many Vagrant environments configured simultaneously.
+
+```bash
+vagrant-percona$ ./create-new-env.sh single_node ~/vagrant/percona-toolkit-ptosc-plugin-ptheartbeat
+Creating 'single_node' Environment
+
+percona-toolkit-ptosc-plugin-ptheartbeat gryp$ vagrant up --provider=aws
+percona-toolkit-ptosc-plugin-ptheartbeat gryp$ vagrant ssh
+```
 
 ## Cleanup
 
