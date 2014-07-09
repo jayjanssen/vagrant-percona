@@ -3,7 +3,15 @@
 
 # Assumes a box from https://github.com/jayjanssen/packer-percona
 
-# This sets up 3 nodes with a common PXC, but you need to run bootstrap.sh to connect them.
+# This sets up 3 nodes with a common PXC
+# it also installs haproxy
+
+# HOW TO USE
+# You have to bring the machines up prior to provisioning. so run it in 2 steps:
+#
+# # vagrant up --no-provision --parallel
+# # vagrant provision --parallel
+
 
 require File.dirname(__FILE__) + '/lib/vagrant-common.rb'
 
@@ -24,18 +32,20 @@ pxc_nodes = {
 	},
 	'node2' => {
 		'local_vm_ip' => '192.168.70.3',
-		'aws_region' => 'us-west-1',
 		'aws_host_ip' => 'private',
+		'aws_region' => 'us-east-1',
 		'security_groups' => ['default','pxc', 'haproxy'] 
 	},
 	'node3' => {
 		'local_vm_ip' => '192.168.70.4',
-		'aws_region' => 'eu-west-1',
 		'aws_host_ip' => 'private',
+		'aws_region' => 'us-east-1',
 		'security_groups' => ['default','pxc', 'haproxy']
 	}
 }
 
+# should we use the public or private ips when using AWS
+hostmanager_aws_ips='private'
 
 Vagrant.configure("2") do |config|
 	config.vm.box = "perconajayj/centos-x86_64"
@@ -71,6 +81,7 @@ Vagrant.configure("2") do |config|
 			provision_puppet( config, "sysbench.pp" )
 			provision_puppet( config, "percona_toolkit.pp" )
 			provision_puppet( config, "myq_gadgets.pp" )
+
 			provision_puppet( config, "haproxy-pxc.pp" ) { |puppet|
 				puppet.facter = {
 					"haproxy_servers"       => pxc_nodes.map{|k,v| "#{k}"}.join(','),
@@ -85,7 +96,7 @@ Vagrant.configure("2") do |config|
 				}
 			}
 	
-			provider_aws( "PXC #{name}", config, 'm1.small', node_params['aws_region'], node_params['security_groups']) { |aws, override|
+			provider_aws( "PXC #{name}", config, 'm1.small', node_params['aws_region'], node_params['security_groups'], hostmanager_aws_ips) { |aws, override|
 				aws.block_device_mapping = [
 					{
 						'DeviceName' => "/dev/sdb",
@@ -95,6 +106,7 @@ Vagrant.configure("2") do |config|
 				provision_puppet( override, "pxc_server.pp" ) {|puppet|
 					puppet.facter = {"datadir_dev" => "xvdb"}
 				}
+
 			}
 
 		end
