@@ -3,7 +3,7 @@
 # -- name: name for the node displayed on the aws console
 # -- instance_type: http://aws.amazon.com/ec2/instance-types/
 # -- region: defaults to 'us-east-1'
-def provider_aws( name, config, instance_type, region = nil, security_groups = nil )
+def provider_aws( name, config, instance_type, region = nil, security_groups = nil, hostmanager_aws_ips = nil )
 	require 'yaml'
 
 	aws_secrets_file = File.join( Dir.home, '.aws_secrets' )
@@ -33,12 +33,21 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 				aws.security_groups = security_groups
 			end
 			
-			config.hostmanager.ip_resolver = proc do |vm|
-				result = ''
-				vm.communicate.execute("curl -s http://instance-data/latest/meta-data/local-ipv4 2>&1") do |type,data|
-					result << data if type == :stdout
+			if Vagrant.has_plugin?("vagrant-hostmanager")
+				
+				if hostmanager_aws_ips == "private"
+					awsrequest = "local-ipv4"
+				elsif hostmanager_aws_ips == "public"
+					awsrequest = "public-ipv4"
 				end
-				result
+
+				config.hostmanager.ip_resolver = proc do |vm|
+					result = ''
+					vm.communicate.execute("curl -s http://instance-data/latest/meta-data/" + awsrequest + " 2>&1") do |type,data|
+						result << data if type == :stdout
+					end
+					result
+				end
 			end
 
 			yield( aws, override )
