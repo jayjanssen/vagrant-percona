@@ -37,17 +37,20 @@ pxc_nodes = {
 Vagrant.configure("2") do |config|
 	config.vm.box = "perconajayj/centos-x86_64"
 	config.ssh.username = "root"
-	config.hostmanager.enabled = true
-	config.hostmanager.include_offline = true
 
+	# it's disabled by default, it's done during the provision phase
+	config.hostmanager.enabled = false
+	config.hostmanager.include_offline = true
 
 	# Create all three nodes identically except for name and ip
 	pxc_nodes.each_pair { |name, node_params|
 		config.vm.define name do |node_config|
 			node_config.vm.hostname = name
 			node_config.vm.network :private_network, ip: node_params['local_vm_ip']
-			
+
 			# Provisioners
+			config.vm.provision :hostmanager
+			
 			provision_puppet( config, "base.pp" )
 			provision_puppet( config, "pxc_server.pp" ) { |puppet|	
 				puppet.facter = {
