@@ -32,9 +32,13 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 			if security_groups != nil
 				aws.security_groups = security_groups
 			end
-		
-			config.hostmanager.ip_resolver = proc do |vm, resolving_vm|
-				`vagrant ssh #{vm.name} -c "wget -qO- http://instance-data/latest/meta-data/local-ipv4" 2>&1`.split("\n").first[/(\d+\.\d+\.\d+\.\d+)/, 1]
+			
+			config.hostmanager.ip_resolver = proc do |vm|
+				result = ''
+				vm.communicate.execute("curl -s http://instance-data/latest/meta-data/local-ipv4 2>&1") do |type,data|
+					result << data if type == :stdout
+				end
+				result
 			end
 
 			yield( aws, override )
