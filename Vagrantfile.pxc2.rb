@@ -25,20 +25,17 @@ mysql_version = "56"
 pxc_nodes = {
 	'node1' => {
 		'local_vm_ip' => '192.168.70.2',
-		'aws_host_ip' => 'private',
 		'aws_region' => 'us-east-1',
 		'security_groups' => ['default','pxc', 'haproxy'],
 		'haproxy_primary' => true
 	},
 	'node2' => {
 		'local_vm_ip' => '192.168.70.3',
-		'aws_host_ip' => 'private',
 		'aws_region' => 'us-east-1',
 		'security_groups' => ['default','pxc', 'haproxy'] 
 	},
 	'node3' => {
 		'local_vm_ip' => '192.168.70.4',
-		'aws_host_ip' => 'private',
 		'aws_region' => 'us-east-1',
 		'security_groups' => ['default','pxc', 'haproxy']
 	}

@@ -3,6 +3,7 @@
 # -- name: name for the node displayed on the aws console
 # -- instance_type: http://aws.amazon.com/ec2/instance-types/
 # -- region: defaults to 'us-east-1'
+# -- hostmanager_aws_ips: when using hostmanager, should we use 'public' or 'private' ips?
 def provider_aws( name, config, instance_type, region = nil, security_groups = nil, hostmanager_aws_ips = nil )
 	require 'yaml'
 
