@@ -11,28 +11,23 @@ mysql_version = "56"
 
 # Node names and ips (for local VMs)
 # (Amazon) aws_region is where to bring up the node
-# (Amazon) Security groups are 'default' (23 open) and 'pxc' (3306, 4567-4568,4444 open) for each respective region
-# (Amazon) HAproxy also needs the 'haproxy' security group (3307-3309, 8080, 8000) for each respective region
+# (Amazon) Security groups are 'default' (22 open) and 'pxc' (3306, 4567-4568,4444 open) for each respective region
 # Don't worry about amazon config if you are not using that provider.
 pxc_nodes = {
 	'node1' => {
 		'local_vm_ip' => '192.168.70.2',
-		'aws_host_ip' => 'private',
 		'aws_region' => 'us-east-1',
-		'security_groups' => ['default','pxc', 'haproxy'],
-		'haproxy_primary' => true
+		'security_groups' => ['default','pxc']
 	},
 	'node2' => {
 		'local_vm_ip' => '192.168.70.3',
 		'aws_region' => 'us-west-1',
-		'aws_host_ip' => 'private',
-		'security_groups' => ['default','pxc', 'haproxy'] 
+		'security_groups' => ['default','pxc'] 
 	},
 	'node3' => {
 		'local_vm_ip' => '192.168.70.4',
 		'aws_region' => 'eu-west-1',
-		'aws_host_ip' => 'private',
-		'security_groups' => ['default','pxc', 'haproxy']
+		'security_groups' => ['default','pxc']
 	}
 }
 
@@ -41,19 +36,13 @@ Vagrant.configure("2") do |config|
 	config.vm.box = "perconajayj/centos-x86_64"
 	config.ssh.username = "root"
 
-	# it's disabled by default, it's done during the provision phase
-	config.hostmanager.enabled = false
-	config.hostmanager.include_offline = true
-
 	# Create all three nodes identically except for name and ip
 	pxc_nodes.each_pair { |name, node_params|
 		config.vm.define name do |node_config|
 			node_config.vm.hostname = name
 			node_config.vm.network :private_network, ip: node_params['local_vm_ip']
-
+			
 			# Provisioners
-			config.vm.provision :hostmanager
-
 			provision_puppet( config, "base.pp" )
 			provision_puppet( config, "pxc_server.pp" ) { |puppet|	
 				puppet.facter = {
@@ -71,12 +60,6 @@ Vagrant.configure("2") do |config|
 			provision_puppet( config, "sysbench.pp" )
 			provision_puppet( config, "percona_toolkit.pp" )
 			provision_puppet( config, "myq_gadgets.pp" )
-			provision_puppet( config, "haproxy-pxc.pp" ) { |puppet|
-				puppet.facter = {
-					"haproxy_servers"       => pxc_nodes.map{|k,v| "#{k}"}.join(','),
-					"haproxy_servers_primary" => pxc_nodes.select{|k,v| ! v.select{|k2,v2| k2=="haproxy_primary" && v2==true}.empty? }.map{|k3,v3| "#{k3}"}.join(',')
-				}
-			}
 	
 			# Providers
 			provider_virtualbox( name, config, 256 ) { |vb, override|
