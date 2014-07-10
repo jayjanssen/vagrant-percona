@@ -8,6 +8,7 @@ class haproxy::server {
 	service {
 		'haproxy':
 			ensure => 'running',
+			enable => true,
 			subscribe => File["/etc/haproxy/haproxy.cfg"]
 			;
 	}
