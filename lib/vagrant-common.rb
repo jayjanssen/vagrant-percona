@@ -42,7 +42,7 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 					awsrequest = "public-ipv4"
 				end
 
-				config.hostmanager.ip_resolver = proc do |vm|
+				override.hostmanager.ip_resolver = proc do |vm|
 					result = ''
 					vm.communicate.execute("curl -s http://instance-data/latest/meta-data/" + awsrequest + " 2>&1") do |type,data|
 						result << data if type == :stdout
