@@ -63,10 +63,13 @@ Vagrant.configure("2") do |config|
 
 			# Provisioners
 			config.vm.provision :hostmanager
-
-			provision_puppet( config, "base.pp" )
-			provision_puppet( config, "pxc_server.pp" ) { |puppet|	
+			
+			provision_puppet( config, "pxc_playground.pp" ) { |puppet|
 				puppet.facter = {
+					"percona_server_version"	=> mysql_version,
+					"haproxy_servers"       => pxc_nodes.map{|k,v| "#{k}"}.join(','),
+					"haproxy_servers_primary" => pxc_nodes.select{|k,v| ! v.select{|k2,v2| k2=="haproxy_primary" && v2==true}.empty? }.map{|k3,v3| "#{k3}"}.join(','),
+					"datadir_dev" => "dm-2",
 					"percona_server_version"			=> mysql_version,
 					'innodb_buffer_pool_size' 			=> '128M',
 					'innodb_log_file_size' 				=> '64M',
@@ -79,27 +82,10 @@ Vagrant.configure("2") do |config|
 						''
 				}
 			}
-			provision_puppet( config, "pxc_client.pp" ) { |puppet|
-				puppet.facter = {
-					"percona_server_version"	=> mysql_version
-				}
-			}
-			provision_puppet( config, "sysbench.pp" )
-			provision_puppet( config, "percona_toolkit.pp" )
-			provision_puppet( config, "myq_gadgets.pp" )
-			
-			provision_puppet( config, "pxc_playground.pp" )
 
-			provision_puppet( config, "haproxy-pxc.pp" ) { |puppet|
-				puppet.facter = {
-					"haproxy_servers"       => pxc_nodes.map{|k,v| "#{k}"}.join(','),
-					"haproxy_servers_primary" => pxc_nodes.select{|k,v| ! v.select{|k2,v2| k2=="haproxy_primary" && v2==true}.empty? }.map{|k3,v3| "#{k3}"}.join(',')
-				}
-			}
-	
 			# Providers
 			provider_virtualbox( name, config, 256 ) { |vb, override|
-				provision_puppet( override, "pxc_server.pp" ) {|puppet|
+				provision_puppet( override, "pxc_playground.pp" ) {|puppet|
 					puppet.facter = {"datadir_dev" => "dm-2"}
 				}
 			}
@@ -111,7 +97,7 @@ Vagrant.configure("2") do |config|
 						'VirtualName' => "ephemeral0"
 					}
 				]
-				provision_puppet( override, "pxc_server.pp" ) {|puppet|
+				provision_puppet( override, "pxc_playground.pp" ) {|puppet|
 					puppet.facter = {"datadir_dev" => "xvdb"}
 				}
 
