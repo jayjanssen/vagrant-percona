@@ -1,5 +1,5 @@
 class test::user {
-	package { 'percona-toolkit': ensure => installed }
+	include percona::toolkit
 	
 	exec{ 
 		'create_test_global_user':
