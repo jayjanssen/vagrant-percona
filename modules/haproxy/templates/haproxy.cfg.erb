@@ -25,6 +25,7 @@ defaults
 listen 3307-active-active 0.0.0.0:3307
     mode tcp
     balance roundrobin
+    option  httpchk
 
 <%- haproxy_servers.split(',').each do |node| %>
     server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3
@@ -34,6 +35,7 @@ listen 3307-active-active 0.0.0.0:3307
 listen 3308-active-passive-writes 0.0.0.0:3308
     mode tcp
     balance leastconn
+    option  httpchk
 
 <%- haproxy_servers.split(',').each do |node| %>
     server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3  <%- if haproxy_servers_primary.split(',').select{|v| v==node }.empty? then %> backup <%- end %>
@@ -42,6 +44,7 @@ listen 3308-active-passive-writes 0.0.0.0:3308
 listen 3309-active-passive-reads 0.0.0.0:3309
     mode tcp
     balance leastconn
+    option  httpchk
 
 <%- haproxy_servers.split(',').each do |node| %>
     server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3 <%- if ! haproxy_servers_primary.split(',').select{|v| v==node }.empty? then %> backup <%- end %>
