@@ -88,7 +88,7 @@ Vagrant.configure("2") do |config|
 			provision_puppet( config, "percona_toolkit.pp" )
 			provision_puppet( config, "myq_gadgets.pp" )
 			
-			provision_puppet( config, "pxc-playground.pp" )
+			provision_puppet( config, "pxc_playground.pp" )
 
 			provision_puppet( config, "haproxy-pxc.pp" ) { |puppet|
 				puppet.facter = {
