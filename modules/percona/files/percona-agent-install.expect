@@ -1,0 +1,14 @@
+#!/usr/bin/expect -f
+set percona_agent_api_key [lindex $argv 0]
+spawn ./install -api-key=$percona_agent_api_key
+expect "Create MySQL user for agent? ('N' to use existing user) (Y): "
+send "n\r"
+expect "MySQL username (root): "
+send "test\r"
+expect "MySQL password: "
+send "test\r"
+expect "socket file (localhost): "
+send "\r"
+expect "OK"
+
+sleep 5

@@ -38,3 +38,5 @@ Class['percona::repository'] -> Class['percona::cluster::server'] -> Class['perc
 
 include base::packages
 include base::insecure
+
+include percona::agent
