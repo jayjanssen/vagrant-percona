@@ -3,9 +3,9 @@ class percona::cluster::sstuser {
 
 	exec {
 		'create_sst_user':
-			command => "mysql -e \"GRANT RELOAD, LOCK TABLES, REPLICATION CLIENT ON *.* TO 'sst'@'localhost' IDENTIFIED BY 'secret'\"",
+			command => "mysql -e \"GRANT LOCK TABLES, RELOAD, REPLICATION CLIENT ON *.* TO 'sst'@'localhost' IDENTIFIED BY 'secret'\"",
 			cwd => '/root',
-			unless => "pt-show-grants | grep \"GRANT RELOAD, LOCK TABLES, REPLICATION CLIENT ON *.* TO 'sst'@'localhost'\"",
+			unless => "pt-show-grants | grep \"GRANT LOCK TABLES, RELOAD, REPLICATION CLIENT ON *.* TO 'sst'@'localhost'\"",
 			path => ['/usr/bin', '/bin'],
 			require => [ Package['percona-toolkit'], Service['mysql'] ];
 	}
