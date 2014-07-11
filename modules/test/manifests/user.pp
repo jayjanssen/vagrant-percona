@@ -1,5 +1,5 @@
 class test::user {
-	package { 'percona-toolkit': ensure => installed }
+	include percona::toolkit
 	
 	exec{ 
 		'create_test_global_user':
@@ -7,12 +7,12 @@ class test::user {
 			cwd => '/root',
 			unless => "pt-show-grants | grep \"GRANT ALL PRIVILEGES ON *.* TO 'test'@'%'\"",
 			path => ['/usr/bin', '/bin'],
-			require => Package['percona-toolkit'];
+			require => [ Package['percona-toolkit'], Service['mysql'] ];
 		'create_test_localhost_user':
 			command => "mysql -e \"GRANT ALL PRIVILEGES ON *.* TO 'test'@'localhost' IDENTIFIED BY 'test'\"",
 			cwd => '/root',
 			unless => "pt-show-grants | grep \"GRANT ALL PRIVILEGES ON *.* TO 'test'@'localhost'\"",
 			path => ['/usr/bin', '/bin'],
-			require => Package['percona-toolkit'];
+			require => [ Package['percona-toolkit'], Service['mysql'] ];
 	}
 }
