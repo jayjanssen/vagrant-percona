@@ -44,6 +44,8 @@ pxc_nodes = {
 # should we use the public or private ips when using AWS
 hostmanager_aws_ips='private'
 
+percona_agent_api_key='----'
+
 Vagrant.configure("2") do |config|
 	config.vm.box = "perconajayj/centos-x86_64"
 	config.ssh.username = "root"
@@ -63,7 +65,7 @@ Vagrant.configure("2") do |config|
 
 			# Provisioners
 			config.vm.provision :hostmanager
-			
+
 			provision_puppet( config, "pxc_playground.pp" ) { |puppet|
 				puppet.facter = {
 					"percona_server_version"	=> mysql_version,
@@ -71,6 +73,7 @@ Vagrant.configure("2") do |config|
 					"haproxy_servers_primary" => pxc_nodes.select{|k,v| ! v.select{|k2,v2| k2=="haproxy_primary" && v2==true}.empty? }.map{|k3,v3| "#{k3}"}.join(','),
 					"datadir_dev" => "dm-2",
 					"percona_server_version"			=> mysql_version,
+					'percona_agent_api_key'				=> percona_agent_api_key,
 					'innodb_buffer_pool_size' 			=> '128M',
 					'innodb_log_file_size' 				=> '64M',
 					'innodb_flush_log_at_trx_commit' 	=> '0',
