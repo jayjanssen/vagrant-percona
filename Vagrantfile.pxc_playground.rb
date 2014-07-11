@@ -75,8 +75,8 @@ Vagrant.configure("2") do |config|
 					'innodb_log_file_size' 				=> '64M',
 					'innodb_flush_log_at_trx_commit' 	=> '0',
 					'extra_mysqld_config'				=> 
-						'wsrep_provider_options=ist.recv_addr="' + name + "\n" +
-						'wsrep_sst_receive_address="' + name + "\n" +
+						'wsrep_provider_options=ist.recv_addr="' + name + "\"\n" +
+						'wsrep_sst_receive_address=' + name + "\n" +
 						'wsrep_node_address=' + name + "\n" +
 						'wsrep_cluster_address=gcomm://' + pxc_nodes.map{|k,v| "#{k}"}.join(',') + "\n" +
 						''
