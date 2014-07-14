@@ -3,7 +3,8 @@
 # -- name: name for the node displayed on the aws console
 # -- instance_type: http://aws.amazon.com/ec2/instance-types/
 # -- region: defaults to 'us-east-1'
-def provider_aws( name, config, instance_type, region = nil, security_groups = nil )
+# -- hostmanager_aws_ips: when using hostmanager, should we use 'public' or 'private' ips?
+def provider_aws( name, config, instance_type, region = nil, security_groups = nil, hostmanager_aws_ips = nil )
 	require 'yaml'
 
 	aws_secrets_file = File.join( Dir.home, '.aws_secrets' )
@@ -32,11 +33,28 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 			if security_groups != nil
 				aws.security_groups = security_groups
 			end
-		
+			
+			if Vagrant.has_plugin?("vagrant-hostmanager")
+				
+				if hostmanager_aws_ips == "private"
+					awsrequest = "local-ipv4"
+				elsif hostmanager_aws_ips == "public"
+					awsrequest = "public-ipv4"
+				end
+
+				override.hostmanager.ip_resolver = proc do |vm|
+					result = ''
+					vm.communicate.execute("curl -s http://instance-data/latest/meta-data/" + awsrequest + " 2>&1") do |type,data|
+						result << data if type == :stdout
+					end
+					result
+				end
+			end
+
 			yield( aws, override )
 		end
 	else
-		puts "Skipping AWS because of missing/non-readable ~/.aws_secrets file.  Read https://github.com/jayjanssen/vagrant-percona/blob/master/README.md#aws-setup for more information about setting up AWS."
+		puts "Skipping AWS because of missing/non-readable #{aws_secrets_file} file.  Read https://github.com/jayjanssen/vagrant-percona/blob/master/README.md#aws-setup for more information about setting up AWS."
 	end
 end
 
@@ -47,6 +65,10 @@ def provider_virtualbox ( name, config, ram )
 	config.vm.provider "virtualbox" do |vb, override|
         vb.name = name
         vb.customize ["modifyvm", :id, "--memory", ram, "--ioapic", "on" ]
+
+        # fix for slow dns https://github.com/mitchellh/vagrant/issues/1172
+		vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
+		vb.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
 
         if block_given?
           yield( vb, override )

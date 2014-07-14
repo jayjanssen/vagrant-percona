@@ -8,6 +8,7 @@ class base::packages {
 		'ntpdate': ensure => 'present';
 		'wget': ensure => 'present';
 		'sysstat': ensure => 'present';
+		'bind-utils': ensure => 'present';
 	}
 	
 	$ntpservice = $operatingsystem ? {

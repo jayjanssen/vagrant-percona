@@ -1,0 +1,59 @@
+# this config needs haproxy-1.4.20
+
+global
+        log 127.0.0.1   local0
+        log 127.0.0.1   local1 notice
+        maxconn 4096
+        uid 99
+        gid 99
+        daemon
+        #debug
+        #quiet
+
+defaults
+        log     global
+        mode    http
+        option  tcplog
+        option  dontlognull
+        retries 3
+        redispatch
+        maxconn 2000
+        contimeout      5000
+        clitimeout      50000
+        srvtimeout      50000
+
+listen 3307-active-active 0.0.0.0:3307
+    mode tcp
+    balance roundrobin
+    option  httpchk
+
+<%- haproxy_servers.split(',').each do |node| %>
+    server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3
+<%- end %>
+
+## active-passive
+listen 3308-active-passive-writes 0.0.0.0:3308
+    mode tcp
+    balance leastconn
+    option  httpchk
+
+<%- haproxy_servers.split(',').each do |node| %>
+    server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3  <%- if haproxy_servers_primary.split(',').select{|v| v==node }.empty? then %> backup <%- end %>
+<%- end %>
+
+listen 3309-active-passive-reads 0.0.0.0:3309
+    mode tcp
+    balance leastconn
+    option  httpchk
+
+<%- haproxy_servers.split(',').each do |node| %>
+    server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3 <%- if ! haproxy_servers_primary.split(',').select{|v| v==node }.empty? then %> backup <%- end %>
+<%- end %>
+
+
+listen stats :8080
+    mode http
+    stats enable
+    stats hide-version
+    stats realm Haproxy\ Statistics
+    stats uri /
