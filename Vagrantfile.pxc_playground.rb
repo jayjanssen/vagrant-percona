@@ -45,6 +45,9 @@ pxc_nodes = {
 # should we use the public or private ips when using AWS
 hostmanager_aws_ips='private'
 
+# Support for cloud.percona.com through the percona-agent
+# please ensure to fill in the correct api key
+percona_agent_enabled=false
 percona_agent_api_key='----'
 
 Vagrant.configure("2") do |config|
@@ -74,6 +77,7 @@ Vagrant.configure("2") do |config|
 					"haproxy_servers_primary"			=> pxc_nodes.select{|k,v| ! v.select{|k2,v2| k2=="haproxy_primary" && v2==true}.empty? }.map{|k3,v3| "#{k3}"}.join(','),
 					"datadir_dev" 						=> "dm-2",
 					"percona_server_version"			=> mysql_version,
+					'percona_agent_enabled'             => percona_agent_enabled,
 					'percona_agent_api_key'				=> percona_agent_api_key,
 					'innodb_buffer_pool_size' 			=> '128M',
 					'innodb_log_file_size' 				=> '64M',

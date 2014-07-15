@@ -39,4 +39,7 @@ Class['percona::repository'] -> Class['percona::cluster::server'] -> Class['perc
 include base::packages
 include base::insecure
 
-include percona::agent
+
+if ( $percona_agent_enabled == true or $percona_agent_enabled == 'true' ) {
+	include percona::agent
+}
