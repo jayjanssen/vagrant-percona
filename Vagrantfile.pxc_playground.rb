@@ -27,7 +27,8 @@ pxc_nodes = {
 		'local_vm_ip' => '192.168.70.2',
 		'aws_region' => 'us-east-1',
 		'security_groups' => ['default','pxc', 'haproxy'],
-		'haproxy_primary' => true
+		'haproxy_primary' => true,
+		'pxc_bootstrap_node' => true
 	},
 	'pxc2' => {
 		'local_vm_ip' => '192.168.70.3',
@@ -68,21 +69,22 @@ Vagrant.configure("2") do |config|
 
 			provision_puppet( config, "pxc_playground.pp" ) { |puppet|
 				puppet.facter = {
-					"percona_server_version"	=> mysql_version,
-					"haproxy_servers"       => pxc_nodes.map{|k,v| "#{k}"}.join(','),
-					"haproxy_servers_primary" => pxc_nodes.select{|k,v| ! v.select{|k2,v2| k2=="haproxy_primary" && v2==true}.empty? }.map{|k3,v3| "#{k3}"}.join(','),
-					"datadir_dev" => "dm-2",
+					"percona_server_version"			=> mysql_version,
+					"haproxy_servers"					=> pxc_nodes.map{|k,v| "#{k}"}.join(','),
+					"haproxy_servers_primary"			=> pxc_nodes.select{|k,v| ! v.select{|k2,v2| k2=="haproxy_primary" && v2==true}.empty? }.map{|k3,v3| "#{k3}"}.join(','),
+					"datadir_dev" 						=> "dm-2",
 					"percona_server_version"			=> mysql_version,
 					'percona_agent_api_key'				=> percona_agent_api_key,
 					'innodb_buffer_pool_size' 			=> '128M',
 					'innodb_log_file_size' 				=> '64M',
 					'innodb_flush_log_at_trx_commit' 	=> '0',
+					'pxc_bootstrap_node'				=> node_params['pxc_bootstrap_node'],
 					'extra_mysqld_config'				=> 
 						'wsrep_provider_options=ist.recv_addr="' + name + "\"\n" +
 						'wsrep_sst_receive_address=' + name + "\n" +
 						'wsrep_node_address=' + name + "\n" +
 						'wsrep_cluster_address=gcomm://' + pxc_nodes.map{|k,v| "#{k}"}.join(',') + "\n" +
-						''
+						"\n"
 				}
 			}
 
