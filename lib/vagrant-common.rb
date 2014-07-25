@@ -36,7 +36,7 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 			
 			if Vagrant.has_plugin?("vagrant-hostmanager")
 				
-				if hostmanager_aws_ips == "private"
+				if hostmanager_aws_ips == "private" or hostmanager_aws_ips == nil
 					awsrequest = "local-ipv4"
 				elsif hostmanager_aws_ips == "public"
 					awsrequest = "public-ipv4"
