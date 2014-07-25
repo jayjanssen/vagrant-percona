@@ -4,7 +4,7 @@ class test::sysbench_pkg {
 			command => "/usr/bin/yum localinstall -y /tmp/sysbench.rpm",
 			cwd => "/tmp",
 			unless => "/bin/rpm -q sysbench",
-			require => [File['/tmp/sysbench.rpm']];
+			require => [File['/tmp/sysbench.rpm'], Package["MySQL-shared"]];
 	}
 	file {
 		"/tmp/sysbench.rpm":
