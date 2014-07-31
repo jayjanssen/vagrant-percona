@@ -4,6 +4,8 @@
 # -- instance_type: http://aws.amazon.com/ec2/instance-types/
 # -- region: defaults to 'us-east-1'
 # -- hostmanager_aws_ips: when using hostmanager, should we use 'public' or 'private' ips?
+
+$aws_ip_cache = Hash.new
 def provider_aws( name, config, instance_type, region = nil, security_groups = nil, hostmanager_aws_ips = nil )
 	require 'yaml'
 
@@ -43,11 +45,12 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 				end
 
 				override.hostmanager.ip_resolver = proc do |vm|
-					result = ''
-					vm.communicate.execute("curl -s http://instance-data/latest/meta-data/" + awsrequest + " 2>&1") do |type,data|
-						result << data if type == :stdout
+					if $aws_ip_cache[name] == nil
+						vm.communicate.execute("curl -s http://instance-data/latest/meta-data/" + awsrequest + " 2>&1") do |type,data|
+							$aws_ip_cache[name] = data if type == :stdout
+						end
 					end
-					result
+					$aws_ip_cache[name]
 				end
 			end
 
