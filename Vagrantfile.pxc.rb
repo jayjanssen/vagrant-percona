@@ -70,6 +70,17 @@ wsrep_cluster_address = #{$cluster_address}
 			provision_puppet( node_config, "sysbench.pp" )
 			provision_puppet( node_config, "test_user.pp" )
 
+			# Setup a sysbench environment and test user on node1
+			if name == 'node1'
+			  provision_puppet( node_config, "sysbench_load.pp" ) { |puppet|
+					puppet.facter = {
+						'tables' => 1,
+						'rows' => 1000000,
+						'threads' => 1
+					}
+				}
+			end
+
 			# Providers
 			provider_virtualbox( name, node_config, 256 ) { |vb, override|
 				provision_puppet( override, "pxc_server.pp" ) {|puppet|
