@@ -30,13 +30,16 @@ class percona::cluster::client {
 					alias => "MySQL-client",
 					ensure => "installed";
 				"Percona-XtraDB-Cluster-shared$percona_server_version.$hardwaremodel":
-					require => [ Yumrepo['Percona']],
+					require => [ Yumrepo['Percona'], Package['mysql-libs']],
 					alias => "MySQL-shared",
 					ensure => "installed";
 				"Percona-XtraDB-Cluster-devel$percona_server_version.$hardwaremodel":
 					require => [ Yumrepo['Percona']],
 					alias => "MySQL-devel",
 					ensure => "installed";
+				"Percona-Server-shared-51":
+					alias => "mysql-libs",
+					ensure => "present";
 			}
 		}
 		ubuntu: {
