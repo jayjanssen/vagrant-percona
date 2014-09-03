@@ -21,17 +21,28 @@ pxc_nodes = {
 	},
 	'node2' => {
 		'local_vm_ip' => '192.168.70.3',
-		'aws_region' => 'us-west-1',
+		'aws_region' => 'us-east-1',
 		'security_groups' => ['default','pxc'] 
 	},
 	'node3' => {
 		'local_vm_ip' => '192.168.70.4',
-		'aws_region' => 'eu-west-1',
+		'aws_region' => 'us-east-1',
 		'security_groups' => ['default','pxc']
 	}
 }
 
+# Use 'public' for cross-region AWS.  'private' otherwise (or commented out)
+hostmanager_aws_ips='private'
+
+sysbench_setup= {
+	'tables' => 1,
+	'rows' => 1000000,
+	'threads' => 1,
+	'tx_rate' => 10
+}
+
 $cluster_address = "gcomm://" + pxc_nodes.keys().join(',')
+
 
 Vagrant.configure("2") do |config|
 	config.vm.box = "perconajayj/centos-x86_64"
@@ -67,17 +78,15 @@ wsrep_cluster_address = #{$cluster_address}
 			provision_puppet( node_config, "percona_toolkit.pp" )
 			provision_puppet( node_config, "myq_gadgets.pp" )
 
-			provision_puppet( node_config, "sysbench.pp" )
+			provision_puppet( node_config, "sysbench.pp" ) { |puppet|
+				puppet.facter = sysbench_setup
+			}
 			provision_puppet( node_config, "test_user.pp" )
 
 			# Setup a sysbench environment and test user on node1
 			if name == 'node1'
 			  provision_puppet( node_config, "sysbench_load.pp" ) { |puppet|
-					puppet.facter = {
-						'tables' => 1,
-						'rows' => 1000000,
-						'threads' => 1
-					}
+					puppet.facter = sysbench_setup
 				}
 			end
 
@@ -97,7 +106,7 @@ wsrep_cluster_address = #{$cluster_address}
 				}
 			}
 	
-			provider_aws( "PXC #{name}", node_config, 'm1.small', node_params['aws_region'], node_params['security_groups']) { |aws, override|
+			provider_aws( "PXC #{name}", node_config, 'm1.small', node_params['aws_region'], node_params['security_groups'], hostmanager_aws_ips) { |aws, override|
 				aws.block_device_mapping = [
 					{
 						'DeviceName' => "/dev/sdb",
@@ -105,7 +114,15 @@ wsrep_cluster_address = #{$cluster_address}
 					}
 				]
 				provision_puppet( override, "pxc_server.pp" ) {|puppet|
-					puppet.facter = {"datadir_dev" => "xvdb"}
+					puppet.facter = {
+						'datadir_dev' => 'xvdb',
+						# /etc/hosts is weird w/ VB and Vagrant, so we use the ips 
+						# instead.  This may apply to other local vms as well.
+						'extra_mysqld_config' => "
+wsrep_node_address = #{name}
+wsrep_cluster_address = #{$cluster_address}
+"
+					}
 				}
 			}
 
