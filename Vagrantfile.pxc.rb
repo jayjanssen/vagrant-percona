@@ -84,7 +84,16 @@ wsrep_cluster_address = #{$cluster_address}
 			# Providers
 			provider_virtualbox( name, node_config, 256 ) { |vb, override|
 				provision_puppet( override, "pxc_server.pp" ) {|puppet|
-					puppet.facter = {"datadir_dev" => "dm-2"}
+					puppet.facter = {
+						'datadir_dev' => 'dm-2',
+						# /etc/hosts is weird w/ VB and Vagrant, so we use the ips 
+						# instead.  This may apply to other local vms as well.
+						'extra_mysqld_config' => "
+wsrep_provider_options = \"ist.recv_addr=#{node_params['local_vm_ip']}\"
+wsrep_node_address = #{node_params['local_vm_ip']}
+wsrep_cluster_address = #{$cluster_address}
+"
+					}
 				}
 			}
 	
