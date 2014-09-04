@@ -4,12 +4,13 @@
 require File.dirname(__FILE__) + '/lib/vagrant-common.rb'
 
 mysql_version = "56"
-name = "ps-sysbench"
+name = "pssysbench"
 
 Vagrant.configure("2") do |config|
 	# Every Vagrant virtual environment requires a box to build off of.
 	config.vm.hostname = name
 	config.vm.box = "perconajayj/centos-x86_64"
+	config.vm.box_version = "~> 6.5"
 	config.ssh.username = "root"
   
   # Provisioners

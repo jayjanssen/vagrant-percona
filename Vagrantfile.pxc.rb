@@ -46,6 +46,7 @@ $cluster_address = "gcomm://" + pxc_nodes.keys().join(',')
 
 Vagrant.configure("2") do |config|
 	config.vm.box = "perconajayj/centos-x86_64"
+	config.vm.box_version = "~> 6.5"
 	config.ssh.username = "root"
 
     config.hostmanager.enabled = true # Disable for AWS
