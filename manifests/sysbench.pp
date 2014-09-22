@@ -1,2 +1,2 @@
-include test::sysbench_pkg
+include percona::sysbench
 include test::sysbench_test_script
