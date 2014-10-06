@@ -7,7 +7,7 @@ class percona::sysbench {
 	file {
 		"/root/sysbench_tests":
 			ensure => link,
-			target => '/root/sysbench/sysbench/tests',
+			target => '/usr/share/doc/sysbench/tests',
 			require => Package['sysbench'];
 	}
 }
