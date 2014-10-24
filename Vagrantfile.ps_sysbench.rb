@@ -6,11 +6,19 @@ require File.dirname(__FILE__) + '/lib/vagrant-common.rb'
 mysql_version = "56"
 name = "pssysbench"
 
+sysbench_setup= {
+	'tables' => 1,
+	'rows' => 1000000,
+	'threads' => 1,
+	'tx_rate' => 10
+}
+
 Vagrant.configure("2") do |config|
 	# Every Vagrant virtual environment requires a box to build off of.
 	config.vm.hostname = name
 	config.vm.box = "perconajayj/centos-x86_64"
-	config.vm.box_version = "~> 6.5"
+	#config.vm.box_version = "~> 6.5"
+	config.vm.box_version = "~> 7.0"
 	config.ssh.username = "root"
   
   # Provisioners
@@ -27,9 +35,15 @@ Vagrant.configure("2") do |config|
     	"percona_server_version"	=> mysql_version
     }
   }
-  provision_puppet( config, "sysbench.pp" )
-  
-  
+	provision_puppet( config, "sysbench.pp" ) { |puppet|
+		puppet.facter = sysbench_setup
+	}
+    
+	provision_puppet( config, "test_user.pp" )
+
+  provision_puppet( config, "sysbench_load.pp" ) { |puppet|
+		puppet.facter = sysbench_setup
+	}
   
   # Providers
   provider_virtualbox( name, config, 256 ) { |vb, override|
