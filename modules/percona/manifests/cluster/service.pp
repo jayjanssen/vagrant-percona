@@ -15,9 +15,7 @@ class percona::cluster::service {
 					enable  	=> true,
 					ensure  	=> 'running',
 					provider	=> 'base',
-					status		=> "/etc/init.d/mysql status",
 					start		=> "(test -f /var/lib/mysql/grastate.dat && systemctl start mysql) || systemctl start mysql@bootstrap",
-					stop		=> "systemctl stop mysql",
 					require 	=> Package['MySQL-server'],
 					subscribe 	=> File["/etc/my.cnf"];		
 			}
