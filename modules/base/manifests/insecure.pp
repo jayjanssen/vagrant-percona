@@ -2,9 +2,15 @@ class base::insecure {
 
 	case $operatingsystem {
 		centos: {
-			service {
-				'iptables': ensure => 'stopped', enable => false, 
-                    status => 'iptables -L -v | grep REJECT' ;
+			if( $operatingsystemrelease =~ /^7/ ) {
+				service {
+					'firewalld': ensure => 'stopped', enable => false;
+				}
+			} else {
+				service {
+					'iptables': ensure => 'stopped', enable => false, 
+	                    status => 'iptables -L -v | grep REJECT' ;
+				}
 			}
 		}
 	}
