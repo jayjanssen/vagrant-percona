@@ -44,10 +44,6 @@ class percona::cluster::server {
 				"Percona-XtraDB-Cluster-galera-$galera_version":
 					alias => "galera",
 					ensure => "installed";
-				# replaces mysql-libs
-				"Percona-Server-shared-51":
-					alias => "mysql-libs",
-					ensure => "present";
 			}
 		}
 		ubuntu: {
