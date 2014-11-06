@@ -1,5 +1,6 @@
 include stdlib
 
+
 class { 'consul':
 	join_cluster => $join_cluster,
     config_hash => {
@@ -11,3 +12,5 @@ class { 'consul':
         'client_addr' => '0.0.0.0',
     }
 }
+
+include consul::local_dns

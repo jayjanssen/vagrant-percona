@@ -7,3 +7,6 @@
 [submodule "modules/consul"]
 	path = modules/consul
 	url = git@github.com:jayjanssen/puppet-consul.git
+[submodule "modules/bind"]
+	path = modules/bind
+	url = https://github.com/thias/puppet-bind.git
