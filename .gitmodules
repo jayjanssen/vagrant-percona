@@ -1,9 +1,9 @@
-[submodule "modules/consul"]
-	path = modules/consul
-	url = https://github.com/solarkennedy/puppet-consul.git
 [submodule "modules/stdlib"]
 	path = modules/stdlib
 	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
 [submodule "modules/staging"]
 	path = modules/staging
 	url = https://github.com/nanliu/puppet-staging.git
+[submodule "modules/consul"]
+	path = modules/consul
+	url = git@github.com:jayjanssen/puppet-consul.git
