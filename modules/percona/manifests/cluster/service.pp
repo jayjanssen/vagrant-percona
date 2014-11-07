@@ -40,7 +40,4 @@ class percona::cluster::service {
 				subscribe 	=> File["/etc/my.cnf"];
 		}
 	}
-
-
-
 }

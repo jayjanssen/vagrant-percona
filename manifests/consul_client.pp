@@ -1,6 +1,5 @@
 include stdlib
 
-
 class { 'consul':
 	join_cluster => $join_cluster,
     config_hash => {
