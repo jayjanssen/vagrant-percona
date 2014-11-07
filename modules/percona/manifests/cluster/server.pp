@@ -55,4 +55,13 @@ class percona::cluster::server {
 			}
 		}
 	}
+	
+	
+	if $enable_consul == 'true' {
+		consul::service {'pxc':
+			port           => 3306,
+			check_script   => '/usr/bin/clustercheck || (exit 2)',
+			check_interval => '5s'
+		}
+	}
 }
