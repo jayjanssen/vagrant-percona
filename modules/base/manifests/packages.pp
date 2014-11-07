@@ -11,6 +11,12 @@ class base::packages {
 		'bind-utils': ensure => 'present';
 	}
 	
+	if( $operatingsystem == 'centos' and $operatingsystemrelease =~ /^7/ ) {  #7.0.1406
+		package {
+			'psmisc': ensure => 'present';
+		}
+	}
+	
 	$ntpservice = $operatingsystem ? {
 		ubuntu => "ntp",
 		default => "ntpd"
