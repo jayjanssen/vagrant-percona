@@ -15,8 +15,12 @@ innodb_flush_log_at_trx_commit	= <%= @innodb_flush_log_at_trx_commit %>
 innodb_autoinc_lock_mode        = 2
 innodb_locks_unsafe_for_binlog  = ON
 
+<%= "wsrep_cluster_address           = " + @wsrep_cluster_address if defined?( @wsrep_cluster_address ) %>
 wsrep_cluster_name              = mycluster
+
 wsrep_node_name                 = <%= @hostname %>
+<%= "wsrep_node_address           = " + @wsrep_node_address if defined?( @wsrep_node_address ) %>
+
 
 wsrep_provider                  = /usr/lib64/libgalera_smm.so
 wsrep_provider_options          = "<%= @wsrep_provider_options %>"
