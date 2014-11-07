@@ -46,7 +46,7 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 
 				override.hostmanager.ip_resolver = proc do |vm|
 					if $aws_ip_cache[name] == nil
-						vm.communicate.execute("curl -s http://instance-data/latest/meta-data/" + awsrequest + " 2>&1") do |type,data|
+						vm.communicate.execute("curl -s http://169.254.169.254/latest/meta-data/" + awsrequest + " 2>&1") do |type,data|
 							$aws_ip_cache[name] = data if type == :stdout
 						end
 					end
