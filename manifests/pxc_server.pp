@@ -71,3 +71,10 @@ if $enable_consul == 'true' {
 	Class['consul::local_dns'] -> Class['percona::cluster::service'] 
 	Class['consul'] -> Class['percona::cluster::service']
 }
+
+if ( $percona_agent_enabled == true or $percona_agent_enabled == 'true' ) {
+	include percona::agent
+    
+    Class['percona::cluster::service'] -> Class['percona::agent']
+}
+
