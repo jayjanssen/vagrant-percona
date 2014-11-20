@@ -5,4 +5,11 @@ class test::sysbench_test_script {
 			content => "sysbench --db-driver=mysql --test=sysbench_tests/db/oltp.lua --mysql-user=test --mysql-password=test --oltp-tables-count=$tables --oltp-table-size=$rows --oltp-auto-inc=off --num-threads=$threads --report-interval=1 --max-requests=0 --tx-rate=$tx_rate run | grep tps",
 			mode => 0700;
 	}
+    
+	file {
+		'/root/run_sysbench_update_index.sh':
+			ensure => present,
+			content => "sysbench --db-driver=mysql --test=sysbench_tests/db/update_index.lua --mysql-user=test --mysql-password=test --oltp-tables-count=$tables --oltp-table-size=$rows --oltp-auto-inc=off --num-threads=$threads --report-interval=1 --max-requests=0 --tx-rate=$tx_rate run | grep tps",
+			mode => 0700;
+	}
 }
