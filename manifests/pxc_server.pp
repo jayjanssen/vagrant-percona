@@ -16,7 +16,6 @@ include percona::cluster::clustercheckuser
 
 include misc::myq_gadgets
 
-include test::sysbench_test_script
 include test::user
 
 include mysql::datadir
@@ -70,6 +69,7 @@ if $enable_consul == 'true' {
 	Class['percona::cluster::server'] ~> Class['consul'] 
 	Class['consul::local_dns'] -> Class['percona::cluster::service'] 
 	Class['consul'] -> Class['percona::cluster::service']
+
 }
 
 if ( $percona_agent_enabled == true or $percona_agent_enabled == 'true' ) {
@@ -77,4 +77,9 @@ if ( $percona_agent_enabled == true or $percona_agent_enabled == 'true' ) {
     
     Class['percona::cluster::service'] -> Class['percona::agent']
 }
+
+unless $sysbench_skip_test_client == 'true' {
+    include test::sysbench_test_script
+}
+
 
