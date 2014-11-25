@@ -68,16 +68,16 @@ end
 # -- ram: amount of RAM (in MB)
 def provider_virtualbox ( name, config, ram )
 	config.vm.provider "virtualbox" do |vb, override|
-        vb.name = name
-        vb.customize ["modifyvm", :id, "--memory", ram, "--ioapic", "on" ]
+    vb.name = name
+    vb.customize ["modifyvm", :id, "--memory", ram, "--ioapic", "on" ]
 
-        # fix for slow dns https://github.com/mitchellh/vagrant/issues/1172
-		vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
+    # fix for slow dns https://github.com/mitchellh/vagrant/issues/1172
+  	vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
 		vb.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
 
-        if block_given?
-          yield( vb, override )
-        end
+    if block_given?
+      yield( vb, override )
+    end
 	end	
 end
 
