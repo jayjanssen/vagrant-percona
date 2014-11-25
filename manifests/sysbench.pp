@@ -15,7 +15,10 @@ if $enable_consul == 'true' {
         'data_dir'    => '/opt/consul',
         'log_level'   => 'INFO',
         'node_name'   => $node_name,
-		'bind_addr'   => $bind_addr,
+        'bind_addr'   => $default_interface ? {
+            undef => undef,
+            default => getvar("ipaddress_${default_interface}")
+            },
         'client_addr' => '0.0.0.0',
 	})
 	
