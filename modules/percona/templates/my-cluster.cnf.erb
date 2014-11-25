@@ -22,7 +22,7 @@ wsrep_node_name                 = <%= @hostname %>
 <%= "wsrep_node_address              = " + @wsrep_node_address + "\n" if defined?( @wsrep_node_address ) -%>
 
 wsrep_provider                  = /usr/lib64/libgalera_smm.so
-<%= "wsrep_provider_options          = " + @wsrep_provider_options + "\n" if defined?( @wsrep_provider_options ) -%>
+<%= "wsrep_provider_options          = \"" + @wsrep_provider_options + "\"\n" if defined?( @wsrep_provider_options ) -%>
 
 <%= "wsrep_slave_threads             = " + @wsrep_slave_threads + "\n" if defined?( @wsrep_slave_threads ) -%>
 <%= "wsrep_auto_increment_control    = " + @wsrep_auto_increment_control + "\n" if defined?( @wsrep_auto_increment_control ) -%>
