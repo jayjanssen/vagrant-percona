@@ -101,6 +101,7 @@ Note that the aws Vagrant boxes you use must include AMI's in each region.  For 
 ```bash
 git clone <clone URL> 
 cd vagrant-percona
+git submodule init; git submodule update
 ```
 
 ### Launch the box

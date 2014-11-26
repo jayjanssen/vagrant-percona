@@ -37,12 +37,12 @@ Vagrant.configure("2") do |config|
         puppet.facter = {
           # PXC setup
           "percona_server_version"  => pxc_version,
-          'innodb_buffer_pool_size' => '1G',
-          'innodb_log_file_size' => '1G',
+          'innodb_buffer_pool_size' => '128M',
+          'innodb_log_file_size' => '64Mf',
           'innodb_flush_log_at_trx_commit' => '0',
           'pxc_bootstrap_node' => (i == 1 ? true : false ),
           'wsrep_cluster_address' => cluster_address,
-          'wsrep_provider_options' => 'gcache.size=2G; gcs.fc_limit=1024',
+          'wsrep_provider_options' => 'gcache.size=128M; gcs.fc_limit=128',
           
           # Sysbench setup
           'sysbench_load' => (i == 1 ? true : false ),
@@ -57,7 +57,7 @@ Vagrant.configure("2") do |config|
       }
 
       # Providers
-      provider_virtualbox( name, node_config, 2048 ) { |vb, override|
+      provider_virtualbox( name, node_config, 256 ) { |vb, override|
         provision_puppet( override, "pxc_server.pp" ) {|puppet|
           puppet.facter = {
             'default_interface' => 'eth1',
@@ -68,7 +68,7 @@ Vagrant.configure("2") do |config|
         }
       }
   
-      provider_aws( "PXC #{name}", node_config, 'm3.large', aws_region, pxc_security_groups, aws_ips) { |aws, override|
+      provider_aws( "PXC #{name}", node_config, 'm1.small', aws_region, pxc_security_groups, aws_ips) { |aws, override|
         aws.block_device_mapping = [
           { 'DeviceName' => "/dev/sdb", 'VirtualName' => "ephemeral0" }
         ]
