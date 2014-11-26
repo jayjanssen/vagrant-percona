@@ -75,7 +75,7 @@ if $enable_consul == 'true' {
 
 }
 
-if ( $percona_agent_enabled == true or $percona_agent_enabled == 'true' ) {
+if ( $percona_agent_api_key ) {
 	include percona::agent
     
     Class['percona::cluster::service'] -> Class['percona::agent']
