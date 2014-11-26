@@ -81,7 +81,7 @@ if ( $percona_agent_api_key ) {
     Class['percona::cluster::service'] -> Class['percona::agent']
 }
 
-unless $sysbench_skip_test_client == 'true' {
+if $sysbench_skip_test_client != 'true' {
     include test::sysbench_test_script
 }
 
