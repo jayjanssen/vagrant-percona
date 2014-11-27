@@ -51,8 +51,6 @@ Vagrant.configure("2") do |config|
         provision_puppet( override, "percona_server.pp" ) {|puppet|
           puppet.facter = {
             'default_interface' => 'eth1',
-            
-            # PXC Setup
             'datadir_dev' => 'dm-2',
           }
         }
