@@ -14,11 +14,14 @@ if $enable_consul == 'true' {
         'datacenter'  => $datacenter,
         'data_dir'    => '/opt/consul',
         'log_level'   => 'INFO',
-        'node_name'   => $node_name,
+        'node_name'   => $node_name ? {
+            undef => $hostname,
+            default => $node_name
+        },
         'bind_addr'   => $default_interface ? {
             undef => undef,
             default => getvar("ipaddress_${default_interface}")
-            },
+        },
         'client_addr' => '0.0.0.0',
 	})
 	
