@@ -1,5 +1,5 @@
 class test::sysbench_test_script {
-    unless $mysql_host { $mysql_host = 'localhost' }
+    if !$mysql_host { $mysql_host = 'localhost' }
     
 	file {
 		'/usr/local/bin/run_sysbench_oltp.sh':

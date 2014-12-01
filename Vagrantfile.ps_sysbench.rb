@@ -3,69 +3,67 @@
 
 require File.dirname(__FILE__) + '/lib/vagrant-common.rb'
 
-mysql_version = "56"
-name = "pssysbench"
+# Number of servers
+ps_servers = 1
 
-sysbench_setup= {
-	'tables' => 1,
-	'rows' => 1000000,
-	'threads' => 1,
-	'tx_rate' => 10
-}
+# AWS configuration
+aws_region = "us-west-1"
+aws_ips='private' # Use 'public' for cross-region AWS.  'private' otherwise (or commented out)
+security_groups = ['default']
+
 
 Vagrant.configure("2") do |config|
-	# Every Vagrant virtual environment requires a box to build off of.
-	config.vm.hostname = name
 	config.vm.box = "perconajayj/centos-x86_64"
-	#config.vm.box_version = "~> 6.5"
 	config.vm.box_version = "~> 7.0"
 	config.ssh.username = "root"
-  
-  # Provisioners
-  provision_puppet( config, "base.pp" )
-  provision_puppet( config, "percona_server.pp" ) { |puppet|  
-    puppet.facter = {
-    	"percona_server_version"	=> mysql_version,
-    	"innodb_buffer_pool_size"	=> "128M",
-    	"innodb_log_file_size"		=> "64M"
-    }
-  }
-  provision_puppet( config, "percona_client.pp" ) { |puppet|
-    puppet.facter = {
-    	"percona_server_version"	=> mysql_version
-    }
-  }
-	provision_puppet( config, "sysbench.pp" ) { |puppet|
-		puppet.facter = sysbench_setup
-	}
-    
-	provision_puppet( config, "test_user.pp" )
 
-  provision_puppet( config, "sysbench_load.pp" ) { |puppet|
-		puppet.facter = sysbench_setup
-	}
-  
-  # Providers
-  provider_virtualbox( name, config, 256 ) { |vb, override|
-    # If we are using Virtualbox, override percona_server.pp with the right device for the datadir
-    provision_puppet( override, "percona_server.pp" ) {|puppet|
-      puppet.facter = {"datadir_dev" => "dm-2"}
-    }
-  }
-  
-	provider_aws( name, config, 'm1.small') { |aws, override|
-    # For AWS, we want to map the proper device for this instance type
-		aws.block_device_mapping = [
-			{
-				'DeviceName' => "/dev/sdb",
-				'VirtualName' => "ephemeral0"
-			}
-		]
-    # Also override the percona_server.pp manifest with the right datadir device
-    provision_puppet( override, "percona_server.pp" ) {|puppet|
-      puppet.facter = {"datadir_dev" => "xvdb"}
-    }
-	}
+  # Create the PXC nodes
+  (1..ps_servers).each do |i|
+    name = "ps" + i.to_s
+    config.vm.define name do |node_config|
+      node_config.vm.hostname = name
+      node_config.vm.network :private_network, type: "dhcp"
+      node_config.vm.provision :hostmanager
+      
+      # Provisioners
+      provision_puppet( node_config, "percona_server.pp" ) { |puppet| 
+        puppet.facter = {
+          # PXC setup
+          "percona_server_version"  => '56',
+          'innodb_buffer_pool_size' => '128M',
+          'innodb_log_file_size' => '64Mf',
+          'innodb_flush_log_at_trx_commit' => '0',
+         
+          # Sysbench setup
+          'sysbench_load' => (i == 1 ? true : false ),
+          'tables' => 1,
+          'rows' => 1000000,
+          'threads' => 1,
+          'tx_rate' => 10,
+          
+          # PCT setup
+          'percona_agent_api_key' => ENV['PERCONA_AGENT_API_KEY']
+        }
+      }
 
+      # Providers
+      provider_virtualbox( name, node_config, 256 ) { |vb, override|
+        provision_puppet( override, "percona_server.pp" ) {|puppet|
+          puppet.facter = {
+            'default_interface' => 'eth1',
+            'datadir_dev' => 'dm-2',
+          }
+        }
+      }
+  
+      provider_aws( "Percona Server #{name}", node_config, 'm1.small', aws_region, security_groups, aws_ips) { |aws, override|
+        aws.block_device_mapping = [
+          { 'DeviceName' => "/dev/sdb", 'VirtualName' => "ephemeral0" }
+        ]
+        provision_puppet( override, "percona_server.pp" ) {|puppet| puppet.facter = { 'datadir_dev' => 'xvdb' }}
+      }
+
+    end
+  end
   
 end
