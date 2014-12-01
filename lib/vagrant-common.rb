@@ -66,10 +66,13 @@ end
 # Configure this node for Virtualbox
 # -- config: vm config from Vagrantfile
 # -- ram: amount of RAM (in MB)
-def provider_virtualbox ( name, config, ram )
+def provider_virtualbox ( name, config, ram = 256, cpus = 1 )
 	config.vm.provider "virtualbox" do |vb, override|
     vb.name = name
-    vb.customize ["modifyvm", :id, "--memory", ram, "--ioapic", "on" ]
+    vb.cpus = cpus
+    vb.memory = ram
+    
+    vb.customize ["modifyvm", :id, "--ioapic", "on" ]
 
     # fix for slow dns https://github.com/mitchellh/vagrant/issues/1172
   	vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
@@ -84,6 +87,21 @@ def provider_virtualbox ( name, config, ram )
 
     if block_given?
       yield( vb, override )
+    end
+	end	
+end
+
+# Configure this node for VMware
+# -- config: vm config from Vagrantfile
+# -- ram: amount of RAM (in MB)
+def provider_vmware ( name, config, ram = 256, cpus = 1 )
+	config.vm.provider "vmware_fusion" do |v, override|
+    v.name = name
+    v.vmx["memsize"] = ram
+    v.vmx["numvcpus"] = cpus
+
+    if block_given?
+      yield( v, override )
     end
 	end	
 end
