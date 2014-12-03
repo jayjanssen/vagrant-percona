@@ -84,7 +84,7 @@ if $enable_consul == 'true' {
 if ( $percona_agent_api_key ) {
 	include percona::agent
     
-    Class['percona::cluster::service'] -> Class['percona::agent']
+    Class['percona::service'] -> Class['percona::agent']
 }
 
 if $sysbench_skip_test_client != 'true' {
