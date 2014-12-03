@@ -7,7 +7,7 @@ require File.dirname(__FILE__) + '/lib/vagrant-common.rb'
 ps_servers = 1
 
 # AWS configuration
-aws_region = "us-west-1"
+aws_region = "us-east-1"
 aws_ips='private' # Use 'public' for cross-region AWS.  'private' otherwise (or commented out)
 security_groups = ['default']
 
