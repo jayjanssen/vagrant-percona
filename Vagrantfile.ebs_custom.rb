@@ -3,6 +3,9 @@
 
 # Example of a beefier EC2 instance
 
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'aws'
+
+
 # Assumes a box from https://github.com/jayjanssen/packer-percona
 require './lib/vagrant-common.rb'
 
