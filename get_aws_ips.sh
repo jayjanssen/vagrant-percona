@@ -3,7 +3,7 @@
 
 # curl -s http://169.254.169.254/latest/meta-data/public-hostname | sed -re 's/[ tab]$//'
 
-node_list=($(vagrant status | grep running | awk '{print $1}'))
+node_list=($(vagrant status | grep running | grep -v "instance is running" | awk '{print $1}'))
 node_ips=()
 
 for (( i = 0 ; i < ${#node_list[@]} ; i++ ))
