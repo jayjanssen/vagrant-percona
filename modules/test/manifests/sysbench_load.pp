@@ -9,7 +9,7 @@ class test::sysbench_load(
 			cwd => '/root',
 			creates => '/var/lib/mysql/sbtest/db.opt';        
 		'prepare_database':
-			command => "sysbench --test=sysbench_tests/db/parallel_prepare.lua --db-driver=mysql --mysql-user=root --oltp-tables-count=$tables --oltp-table-size=$rows --oltp-auto-inc=off ---num-threads=$threads run",
+			command => "sysbench --test=sysbench_tests/db/parallel_prepare.lua --db-driver=mysql --mysql-user=root --oltp-tables-count=$tables --oltp-table-size=$rows --oltp-auto-inc=off --num-threads=$threads run",
 			timeout => 0,  # unlimited
 			logoutput => true,
 			path => ['/usr/bin', '/bin', '/usr/local/bin'],
