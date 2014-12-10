@@ -26,10 +26,12 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 			if region == nil
 				aws.keypair_name = aws_config["keypair_name"]
 				override.ssh.private_key_path = aws_config["keypair_path"]
-			else
+      elsif aws_config['regions'][region] != nil
 				aws.region = region
 				aws.keypair_name = aws_config['regions'][region]["keypair_name"]
 				override.ssh.private_key_path = aws_config['regions'][region]["keypair_path"]
+      else
+        # puts "Warning: AWS region #{region} not defined in your ~.aws_secrets file."
 			end
 		
 			if security_groups != nil
