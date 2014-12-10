@@ -17,7 +17,7 @@ aws_region = "us-west-1"
 aws_ips='private' # Use 'public' for cross-region AWS.  'private' otherwise (or commented out)
 pxc_security_groups = ['default','pxc']
 
-cluster_address = 'gcomm://' + Array.new( pxc_nodes ){ |i| "pxc" + (i+1).to_s }.join(',')
+cluster_address = 'gcomm://' + Array.new( pxc_nodes ){ |i| "node" + (i+1).to_s }.join(',')
 
 
 Vagrant.configure("2") do |config|
@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
 
   # Create the PXC nodes
   (1..pxc_nodes).each do |i|
-    name = "pxc" + i.to_s
+    name = "node" + i.to_s
     config.vm.define name do |node_config|
       node_config.vm.hostname = name
       node_config.vm.network :private_network, type: "dhcp"
@@ -38,7 +38,7 @@ Vagrant.configure("2") do |config|
           # PXC setup
           "percona_server_version"  => pxc_version,
           'innodb_buffer_pool_size' => '128M',
-          'innodb_log_file_size' => '64Mf',
+          'innodb_log_file_size' => '64M',
           'innodb_flush_log_at_trx_commit' => '0',
           'pxc_bootstrap_node' => (i == 1 ? true : false ),
           'wsrep_cluster_address' => cluster_address,
@@ -47,8 +47,8 @@ Vagrant.configure("2") do |config|
           # Sysbench setup
           'sysbench_load' => (i == 1 ? true : false ),
           'tables' => 1,
-          'rows' => 1000000,
-          'threads' => 1,
+          'rows' => 100000,
+          'threads' => 8,
           'tx_rate' => 10,
           
           # PCT setup
