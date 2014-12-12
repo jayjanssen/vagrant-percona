@@ -1,0 +1,15 @@
+[submodule "modules/stdlib"]
+	path = modules/stdlib
+	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
+[submodule "modules/staging"]
+	path = modules/staging
+	url = https://github.com/nanliu/puppet-staging.git
+[submodule "modules/consul"]
+	path = modules/consul
+	url = https://github.com/jayjanssen/puppet-consul.git
+[submodule "modules/bind"]
+	path = modules/bind
+	url = https://github.com/thias/puppet-bind.git
+[submodule "modules/resolv_conf"]
+	path = modules/resolv_conf
+	url = https://github.com/saz/puppet-resolv_conf.git

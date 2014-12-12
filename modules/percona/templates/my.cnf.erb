@@ -3,21 +3,21 @@ datadir                         = /var/lib/mysql
 log_error                       = error.log
 
 log-bin
-server-id = <%= server_id %>
+server-id = <%= @server_id %>
 
 query_cache_size=0
 query_cache_type=0
 
-innodb_buffer_pool_size			= <%= innodb_buffer_pool_size %>
-innodb_log_file_size            = <%= innodb_log_file_size %>
+innodb_buffer_pool_size			= <%= @innodb_buffer_pool_size %>
+innodb_log_file_size            = <%= @innodb_log_file_size %>
 innodb_flush_method				= O_DIRECT
 innodb_file_per_table
-innodb_flush_log_at_trx_commit	= <%= innodb_flush_log_at_trx_commit %>
+innodb_flush_log_at_trx_commit	= <%= @innodb_flush_log_at_trx_commit %>
 
-<%=extra_mysqld_config %>
+<%=@extra_mysqld_config %>
 
 [mysql]
-prompt                          = "<%=hostname %> mysql> "
+prompt                          = "<%=@hostname %> mysql> "
 
 [client]
 user                            = root

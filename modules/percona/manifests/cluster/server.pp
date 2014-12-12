@@ -44,10 +44,6 @@ class percona::cluster::server {
 				"Percona-XtraDB-Cluster-galera-$galera_version":
 					alias => "galera",
 					ensure => "installed";
-				# replaces mysql-libs
-				"Percona-Server-shared-51":
-					alias => "mysql-libs",
-					ensure => "present";
 			}
 		}
 		ubuntu: {
@@ -57,6 +53,15 @@ class percona::cluster::server {
 				"percona-xtradb-cluster-client-5.5":
 					alias => "MySQL-client";
 			}
+		}
+	}
+	
+	
+	if $enable_consul == 'true' {
+		consul::service {'pxc':
+			port           => 3306,
+			check_script   => '/usr/bin/clustercheck || (exit 2)',
+			check_interval => '5s'
 		}
 	}
 }

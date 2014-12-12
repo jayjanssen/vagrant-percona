@@ -4,6 +4,8 @@
 # -- instance_type: http://aws.amazon.com/ec2/instance-types/
 # -- region: defaults to 'us-east-1'
 # -- hostmanager_aws_ips: when using hostmanager, should we use 'public' or 'private' ips?
+
+$aws_ip_cache = Hash.new
 def provider_aws( name, config, instance_type, region = nil, security_groups = nil, hostmanager_aws_ips = nil )
 	require 'yaml'
 
@@ -24,10 +26,12 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 			if region == nil
 				aws.keypair_name = aws_config["keypair_name"]
 				override.ssh.private_key_path = aws_config["keypair_path"]
-			else
+      elsif aws_config['regions'][region] != nil
 				aws.region = region
 				aws.keypair_name = aws_config['regions'][region]["keypair_name"]
 				override.ssh.private_key_path = aws_config['regions'][region]["keypair_path"]
+      else
+        # puts "Warning: AWS region #{region} not defined in your ~.aws_secrets file."
 			end
 		
 			if security_groups != nil
@@ -36,22 +40,25 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 			
 			if Vagrant.has_plugin?("vagrant-hostmanager")
 				
-				if hostmanager_aws_ips == "private"
+				if hostmanager_aws_ips == "private" or hostmanager_aws_ips == nil
 					awsrequest = "local-ipv4"
 				elsif hostmanager_aws_ips == "public"
 					awsrequest = "public-ipv4"
 				end
 
 				override.hostmanager.ip_resolver = proc do |vm|
-					result = ''
-					vm.communicate.execute("curl -s http://instance-data/latest/meta-data/" + awsrequest + " 2>&1") do |type,data|
-						result << data if type == :stdout
+					if $aws_ip_cache[name] == nil
+						vm.communicate.execute("curl -s http://169.254.169.254/latest/meta-data/" + awsrequest + " 2>&1") do |type,data|
+							$aws_ip_cache[name] = data if type == :stdout
+						end
 					end
-					result
+					$aws_ip_cache[name]
 				end
 			end
 
-			yield( aws, override )
+      if block_given?
+			  yield( aws, override )
+      end
 		end
 	else
 		puts "Skipping AWS because of missing/non-readable #{aws_secrets_file} file.  Read https://github.com/jayjanssen/vagrant-percona/blob/master/README.md#aws-setup for more information about setting up AWS."
@@ -61,18 +68,43 @@ end
 # Configure this node for Virtualbox
 # -- config: vm config from Vagrantfile
 # -- ram: amount of RAM (in MB)
-def provider_virtualbox ( name, config, ram )
+def provider_virtualbox ( name, config, ram = 256, cpus = 1 )
 	config.vm.provider "virtualbox" do |vb, override|
-        vb.name = name
-        vb.customize ["modifyvm", :id, "--memory", ram, "--ioapic", "on" ]
+    vb.name = name
+    vb.cpus = cpus
+    vb.memory = ram
+    
+    vb.customize ["modifyvm", :id, "--ioapic", "on" ]
 
-        # fix for slow dns https://github.com/mitchellh/vagrant/issues/1172
-		vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
+    # fix for slow dns https://github.com/mitchellh/vagrant/issues/1172
+  	vb.customize ["modifyvm", :id, "--natdnsproxy1", "off"]
 		vb.customize ["modifyvm", :id, "--natdnshostresolver1", "off"]
+    
+    # Custom ip resolver that works with DHCP or explicit addresses (and is fast)
+    override.hostmanager.ip_resolver = proc do |vm, resolving_vm|
+      if vm.id
+        `VBoxManage guestproperty get #{vm.id} "/VirtualBox/GuestInfo/Net/1/V4/IP"`.split()[1]
+      end
+    end
 
-        if block_given?
-          yield( vb, override )
-        end
+    if block_given?
+      yield( vb, override )
+    end
+	end	
+end
+
+# Configure this node for VMware
+# -- config: vm config from Vagrantfile
+# -- ram: amount of RAM (in MB)
+def provider_vmware ( name, config, ram = 256, cpus = 1 )
+	config.vm.provider "vmware_fusion" do |v, override|
+    v.name = name
+    v.vmx["memsize"] = ram
+    v.vmx["numvcpus"] = cpus
+
+    if block_given?
+      yield( v, override )
+    end
 	end	
 end
 

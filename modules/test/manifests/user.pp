@@ -7,12 +7,12 @@ class test::user {
 			cwd => '/root',
 			unless => "pt-show-grants | grep \"GRANT ALL PRIVILEGES ON *.* TO 'test'@'%'\"",
 			path => ['/usr/bin', '/bin'],
-			require => [ Package['percona-toolkit'], Service['mysql'] ];
+			require => [ Package['percona-toolkit'] ];
 		'create_test_localhost_user':
 			command => "mysql -e \"GRANT ALL PRIVILEGES ON *.* TO 'test'@'localhost' IDENTIFIED BY 'test'\"",
 			cwd => '/root',
 			unless => "pt-show-grants | grep \"GRANT ALL PRIVILEGES ON *.* TO 'test'@'localhost'\"",
 			path => ['/usr/bin', '/bin'],
-			require => [ Package['percona-toolkit'], Service['mysql'] ];
+			require => [ Package['percona-toolkit'] ];
 	}
 }

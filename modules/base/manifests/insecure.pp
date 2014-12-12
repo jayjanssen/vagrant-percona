@@ -2,18 +2,25 @@ class base::insecure {
 
 	case $operatingsystem {
 		centos: {
-			service {
-				'iptables': ensure => 'stopped', enable => false, 
-                    status => 'iptables -L -v | grep REJECT' ;
+			if( $operatingsystemrelease =~ /^7/ ) {
+				service {
+					'firewalld': ensure => 'stopped', enable => false;
+				}
+			} else {
+				service {
+					'iptables': ensure => 'stopped', enable => false, 
+	                    status => 'iptables -L -v | grep REJECT' ;
+				}
 			}
 		}
 	}
 	
 	exec {
 		"disable-selinux":
-			path    => ["/usr/bin","/bin"],
-			command => "echo 0 >/selinux/enforce",
-			unless => "grep 0 /selinux/enforce";
-  }
+			path    => ["/usr/sbin","/bin","/usr/bin"],
+			command => "setenforce Permissive",
+			unless => "getenforce | grep Permissive";
+	}
+
 }
 

@@ -34,14 +34,13 @@ deb-src http://repo.percona.com/apt precise experimental
 			}
 		}
 		centos: {
-			$releasever = "6"
 			yumrepo {
 				"Percona":
 				descr       => "Percona",
 				enabled     => 1,
 				baseurl     => $experimental_repo ? {
-					/(^no|undef)$/  => "http://repo.percona.com/centos/$releasever/os/$hardwaremodel/",
-					yes 		=> "http://repo.percona.com/testing/centos/$releasever/os/$hardwaremodel/"
+					/(^no|undef)$/  => "http://repo.percona.com/centos/\$releasever/os/$hardwaremodel/",
+					yes 		=> "http://repo.percona.com/testing/centos/\$releasever/os/$hardwaremodel/"
 				},
 				gpgcheck    => 0;
 			 }
