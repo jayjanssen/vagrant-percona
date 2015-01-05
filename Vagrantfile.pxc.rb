@@ -68,6 +68,16 @@ Vagrant.configure("2") do |config|
           }
         }
       }
+      provider_vmware( name, node_config, 256 ) { |vb, override|
+        provision_puppet( override, "pxc_server.pp" ) {|puppet|
+          puppet.facter = {
+            'default_interface' => 'eth1',
+            
+            # PXC Setup
+            'datadir_dev' => 'dm-2',
+          }
+        }
+      }
   
       provider_aws( "PXC #{name}", node_config, 'm1.small', aws_region, pxc_security_groups, aws_ips) { |aws, override|
         aws.block_device_mapping = [
