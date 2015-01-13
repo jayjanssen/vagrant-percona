@@ -1,6 +1,8 @@
 # different tools which are used to setup lot's of stuff for pxc and to test/train...
 
 include test::sysbench_custom_lua
+
+Class['test::user'] -> Class['percona::cluster::service']
 include test::user
 
 
@@ -10,7 +12,7 @@ include percona::cluster::client
 
 Class['percona::repository'] -> Class['percona::cluster::client']
 
-
+Class['test::sysbench_pkg'] -> Class['percona::cluster::client']
 include test::sysbench_pkg
 
 
