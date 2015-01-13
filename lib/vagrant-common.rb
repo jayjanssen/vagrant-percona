@@ -12,7 +12,7 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 	aws_secrets_file = File.join( Dir.home, '.aws_secrets' )
 	
 	if( File.readable?( aws_secrets_file ))
-		config.vm.provider :aws do |aws, override|
+		config.vm.provider "aws" do |aws, override|
 			aws.instance_type = instance_type
 		
 			aws_config = YAML::load_file( aws_secrets_file )
@@ -112,7 +112,7 @@ end
 # -- config: vm config from Vagrantfile
 # -- manifest_file: puppet manifest to use (under puppet/manifests)
 def provision_puppet( config, manifest_file )
-  config.vm.provision "puppet", id: manifest_file, preserve_order: true do |puppet|
+  config.vm.provision manifest_file, type:"puppet", preserve_order: true do |puppet|
 		puppet.manifest_file = manifest_file
     puppet.manifests_path = ["vm", "/vagrant/manifests"]
     puppet.options = "--verbose --modulepath /vagrant/modules"

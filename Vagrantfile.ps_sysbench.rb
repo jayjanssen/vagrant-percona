@@ -9,7 +9,7 @@ ps_servers = 1
 # AWS configuration
 aws_region = "us-east-1"
 aws_ips='private' # Use 'public' for cross-region AWS.  'private' otherwise (or commented out)
-security_groups = ['default']
+security_groups = ['default','http']
 
 
 Vagrant.configure("2") do |config|

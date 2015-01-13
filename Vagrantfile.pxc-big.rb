@@ -7,7 +7,7 @@
 
 require File.dirname(__FILE__) + '/lib/vagrant-common.rb'
 
-pxc_version = "56"
+pxc_version = "55"
 
 # Node group counts and aws security groups (if using aws provider)
 pxc_nodes = 3
@@ -38,19 +38,20 @@ Vagrant.configure("2") do |config|
         puppet.facter = {
           # PXC setup
           "percona_server_version"  => pxc_version,
-          'innodb_buffer_pool_size' => '128M',
-          'innodb_log_file_size' => '64M',
+          'innodb_buffer_pool_size' => '12G',
+          'innodb_log_file_size' => '1G',
           'innodb_flush_log_at_trx_commit' => '0',
           'pxc_bootstrap_node' => (i == 1 ? true : false ),
           'wsrep_cluster_address' => cluster_address,
-          'wsrep_provider_options' => 'gcache.size=128M; gcs.fc_limit=128',
+          'wsrep_provider_options' => 'gcache.size=128M; gcs.fc_limit=1024; evs.user_send_window=512; evs.send_window=512',
+          'wsrep_slave_threads' => 8,
           
           # Sysbench setup
           'sysbench_load' => (i == 1 ? true : false ),
-          'tables' => 1,
-          'rows' => 100000,
+          'tables' => 20,
+          'rows' => 1000000,
           'threads' => 8,
-          'tx_rate' => 10,
+          # 'tx_rate' => 10,
           
           # PCT setup
           'percona_agent_api_key' => ENV['PERCONA_AGENT_API_KEY']
@@ -79,7 +80,7 @@ Vagrant.configure("2") do |config|
         }
       }
   
-      provider_aws( "PXC #{name}", node_config, 'm1.small', aws_region, pxc_security_groups, aws_ips) { |aws, override|
+      provider_aws( "PXC #{name}", node_config, 'm3.xlarge', aws_region, pxc_security_groups, aws_ips) { |aws, override|
         aws.block_device_mapping = [
           { 'DeviceName' => "/dev/sdb", 'VirtualName' => "ephemeral0" }
         ]
