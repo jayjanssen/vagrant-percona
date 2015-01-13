@@ -12,6 +12,10 @@
 # # vagrant up --no-provision --parallel
 # # vagrant provision --parallel
 
+prefix='team1-'
+iprange='192.168.60'
+if_adapter='vboxnet4'
+
 
 require File.dirname(__FILE__) + '/lib/vagrant-common.rb'
 
@@ -23,22 +27,24 @@ mysql_version = "56"
 # (Amazon) HAproxy also needs the 'haproxy' security group (3307-3309, 8080, 8000) for each respective region
 # Don't worry about amazon config if you are not using that provider.
 pxc_nodes = {
-	'pxc1' => {
-		'local_vm_ip' => '192.168.70.2',
+	prefix + 'pxc1' => {
+		'local_vm_ip' => iprange + '.2',
 		'aws_region' => 'us-east-1',
 		'security_groups' => ['default','pxc', 'haproxy'],
 		'haproxy_primary' => true,
 		'pxc_bootstrap_node' => true
 	},
-	'pxc2' => {
-		'local_vm_ip' => '192.168.70.3',
+	prefix + 'pxc2' => {
+		'local_vm_ip' => iprange + '.3',
 		'aws_region' => 'us-east-1',
-		'security_groups' => ['default','pxc', 'haproxy'] 
+		'security_groups' => ['default','pxc', 'haproxy'],
+		'pxc_bootstrap_node' => false
 	},
-	'pxc3' => {
-		'local_vm_ip' => '192.168.70.4',
+	prefix + 'pxc3' => {
+		'local_vm_ip' => iprange + '.4',
 		'aws_region' => 'us-east-1',
-		'security_groups' => ['default','pxc', 'haproxy']
+		'security_groups' => ['default','pxc', 'haproxy'],
+		'pxc_bootstrap_node' => false
 	}
 }
 
@@ -62,7 +68,7 @@ Vagrant.configure("2") do |config|
 	pxc_nodes.each_pair { |name, node_params|
 		config.vm.define name do |node_config|
 			node_config.vm.hostname = name
-			node_config.vm.network :private_network, ip: node_params['local_vm_ip']
+			node_config.vm.network :private_network, ip: node_params['local_vm_ip'], adaptor: if_adapter
 
 			# custom port forwarding
 			node_config.vm.network "forwarded_port", guest: 8080, host: 8080, auto_correct: true	
@@ -93,7 +99,7 @@ Vagrant.configure("2") do |config|
 			}
 
 			# Providers
-			provider_virtualbox( name, config, 256 ) { |vb, override|
+			provider_virtualbox( name, config, 512) { |vb, override|
 				provision_puppet( override, "pxc_playground.pp" ) {|puppet|
 					puppet.facter = {"datadir_dev" => "dm-2"}
 				}

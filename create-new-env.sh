@@ -7,9 +7,10 @@ destdir=$2
 pwd=`pwd`
 infofile=$destdir/vagrant-percona-info
 
+types="ec2_provisioned_iops|ms|mysql57|pxc|ps_sysbench|pxc_playground"
 
 if [ $# -ne 2 ]; then
-	echo "Usage $0 (ec2_provisioned_iops|ms|mysql57|pxc|ps_sysbench) destinationdirectory"
+	echo "Usage $0 ($types) destinationdirectory"
 	echo ""
 	exit 1
 fi
@@ -22,7 +23,7 @@ fi
 
 
 case $type in
-	ec2_provisioned_iops|ms|mysql57|pxc|ps_sysbench)
+	ec2_provisioned_iops|ms|mysql57|pxc|ps_sysbench|pxc_playground)
 		echo "Creating '$type' Environment"
 	;;
 	*)
