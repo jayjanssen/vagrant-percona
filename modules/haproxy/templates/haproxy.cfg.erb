@@ -27,7 +27,7 @@ listen 3307-active-active 0.0.0.0:3307
     balance roundrobin
     option  httpchk
 
-<%- haproxy_servers.split(',').each do |node| %>
+<%- @haproxy_servers.split(',').each do |node| %>
     server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3
 <%- end %>
 
@@ -37,8 +37,8 @@ listen 3308-active-passive-writes 0.0.0.0:3308
     balance leastconn
     option  httpchk
 
-<%- haproxy_servers.split(',').each do |node| %>
-    server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3  <%- if haproxy_servers_primary.split(',').select{|v| v==node }.empty? then %> backup <%- end %>
+<%- @haproxy_servers.split(',').each do |node| %>
+    server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3  <%- if @haproxy_servers_primary.split(',').select{|v| v==node }.empty? then %> backup <%- end %>
 <%- end %>
 
 listen 3309-active-passive-reads 0.0.0.0:3309
@@ -46,8 +46,8 @@ listen 3309-active-passive-reads 0.0.0.0:3309
     balance leastconn
     option  httpchk
 
-<%- haproxy_servers.split(',').each do |node| %>
-    server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3 <%- if ! haproxy_servers_primary.split(',').select{|v| v==node }.empty? then %> backup <%- end %>
+<%- @haproxy_servers.split(',').each do |node| %>
+    server <%= node %> <%= node %>:3306 check port 8000 inter 12000 rise 3 fall 3 <%- if ! @haproxy_servers_primary.split(',').select{|v| v==node }.empty? then %> backup <%- end %>
 <%- end %>
 
 
