@@ -6,8 +6,18 @@ class misc::local_percona_repo {
 			ensure => 'directory';
 	}
 	
+	if( $operatingsystem == 'centos' and $operatingsystemrelease =~ /^7/ ) { 
+		# Download only seems to be built-in to yum in 7+
+		package {
+			'yum': ensure => 'installed', alias => 'yum-plugin-downloadonly';
+		}
+	} else {
+		package {
+			'yum-plugin-downloadonly': ensure => 'installed';
+		}
+	}
+	
 	package {
-		'yum-plugin-downloadonly': ensure => 'installed';
 		'createrepo': ensure => 'installed';
 		'yum-plugin-priorities': ensure => 'installed';
 	}
