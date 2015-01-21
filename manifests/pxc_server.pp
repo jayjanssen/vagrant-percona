@@ -25,10 +25,11 @@ Class['mysql::datadir'] -> Class['percona::cluster::server']
 Class['percona::repository'] -> Class['percona::cluster::client'] -> Class['percona::cluster::server'] -> Class['percona::cluster::config'] -> Class['percona::cluster::service'] -> Class['percona::cluster::sstuser'] -> Class['percona::cluster::clustercheckuser']
 
 Class['base::packages'] -> Class['misc::myq_gadgets']
+Class['base::packages'] -> Class['misc::myq_tools']
+
 Class['base::packages'] -> Class['percona::repository']
 Class['base::insecure'] -> Class['percona::repository']
 
-Class['percona::cluster::server'] -> Class['misc::myq_gadgets']
 Class['percona::repository'] -> Class['percona::toolkit']
 Class['percona::repository'] -> Class['percona::sysbench']
 

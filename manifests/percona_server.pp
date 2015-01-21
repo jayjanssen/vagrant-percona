@@ -21,6 +21,7 @@ include percona::config
 include percona::service
 
 include misc::myq_gadgets
+include misc::myq_tools
 
 include test::user
 
@@ -31,10 +32,11 @@ Class['percona::repository'] -> Class['percona::server'] -> Class['percona::conf
 
 
 Class['base::packages'] -> Class['misc::myq_gadgets']
+Class['base::packages'] -> Class['misc::myq_tools']
+
 Class['base::packages'] -> Class['percona::repository']
 Class['base::insecure'] -> Class['percona::repository']
 
-Class['percona::server'] -> Class['misc::myq_gadgets']
 Class['percona::repository'] -> Class['percona::toolkit']
 Class['percona::repository'] -> Class['percona::sysbench']
 
