@@ -1,4 +1,4 @@
-include stdlib
+include stdlib 
 
 include base::packages
 include base::insecure
@@ -15,6 +15,7 @@ include percona::cluster::sstuser
 include percona::cluster::clustercheckuser
 
 include misc::myq_gadgets
+include misc::myq_tools
 
 include test::user
 

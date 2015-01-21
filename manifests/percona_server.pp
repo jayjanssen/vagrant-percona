@@ -1,13 +1,4 @@
-Class['mysql::datadir'] -> Class['percona::server']
-
-Class['percona::repository'] -> Class['percona::toolkit']
-
-Class['base::packages'] -> Class['misc::myq_gadgets']
-Class['percona::server'] -> Class['misc::myq_gadgets']
-
-
-
-# include stdlib
+include stdlib 
 
 include base::packages
 include base::insecure
