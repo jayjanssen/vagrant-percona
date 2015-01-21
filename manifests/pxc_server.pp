@@ -37,6 +37,7 @@ Class['percona::cluster::service'] -> Class['test::user']
 
 if $sysbench_load == 'true' {
 	class { 'test::sysbench_load':
+		schema => $schema,
 		tables => $tables,
 		rows => $rows,
 		threads => $threads

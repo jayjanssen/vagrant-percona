@@ -4,14 +4,14 @@ class test::sysbench_test_script {
 	file {
 		'/usr/local/bin/run_sysbench_oltp.sh':
 			ensure => present,
-			content => "sysbench --db-driver=mysql --test=/usr/share/doc/sysbench/tests/db/oltp.lua --mysql-user=test --mysql-password=test --mysql-host=$mysql_host --mysql-ignore-errors=all --oltp-tables-count=$tables --oltp-table-size=$rows --oltp-auto-inc=off --num-threads=$threads --report-interval=1 --max-requests=0 --tx-rate=$tx_rate run | grep tps",
+			content => "sysbench --db-driver=mysql --test=/usr/share/doc/sysbench/tests/db/oltp.lua --mysql-user=test --mysql-password=test --mysql-db=$schema --mysql-host=$mysql_host --mysql-ignore-errors=all --oltp-tables-count=$tables --oltp-table-size=$rows --oltp-auto-inc=off --num-threads=$threads --report-interval=1 --max-requests=0 --tx-rate=$tx_rate run | grep tps",
 			mode => 0755;
 	}
     
 	file {
 		'/usr/local/bin/run_sysbench_update_index.sh':
 			ensure => present,
-			content => "sysbench --db-driver=mysql --test=/usr/share/doc/sysbench/tests/db/update_index.lua --mysql-user=test --mysql-password=test --mysql-host=$mysql_host --mysql-ignore-errors=all --oltp-tables-count=$tables --oltp-table-size=$rows --oltp-auto-inc=off --num-threads=$threads --report-interval=1 --max-requests=0 --tx-rate=$tx_rate run | grep tps",
+			content => "sysbench --db-driver=mysql --test=/usr/share/doc/sysbench/tests/db/update_index.lua --mysql-user=test --mysql-password=test --mysql-db=$schema --mysql-host=$mysql_host --mysql-ignore-errors=all --oltp-tables-count=$tables --oltp-table-size=$rows --oltp-auto-inc=off --num-threads=$threads --report-interval=1 --max-requests=0 --tx-rate=$tx_rate run | grep tps",
 			mode => 0755;
 	}
     
