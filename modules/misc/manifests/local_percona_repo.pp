@@ -25,7 +25,6 @@ class misc::local_percona_repo {
 	exec {
 		'download_pkgs': 
 			command => "/usr/bin/yum install --downloadonly --downloaddir=/var/repo -y Percona-XtraDB-Cluster-56; 
-/usr/bin/yum install --downloadonly --downloaddir=/var/repo -y Percona-XtraDB-Cluster-shared-56 Percona-XtraDB-Cluster-server-56
 /usr/bin/yum install --downloadonly --downloaddir=/var/repo -y Percona-Server-server-56;
 /usr/bin/yum install --downloadonly --downloaddir=/var/repo -y percona-xtrabackup;
 /usr/bin/yum install --downloadonly --downloaddir=/var/repo -y percona-nagios-plugins;
