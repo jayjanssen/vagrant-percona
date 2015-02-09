@@ -2,6 +2,7 @@ include stdlib
 
 include base::packages
 include base::insecure
+include base::swappiness
 
 include percona::repository
 include percona::toolkit
