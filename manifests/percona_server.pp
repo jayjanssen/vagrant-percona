@@ -86,4 +86,14 @@ if $sysbench_skip_test_client != 'true' {
     include test::sysbench_test_script
 }
 
+if $mha_node == 'true' or $mha_manager == 'true' {
+  include mha::node
+  Class['percona::server'] -> Class['mha::node']
+
+  if $mha_manager == 'true' {
+    include mha::manager
+    Class['mha::node'] -> Class['mha::manager']
+  }
+}
+
 

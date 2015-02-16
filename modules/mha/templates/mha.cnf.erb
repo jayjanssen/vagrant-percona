@@ -18,19 +18,13 @@ manager_workdir=/var/log/masterha/app1
 remote_workdir=/var/log/masterha/app1
 
 # Failover scripts
-master_ip_failover_script=<%=master_ip_failover_script%>
-master_ip_online_change_script=<%=master_ip_online_change_script%>
+master_ip_failover_script=<%=@master_ip_failover_script%>
+master_ip_online_change_script=<%=@master_ip_online_change_script%>
 
-# Hardcoded for Vbox for now
-[serverd1n1]
-hostname=192.168.70.2
+<%- @mha_nodes.split(',').each do |node|
+	kv = node.split(':') 
+%>
+[server<%=kv[0]%>]
+hostname=<%=kv[1]%>
 
-[serverd1n2]
-hostname=192.168.70.3
-
-[serverd2n1]
-hostname=192.168.70.4
-
-[serverd2n2]
-hostname=192.168.70.5
-
+<%- end %>
