@@ -25,6 +25,7 @@ use warnings FATAL => 'all';
 use Getopt::Long;
 use MHA::DBHelper;
 use MHA::NodeUtil;
+use MHA::ManagerUtil;
 use Time::HiRes qw( sleep gettimeofday tv_interval );
 use Data::Dumper;
 
@@ -168,6 +169,9 @@ sub main {
         @threads = get_threads_util( $orig_master_handler->{dbh},
           $orig_master_handler->{connection_id} );
       }
+      
+  	  MHA::ManagerUtil::exec_ssh_cmd( $orig_master_ip, '22', "sudo ip addr del 192.168.70.100/32 dev eth1", undef );
+      
 
       ## Setting read_only=1 on the current master so that nobody(except SUPER) can write
       print current_time_us() . " Set read_only=1 on the orig master.. ";
@@ -244,6 +248,10 @@ sub main {
       $new_master_handler->disconnect();
 
       ## Update master ip on the catalog database, etc
+  	  MHA::ManagerUtil::exec_ssh_cmd( $new_master_ip, '22', "sudo ip addr add 192.168.70.100/32 dev eth1", undef );
+  	  MHA::ManagerUtil::exec_ssh_cmd( $new_master_ip, '22', "sudo arping -U -c 5 -I eth1 192.168.70.100", undef );
+      
+      
       $exit_code = 0;
     };
     if ($@) {

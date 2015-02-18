@@ -17,7 +17,7 @@ class mha::node {
 	file {
 		'/etc/sudoers.d/mha_sudo':
 			ensure => present,
-			content => 'Cmnd_Alias VIP_MGMT = /sbin/ip
+			content => 'Cmnd_Alias VIP_MGMT = /sbin/ip, /usr/sbin/arping
 
 mha     ALL=(root)      NOPASSWD: VIP_MGMT
 ';

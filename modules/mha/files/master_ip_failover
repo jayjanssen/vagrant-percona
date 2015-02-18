@@ -24,6 +24,8 @@ use warnings FATAL => 'all';
 
 use Getopt::Long;
 use MHA::DBHelper;
+use MHA::ManagerUtil;
+
 
 my (
   $command,        $ssh_user,         $orig_master_host,
@@ -55,6 +57,8 @@ sub main {
     my $exit_code = 1;
     eval {
       # updating global catalog, etc
+  	  MHA::ManagerUtil::exec_ssh_cmd( $orig_master_ip, '22', "sudo ip addr del 192.168.70.100/32 dev eth1", undef );
+      
       $exit_code = 0;
     };
     if ($@) {
@@ -89,7 +93,10 @@ sub main {
       $new_master_handler->disconnect();
 
       ## Update master ip on the catalog database, etc
-      # FIXME_xxx;
+  	  MHA::ManagerUtil::exec_ssh_cmd( $new_master_ip, '22', "sudo ip addr add 192.168.70.100/32 dev eth1", undef );
+  	  MHA::ManagerUtil::exec_ssh_cmd( $new_master_ip, '22', "sudo arping -U -c 5 -I eth1 192.168.70.100", undef );
+      
+      
 
       $exit_code = 0;
     };
@@ -103,7 +110,15 @@ sub main {
   }
   elsif ( $command eq "status" ) {
 
-    # do nothing
+  	my @rc = MHA::ManagerUtil::exec_ssh_cmd( $orig_master_ip, '22', "sudo ip addr list | grep 192.168.70.100", undef );
+    
+  	if( $rc[0] == 0 ) {
+  		print "INFO: VIP 192.168.70.100 found on Master\n";
+  	} else {
+  		print "CRITICAL: VIP 192.168.70.100 not found on Master!\n";
+		
+  	}
+    
     exit 0;
   }
   else {
