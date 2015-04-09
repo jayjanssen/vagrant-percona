@@ -26,15 +26,12 @@ class percona::cluster::client {
 					ensure => "absent";
                     
 				"Percona-XtraDB-Cluster-client$percona_server_version.$hardwaremodel":
-					require => [ Yumrepo['Percona']],
 					alias => "MySQL-client",
 					ensure => "installed";
 				"Percona-XtraDB-Cluster-shared$percona_server_version.$hardwaremodel":
-					require => [ Yumrepo['Percona']],
 					alias => "MySQL-shared",
 					ensure => "installed";
 				"Percona-XtraDB-Cluster-devel$percona_server_version.$hardwaremodel":
-					require => [ Yumrepo['Percona']],
 					alias => "MySQL-devel",
 					ensure => "installed";
 			}
