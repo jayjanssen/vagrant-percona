@@ -11,6 +11,7 @@ include percona::sysbench
 include percona::server
 include percona::config
 include percona::service
+include percona::tokudb
 
 include misc::myq_gadgets
 include misc::myq_tools
