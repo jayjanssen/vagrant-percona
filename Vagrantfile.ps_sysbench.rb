@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
           # PXC setup
           "percona_server_version"  => '56',
           'innodb_buffer_pool_size' => '128M',
-          'innodb_log_file_size' => '64Mf',
+          'innodb_log_file_size' => '64M',
           'innodb_flush_log_at_trx_commit' => '0',
          
           # Sysbench setup
