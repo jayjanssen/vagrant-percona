@@ -11,7 +11,8 @@ include percona::sysbench
 include percona::server
 include percona::config
 include percona::service
-include percona::tokudb
+include percona::tokudb_install
+include percona::tokudb_enable
 
 include misc::myq_gadgets
 include misc::myq_tools
@@ -21,7 +22,7 @@ include test::user
 include mysql::datadir
 
 Class['mysql::datadir'] -> Class['percona::server']
-Class['percona::repository'] -> Class['percona::server'] -> Class['percona::config'] -> Class['percona::service']
+Class['percona::repository'] -> Class['percona::server'] -> Class['percona::config'] -> Class['percona::service'] -> Class['percona::tokudb_install'] -> Class['percona::tokudb_enable']
 
 
 Class['base::packages'] -> Class['misc::myq_gadgets']
