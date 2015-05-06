@@ -14,12 +14,6 @@ innodb_flush_method				= O_DIRECT
 innodb_file_per_table
 innodb_flush_log_at_trx_commit	= <%= @innodb_flush_log_at_trx_commit %>
 
-# TokuDB
-tokudb_directio                 = <%= @tokudb_directio %>
-tokudb_loader_memory_size       = <%= @tokudb_loader_memory_size %>
-tokudb_fsync_log_period         = <%= @tokdub_fsync_log_period %>
-tokudb_cache_size               = <%= @tokudb_cache_size %>
-
 <%=@extra_mysqld_config %>
 
 [mysql]
