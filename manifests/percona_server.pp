@@ -1,16 +1,8 @@
-Class['mysql::datadir'] -> Class['percona::server']
-
-Class['percona::repository'] -> Class['percona::toolkit']
-
-Class['base::packages'] -> Class['misc::myq_gadgets']
-Class['percona::server'] -> Class['misc::myq_gadgets']
-
-
-
-# include stdlib
+include stdlib 
 
 include base::packages
 include base::insecure
+include base::swappiness
 
 include percona::repository
 include percona::toolkit
@@ -21,6 +13,7 @@ include percona::config
 include percona::service
 
 include misc::myq_gadgets
+include misc::myq_tools
 
 include test::user
 
@@ -31,10 +24,11 @@ Class['percona::repository'] -> Class['percona::server'] -> Class['percona::conf
 
 
 Class['base::packages'] -> Class['misc::myq_gadgets']
+Class['base::packages'] -> Class['misc::myq_tools']
+
 Class['base::packages'] -> Class['percona::repository']
 Class['base::insecure'] -> Class['percona::repository']
 
-Class['percona::server'] -> Class['misc::myq_gadgets']
 Class['percona::repository'] -> Class['percona::toolkit']
 Class['percona::repository'] -> Class['percona::sysbench']
 
@@ -43,6 +37,7 @@ Class['percona::service'] -> Class['test::user']
 
 if $sysbench_load == 'true' {
 	class { 'test::sysbench_load':
+		schema => $schema,
 		tables => $tables,
 		rows => $rows,
 		threads => $threads
@@ -89,6 +84,16 @@ if ( $percona_agent_api_key ) {
 
 if $sysbench_skip_test_client != 'true' {
     include test::sysbench_test_script
+}
+
+if $mha_node == 'true' or $mha_manager == 'true' {
+  include mha::node
+  Class['percona::server'] -> Class['mha::node']
+
+  if $mha_manager == 'true' {
+    include mha::manager
+    Class['mha::node'] -> Class['mha::manager']
+  }
 }
 
 

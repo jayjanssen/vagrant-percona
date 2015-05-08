@@ -40,10 +40,10 @@ mysql --batch -e \\"show master status\\" | tail -n 1
 END
 my @master_status_str = `vagrant ssh $master->{name} -c \"$master_status\"`;
 my $master_log_file;
-my $master_log_pos;
+my $master_log_pos = 0;
 if( $master_status_str[$#master_status_str] =~ m/^(.+)\s+(\d+)/ ) {
 	$master_log_file = $1;
-	$master_log_pos = $2;
+	# $master_log_pos = $2;
 } else {
 	die "Could not parse master log file and position!\n";
 }

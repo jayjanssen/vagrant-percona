@@ -1,7 +1,8 @@
-include stdlib
+include stdlib 
 
 include base::packages
 include base::insecure
+include base::swappiness
 
 include percona::repository
 include percona::toolkit
@@ -15,6 +16,7 @@ include percona::cluster::sstuser
 include percona::cluster::clustercheckuser
 
 include misc::myq_gadgets
+include misc::myq_tools
 
 include test::user
 
@@ -25,10 +27,11 @@ Class['mysql::datadir'] -> Class['percona::cluster::server']
 Class['percona::repository'] -> Class['percona::cluster::client'] -> Class['percona::cluster::server'] -> Class['percona::cluster::config'] -> Class['percona::cluster::service'] -> Class['percona::cluster::sstuser'] -> Class['percona::cluster::clustercheckuser']
 
 Class['base::packages'] -> Class['misc::myq_gadgets']
+Class['base::packages'] -> Class['misc::myq_tools']
+
 Class['base::packages'] -> Class['percona::repository']
 Class['base::insecure'] -> Class['percona::repository']
 
-Class['percona::cluster::server'] -> Class['misc::myq_gadgets']
 Class['percona::repository'] -> Class['percona::toolkit']
 Class['percona::repository'] -> Class['percona::sysbench']
 
@@ -37,6 +40,7 @@ Class['percona::cluster::service'] -> Class['test::user']
 
 if $sysbench_load == 'true' {
 	class { 'test::sysbench_load':
+		schema => $schema,
 		tables => $tables,
 		rows => $rows,
 		threads => $threads
