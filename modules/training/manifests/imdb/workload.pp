@@ -1,4 +1,4 @@
-class training::imdb_workload {
+class training::imdb::workload {
 
 	file {
 		"/root/.bin/":
