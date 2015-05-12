@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
           # PXC setup
           "percona_server_version"  => '56',
           'innodb_buffer_pool_size' => '128M',
-          'innodb_log_file_size' => '64Mf',
+          'innodb_log_file_size' => '64M',
           'innodb_flush_log_at_trx_commit' => '0',
          
           # Sysbench setup
@@ -41,6 +41,12 @@ Vagrant.configure("2") do |config|
           'threads' => 1,
           'tx_rate' => 10,
           
+          # TokuDB setup
+          'tokudb_directio' => 'ON',
+          'tokudb_loader_memory_size' => '64M',
+          'tokudb_fsync_log_period' => '0',
+          'tokudb_cache_size' => '128M',
+            
           # PCT setup
           'percona_agent_api_key' => ENV['PERCONA_AGENT_API_KEY']
         }
