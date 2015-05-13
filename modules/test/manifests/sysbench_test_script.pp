@@ -1,5 +1,6 @@
 class test::sysbench_test_script {
 	if !$mysql_host { $mysql_host = 'localhost' }
+	if !$schema { $schema = 'sbtest' }
 
 	file {
 		'/usr/local/bin/run_sysbench_reload.sh':
