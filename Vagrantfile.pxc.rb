@@ -14,9 +14,9 @@ pxc_nodes = 3
 pxc_node_name_prefix = "node"
 
 # AWS configuration
-aws_region = "us-west-1"
+aws_region = "us-east-1"
 aws_ips='private' # Use 'public' for cross-region AWS.  'private' otherwise (or commented out)
-pxc_security_groups = ['default','pxc']
+pxc_security_groups = []
 
 cluster_address = 'gcomm://' + Array.new( pxc_nodes ){ |i| pxc_node_name_prefix + (i+1).to_s }.join(',')
 
@@ -50,7 +50,6 @@ Vagrant.configure("2") do |config|
           'tables' => 1,
           'rows' => 100000,
           'threads' => 8,
-          'tx_rate' => 10,
           
           # PCT setup
           'percona_agent_api_key' => ENV['PERCONA_AGENT_API_KEY']
@@ -58,7 +57,7 @@ Vagrant.configure("2") do |config|
       }
 
       # Providers
-      provider_virtualbox( name, node_config, 256 ) { |vb, override|
+      provider_virtualbox( name, node_config, 1024 ) { |vb, override|
         provision_puppet( override, "pxc_server.pp" ) {|puppet|
           puppet.facter = {
             'default_interface' => 'eth1',
@@ -68,7 +67,7 @@ Vagrant.configure("2") do |config|
           }
         }
       }
-      provider_vmware( name, node_config, 256 ) { |vb, override|
+      provider_vmware( name, node_config, 1024 ) { |vb, override|
         provision_puppet( override, "pxc_server.pp" ) {|puppet|
           puppet.facter = {
             'default_interface' => 'eth1',
@@ -79,11 +78,16 @@ Vagrant.configure("2") do |config|
         }
       }
   
-      provider_aws( "PXC #{name}", node_config, 'm1.small', aws_region, pxc_security_groups, aws_ips) { |aws, override|
+      provider_aws( "PXC #{name}", node_config, 't2.small', aws_region, pxc_security_groups, aws_ips) { |aws, override|
         aws.block_device_mapping = [
-          { 'DeviceName' => "/dev/sdb", 'VirtualName' => "ephemeral0" }
+            {
+                'DeviceName' => "/dev/sdl",
+                'VirtualName' => "mysql_data",
+                'Ebs.VolumeSize' => 20,
+                'Ebs.DeleteOnTermination' => true,
+            }
         ]
-        provision_puppet( override, "pxc_server.pp" ) {|puppet| puppet.facter = { 'datadir_dev' => 'xvdb' }}
+        provision_puppet( override, "pxc_server.pp" ) {|puppet| puppet.facter = { 'datadir_dev' => 'xvdl' }}
       }
 
     end

@@ -6,7 +6,7 @@
 # -- hostmanager_aws_ips: when using hostmanager, should we use 'public' or 'private' ips?
 
 $aws_ip_cache = Hash.new
-def provider_aws( name, config, instance_type, region = nil, security_groups = nil, hostmanager_aws_ips = nil )
+def provider_aws( name, config, instance_type, region = nil, security_groups = nil, hostmanager_aws_ips = nil, subnet_id = nil )
 	require 'yaml'
 
 	aws_secrets_file = File.join( Dir.home, '.aws_secrets' )
@@ -22,16 +22,33 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 			aws.tags = {
 				'Name' => aws_config.fetch("instance_name_prefix") + " " + name
 			}
-		
+
+			# Used_subnet_id can be overridden if it is nil
+			used_subnet_id = subnet_id
+
 			if region == nil
 				aws.keypair_name = aws_config["keypair_name"]
 				override.ssh.private_key_path = aws_config["keypair_path"]
-      elsif aws_config['regions'][region] != nil
+
+				if used_subnet_id == nil 
+					used_subnet_id = aws_config.fetch("default_vpc_subnet_id")
+				end
+			elsif aws_config['regions'][region] != nil
 				aws.region = region
 				aws.keypair_name = aws_config['regions'][region]["keypair_name"]
 				override.ssh.private_key_path = aws_config['regions'][region]["keypair_path"]
-      else
-        # puts "Warning: AWS region #{region} not defined in your ~.aws_secrets file."
+
+				if used_subnet_id == nil 
+					used_subnet_id = aws_config['regions'][region]["default_vpc_subnet_id"]
+				end
+			else
+				puts "Warning: AWS region #{region} not defined in your ~/.aws_secrets file."
+			end
+
+			if used_subnet_id != nil
+				# We assume if the vpc_subnet_id is set, then we should use it.
+				aws.subnet_id = used_subnet_id
+				aws.associate_public_ip = true
 			end
 		
 			if security_groups != nil

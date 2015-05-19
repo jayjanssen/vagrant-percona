@@ -9,12 +9,12 @@ ps_servers = 1
 # AWS configuration
 aws_region = "us-east-1"
 aws_ips='private' # Use 'public' for cross-region AWS.  'private' otherwise (or commented out)
-security_groups = ['default','http']
+security_groups = []
 
 
 Vagrant.configure("2") do |config|
 	config.vm.box = "perconajayj/centos-x86_64"
-	config.vm.box_version = "~> 7.0"
+	config.vm.box_version = "~> 7"
 	config.ssh.username = "root"
 
   # Create the PXC nodes
@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
           # PXC setup
           "percona_server_version"  => '56',
           'innodb_buffer_pool_size' => '128M',
-          'innodb_log_file_size' => '64Mf',
+          'innodb_log_file_size' => '64M',
           'innodb_flush_log_at_trx_commit' => '0',
          
           # Sysbench setup
@@ -47,7 +47,16 @@ Vagrant.configure("2") do |config|
       }
 
       # Providers
-      provider_virtualbox( name, node_config, 256 ) { |vb, override|
+      provider_virtualbox( name, node_config, 1024 ) { |vb, override|
+        provision_puppet( override, "percona_server.pp" ) {|puppet|
+          puppet.facter = {
+            'default_interface' => 'eth1',
+            'datadir_dev' => 'dm-2',
+          }
+        }
+      }
+
+      provider_vmware( name, node_config, 1024 ) { |vb, override|
         provision_puppet( override, "percona_server.pp" ) {|puppet|
           puppet.facter = {
             'default_interface' => 'eth1',
@@ -56,11 +65,24 @@ Vagrant.configure("2") do |config|
         }
       }
   
-      provider_aws( "Percona Server #{name}", node_config, 'm1.small', aws_region, security_groups, aws_ips) { |aws, override|
+      provider_aws( "Percona Server #{name}", node_config, 't2.small', aws_region, security_groups, aws_ips) { |aws, override|
         aws.block_device_mapping = [
           { 'DeviceName' => "/dev/sdb", 'VirtualName' => "ephemeral0" }
         ]
-        provision_puppet( override, "percona_server.pp" ) {|puppet| puppet.facter = { 'datadir_dev' => 'xvdb' }}
+
+        aws.block_device_mapping = [
+            {
+                'DeviceName' => "/dev/sdl",
+                'VirtualName' => "mysql_data",
+                'Ebs.VolumeSize' => 20,
+                'Ebs.DeleteOnTermination' => true,
+            }
+        ]
+
+
+        provision_puppet( override, "percona_server.pp" ) { |puppet| 
+          puppet.facter = {'datadir_dev' => 'xvdl'}        
+        }
       }
 
     end

@@ -10,8 +10,8 @@ def build_box( config, name, ip, server_id )
 		node_config.vm.network :private_network, ip: ip
     
     # Provisioners
-    provision_puppet( config, "base.pp" )
-    provision_puppet( config, "percona_server.pp" ) { |puppet|  
+    provision_puppet( node_config, "base.pp" )
+    provision_puppet( node_config, "percona_server.pp" ) { |puppet|  
       puppet.facter = {
       	"percona_server_version"	=> mysql_version,
       	"innodb_buffer_pool_size"	=> "128M",
@@ -19,28 +19,30 @@ def build_box( config, name, ip, server_id )
   			"server_id" => server_id
       }
     }
-    provision_puppet( config, "percona_client.pp" ) { |puppet|
+    provision_puppet( node_config, "percona_client.pp" ) { |puppet|
       puppet.facter = {
       	"percona_server_version"	=> mysql_version
       }
     }
   
     # Providers
-    provider_virtualbox( name, config, 256 ) { |vb, override|
+    provider_virtualbox( name, node_config, 256 ) { |vb, override|
       provision_puppet( override, "percona_server.pp" ) {|puppet|
         puppet.facter = {"datadir_dev" => "dm-2"}
       }
     }
   
-  	provider_aws( name, config, 'm1.small') { |aws, override|
-  		aws.block_device_mapping = [
-  			{
-  				'DeviceName' => "/dev/sdb",
-  				'VirtualName' => "ephemeral0"
-  			}
-  		]
+  	provider_aws( name, node_config, 't2.small') { |aws, override|
+      aws.block_device_mapping = [
+          {
+              'DeviceName' => "/dev/sdl",
+              'VirtualName' => "mysql_data",
+              'Ebs.VolumeSize' => 20,
+              'Ebs.DeleteOnTermination' => true,
+          }
+      ]
       provision_puppet( override, "percona_server.pp" ) {|puppet|
-        puppet.facter = {"datadir_dev" => "xvdb"}
+        puppet.facter = {"datadir_dev" => "xvdl"}
       }
   	}
   end

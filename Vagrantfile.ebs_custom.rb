@@ -15,7 +15,7 @@ Vagrant.configure("2") do |config|
 	config.ssh.username = "root"
 
 	# We are assuming AWS, create a 'm1.xlarge' and name it 
-	provider_aws( "Beefy Percona Server", config, 'm1.xlarge') { |aws, override|
+	provider_aws( "Beefy Percona Server", config, 'c4.2xlarge') { |aws, override|
 		# Setup the 1k provisioned iops 100G EBS drive under sdl
 		aws.block_device_mapping = [
             {
@@ -33,10 +33,16 @@ Vagrant.configure("2") do |config|
 		# 	the device on EC2, but this is our ephemeral drive above.
 		# - We override the buffer pool here because m1.small has 1.5G of RAM
 		provision_puppet( override, 'percona_server.pp') { |puppet|
-      puppet.facter = {
+			puppet.facter = {
 				'datadir_dev' => 'xvdl',
 				'innodb_buffer_pool_size' => '12G',
-				'innodb_log_file_size' => '4G'
+				'innodb_log_file_size' => '4G',
+
+				# Sysbench setup
+				'sysbench_load' => true,
+				'tables' => 20,
+				'rows' => 1000000,
+				'threads' => 64
 			}
 		}
 	}
