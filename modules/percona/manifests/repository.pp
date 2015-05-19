@@ -34,16 +34,11 @@ deb-src http://repo.percona.com/apt precise experimental
 			}
 		}
 		centos: {
-			yumrepo {
-				"Percona":
-				descr       => "Percona",
-				enabled     => 1,
-				baseurl     => $experimental_repo ? {
-					/(^no|undef)$/  => "http://repo.percona.com/centos/\$releasever/os/$hardwaremodel/",
-					yes 		=> "http://repo.percona.com/testing/centos/\$releasever/os/$hardwaremodel/"
-				},
-				gpgcheck    => 0;
-			 }
+			package {
+				"percona-release":
+					source => "http://www.percona.com/redir/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm",
+					provider => "rpm";
+			}
 
 		}
 	}
