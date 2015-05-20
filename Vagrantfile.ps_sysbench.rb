@@ -72,9 +72,6 @@ Vagrant.configure("2") do |config|
       }
   
       provider_aws( "Percona Server #{name}", node_config, 't2.small', aws_region, security_groups, aws_ips) { |aws, override|
-        aws.block_device_mapping = [
-          { 'DeviceName' => "/dev/sdb", 'VirtualName' => "ephemeral0" }
-        ]
 
         aws.block_device_mapping = [
             {
