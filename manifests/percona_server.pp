@@ -2,7 +2,10 @@ include stdlib
 
 include base::packages
 include base::insecure
-include base::swappiness
+
+class {'base::swappiness':
+	swappiness => $swappiness
+}
 
 include percona::repository
 include percona::toolkit
