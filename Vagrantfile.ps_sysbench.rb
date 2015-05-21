@@ -42,6 +42,7 @@ Vagrant.configure("2") do |config|
           'tx_rate' => 10,
           
           # TokuDB setup
+          'tokudb_enable' => true,
           'tokudb_directio' => 'ON',
           'tokudb_loader_memory_size' => '64M',
           'tokudb_fsync_log_period' => '0',

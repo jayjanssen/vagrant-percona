@@ -11,9 +11,6 @@ include percona::sysbench
 include percona::server
 include percona::config
 include percona::service
-include percona::tokudb_install
-include percona::tokudb_enable
-include percona::tokudb_config
 
 include misc::myq_gadgets
 include misc::myq_tools
@@ -23,7 +20,7 @@ include test::user
 include mysql::datadir
 
 Class['mysql::datadir'] -> Class['percona::server']
-Class['percona::repository'] -> Class['percona::server'] -> Class['percona::config'] -> Class['percona::service'] -> Class['percona::tokudb_install'] -> Class['percona::tokudb_config'] -> Class['percona::tokudb_enable']
+Class['percona::repository'] -> Class['percona::server'] -> Class['percona::config'] -> Class['percona::service']
 
 
 Class['base::packages'] -> Class['misc::myq_gadgets']
@@ -49,6 +46,15 @@ if $sysbench_load == 'true' {
 	Class['percona::sysbench'] -> Class['test::sysbench_load']
 	Class['test::user'] -> Class['test::sysbench_load']
 }
+
+if $enable_tokudb == 'true' {
+	include percona::tokudb_install
+	include percona::tokudb_enable
+	include percona::tokudb_config
+
+	Class['percona::service'] -> Class['percona::tokudb_install'] -> Class['percona::tokudb_config'] -> Class['percona::tokudb_enable']
+}
+
 
 if $enable_consul == 'true' {
 	info( 'enabling consul agent' )
