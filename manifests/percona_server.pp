@@ -108,4 +108,15 @@ if $mha_node == 'true' or $mha_manager == 'true' {
   }
 }
 
+if $softraid == 'true' {
+	class { 'misc::softraid':
+		softraid_dev => $softraid_dev,
+		softraid_level => $softraid_level,
+		softraid_devices => $softraid_devices,
+		softraid_dev_str => $softraid_dev_str
+	}
+
+	Class['misc::softraid'] -> Class['mysql::datadir']
+}
+
 
