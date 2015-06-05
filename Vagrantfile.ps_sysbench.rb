@@ -32,6 +32,9 @@ Vagrant.configure("2") do |config|
           "percona_server_version"  => '56',
           'innodb_buffer_pool_size' => '128M',
           'innodb_log_file_size' => '64M',
+          # Datadir setup
+          'datadir_fs' => 'ext4',
+
           'innodb_flush_log_at_trx_commit' => '0',
          
           # Sysbench setup

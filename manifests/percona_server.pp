@@ -20,7 +20,12 @@ include misc::myq_tools
 
 include test::user
 
-include mysql::datadir
+class { 'mysql::datadir':
+	datadir_dev => $datadir_dev,
+	datadir_dev_scheduler => $datadir_dev_scheduler,
+	datadir_fs => $datadir_fs,
+	datadir_fs_opts => $datadir_fs_opts
+}
 
 Class['mysql::datadir'] -> Class['percona::server']
 Class['percona::repository'] -> Class['percona::server'] -> Class['percona::config'] -> Class['percona::service']
