@@ -25,6 +25,7 @@ class { 'mysql::datadir':
 	datadir_dev_scheduler => $datadir_dev_scheduler,
 	datadir_fs => $datadir_fs,
 	datadir_fs_opts => $datadir_fs_opts
+	datadir_mkfs_opts => $datadir_mkfs_opts
 }
 
 Class['mysql::datadir'] -> Class['percona::server']
