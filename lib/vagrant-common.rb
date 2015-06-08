@@ -115,13 +115,13 @@ end
 # -- ram: amount of RAM (in MB)
 def provider_vmware ( name, config, ram = 256, cpus = 1 )
 	config.vm.provider "vmware_fusion" do |v, override|
-    v.name = name
-    v.vmx["memsize"] = ram
-    v.vmx["numvcpus"] = cpus
+	    v.name = name
+	    v.vmx["memsize"] = ram
+	    v.vmx["numvcpus"] = cpus
 
-    if block_given?
-      yield( v, override )
-    end
+	    if block_given?
+	      yield( v, override )
+	    end
 	end	
 end
 
@@ -177,11 +177,11 @@ end
 def provision_puppet( config, manifest_file )
   config.vm.provision manifest_file, type:"puppet", preserve_order: true do |puppet|
 		puppet.manifest_file = manifest_file
-    puppet.manifests_path = ["vm", "/vagrant/manifests"]
-    puppet.options = "--verbose --modulepath /vagrant/modules"
-    # puppet.options = "--verbose"
-    if block_given?  
-      yield( puppet )
-    end
+	    puppet.manifests_path = ["vm", "/vagrant/manifests"]
+	    puppet.options = "--verbose --modulepath /vagrant/modules"
+	    # puppet.options = "--verbose"
+	    if block_given?  
+	      yield( puppet )
+	    end
 	end
 end
