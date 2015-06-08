@@ -125,6 +125,52 @@ def provider_vmware ( name, config, ram = 256, cpus = 1 )
 	end	
 end
 
+
+# Configure this node for Vmware
+def provider_openstack( name, config, flavor, security_groups = nil, networks = nil, floating_ip = nil )
+    require 'yaml'
+    require 'vagrant-openstack-plugin'
+
+    os_secrets_file = File.join( Dir.home, '.openstack_secrets' )
+
+    if( File.readable?( os_secrets_file ))
+        config.vm.provider :openstack do |os, override|
+            os.flavor = flavor
+
+            os_config = YAML::load_file( os_secrets_file )
+
+            os.endpoint = os_config.fetch("endpoint")
+            os.username = os_config.fetch("username")
+            os.api_key = os_config.fetch("password")
+            os.tenant= os_config.fetch("tenant")
+
+            os.keypair_name = os_config.fetch("keypair_name")
+            override.ssh.private_key_path = os_config.fetch("private_key_path")
+
+
+            if security_groups != nil
+                os.security_groups = security_groups
+            end
+
+            if networks != nil
+                os.networks = networks
+            end
+
+
+            if floating_ip != nil
+                os.floating_ip = floating_ip
+                os.floating_ip_pool = :auto
+            end
+
+            if block_given?
+                yield( os, override )
+            end
+        end
+    else
+        puts "Skipping Openstack because of missing/non-readable #{os_secrets_file} file.  Read https://github.com/jayjanssen/vagrant-percona/blob/master/README.md#os-setup for more information about setting up Openstack."
+    end
+end
+
 # Provision this node with Puppet
 # -- config: vm config from Vagrantfile
 # -- manifest_file: puppet manifest to use (under puppet/manifests)

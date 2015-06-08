@@ -92,6 +92,15 @@ Vagrant.configure("2") do |config|
         }
       }
 
+      provider_openstack( 'Packer Server #{name}', node_config, 'm1.small', nil, ['50285812-3a34-40c5-9e69-0f67fab0ae5c'], '10.60.23.208') { |os, override|
+        os.disks = [
+          { "name" => "#{name}-data", "size" => 10, "description" => "MySQL Data"}
+        ]
+        provision_puppet( override, "percona_server.pp" ) { |puppet| 
+          puppet.facter = {'datadir_dev' => 'vdb'}        
+        }
+      }
+
     end
   end
   
