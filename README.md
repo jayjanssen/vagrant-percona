@@ -65,6 +65,12 @@ keypair_name: your_keypair_name
 private_key_path: the_path_to_your_pem_file
 ```
 
+Finally, you'll need the vagrant-openstack-plugin:
+
+```
+vagrant plugin install vagrant-openstack-plugin
+```
+
 ### AWS Setup
 
 You can skip this section if you aren't planning on using AWS.  
