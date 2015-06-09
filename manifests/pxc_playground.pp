@@ -12,8 +12,8 @@ include percona::cluster::client
 
 Class['percona::repository'] -> Class['percona::cluster::client']
 
-Class['percona::cluster::client'] -> Class['percona::sysbench']
-include percona::sysbench
+Class['percona::cluster::client'] -> Class['test::sysbench_pkg']
+include test::sysbench_pkg
 
 
 include percona::toolkit

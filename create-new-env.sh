@@ -37,9 +37,11 @@ mkdir -p $destdir
 
 # For every type, we need these
 cp Vagrantfile.$type.rb $destdir/Vagrantfile
-cp -R $pwd/lib $destdir/
-cp -R $pwd/modules $destdir/
-cp -R $pwd/manifests $destdir/
+
+cp -R $pwd $destdir/vagrant-percona/
+ln -s vagrant-percona/lib $destdir/
+ln -s vagrant-percona/modules $destdir/
+ln -s vagrant-percona/manifests $destdir/
 
 
 cat << EOF > $infofile
