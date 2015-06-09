@@ -29,20 +29,20 @@ mysql_version = "56"
 pxc_nodes = {
 	prefix + 'pxc1' => {
 		'local_vm_ip' => iprange + '.2',
-		'aws_region' => 'us-east-1',
+		'aws_region' => 'eu-west-1',
 		'security_groups' => ['default','pxc', 'haproxy'],
 		'haproxy_primary' => true,
 		'pxc_bootstrap_node' => true
 	},
 	prefix + 'pxc2' => {
 		'local_vm_ip' => iprange + '.3',
-		'aws_region' => 'us-east-1',
+		'aws_region' => 'eu-west-1',
 		'security_groups' => ['default','pxc', 'haproxy'],
 		'pxc_bootstrap_node' => false
 	},
 	prefix + 'pxc3' => {
 		'local_vm_ip' => iprange + '.4',
-		'aws_region' => 'us-east-1',
+		'aws_region' => 'eu-west-1',
 		'security_groups' => ['default','pxc', 'haproxy'],
 		'pxc_bootstrap_node' => false
 	}
@@ -74,9 +74,9 @@ Vagrant.configure("2") do |config|
 			node_config.vm.network "forwarded_port", guest: 8080, host: 8080, auto_correct: true	
 
 			# Provisioners
-			config.vm.provision :hostmanager
+			node_config.vm.provision :hostmanager
 
-			provision_puppet( config, "pxc_playground.pp" ) { |puppet|
+			provision_puppet( node_config, "pxc_playground.pp" ) { |puppet|
 				puppet.facter = {
 					"percona_server_version"			=> mysql_version,
 					"haproxy_servers"					=> pxc_nodes.map{|k,v| "#{k}"}.join(','),
@@ -90,22 +90,25 @@ Vagrant.configure("2") do |config|
 					'innodb_flush_log_at_trx_commit' 	=> '0',
 					'pxc_bootstrap_node'				=> node_params['pxc_bootstrap_node'],
 					'extra_mysqld_config'				=> 
-						'wsrep_provider_options=ist.recv_addr="' + name + "\"\n" +
-						'wsrep_sst_receive_address=' + name + "\n" +
-						'wsrep_node_address=' + name + "\n" +
 						'wsrep_cluster_address=gcomm://' + pxc_nodes.map{|k,v| "#{k}"}.join(',') + "\n" +
 						"\n"
 				}
 			}
 
+			# Disable these options
+			# 'wsrep_provider_options=ist.recv_addr="' + name + "\"\n" +
+			# 'wsrep_sst_receive_address=' + name + "\n" +
+			# 'wsrep_node_address=' + name + "\n" +
+
+
 			# Providers
-			provider_virtualbox( name, config, 512) { |vb, override|
+			provider_virtualbox( name, node_config, 512) { |vb, override|
 				provision_puppet( override, "pxc_playground.pp" ) {|puppet|
 					puppet.facter = {"datadir_dev" => "dm-2"}
 				}
 			}
 	
-			provider_aws( "PXC #{name}", config, 'm1.small', node_params['aws_region'], node_params['security_groups'], hostmanager_aws_ips) { |aws, override|
+			provider_aws( "PXC " + name, node_config, 'm1.small', node_params['aws_region'], node_params['security_groups'], hostmanager_aws_ips) { |aws, override|
 				aws.block_device_mapping = [
 					{
 						'DeviceName' => "/dev/sdb",
