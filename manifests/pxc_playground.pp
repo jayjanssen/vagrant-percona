@@ -12,8 +12,9 @@ include percona::cluster::client
 
 Class['percona::repository'] -> Class['percona::cluster::client']
 
-Class['percona::cluster::client'] -> Class['test::sysbench_pkg']
+Class['percona::cluster::client'] -> Class['test::sysbench_pkg'] -> Class['test::sysbench_test_script']
 include test::sysbench_pkg
+include test::sysbench_test_script
 
 
 include percona::toolkit
@@ -21,6 +22,8 @@ include percona::toolkit
 Class['percona::repository'] -> Class['percona::toolkit']
 
 include base::packages
+include base::hostname
+
 include misc::myq_gadgets
 
 Class['base::packages'] -> Class['misc::myq_gadgets']
