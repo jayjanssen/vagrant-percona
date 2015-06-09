@@ -11,7 +11,7 @@ class test::sysbench_test_script {
 		'/usr/local/bin/run_sysbench_reload.sh':
 			ensure => present,
 			content => "sysbench --db-driver=mysql --test=/usr/share/doc/sysbench/tests/db/oltp.lua --mysql-user=test --mysql-password=test --mysql-db=$schema --mysql-host=$mysql_host --mysql-port=$mysql_port --oltp-tables-count=$tables cleanup
-sysbench --test=/usr/share/doc/sysbench/tests/db/parallel_prepare.lua --db-driver=mysql --mysql-user=root --mysql-db=$schema --oltp-tables-count=$tables --oltp-table-size=$rows --oltp-auto-inc=off --num-threads=$threads run",
+sysbench --test=/usr/share/doc/sysbench/tests/db/parallel_prepare.lua --db-driver=mysql --mysql-user=test --mysql-password=test --mysql-host=$mysql_host --mysql-db=$schema --oltp-tables-count=$tables --oltp-table-size=$rows --oltp-auto-inc=off --num-threads=$threads run",
 			mode => 0755;
 		}
 
