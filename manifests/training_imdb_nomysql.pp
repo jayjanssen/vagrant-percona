@@ -9,6 +9,8 @@ include misc::innotop
 
 include percona::repository
 
+include training::imdb::optimization
+
 
 include percona::server
 include percona::config
