@@ -1,11 +1,12 @@
 class test::sysbench_test_script {
 	if !$mysql_host { $mysql_host = 'localhost' }
 	if !$schema { $schema = 'sbtest' }
+	if !$engine {$engine = 'innodb' }
 
 	file {
 		'/usr/local/bin/run_sysbench_reload.sh':
 			ensure => present,
-			content => "sysbench --db-driver=mysql --test=/usr/share/doc/sysbench/tests/db/oltp.lua --mysql-user=test --mysql-password=test --mysql-db=$schema --mysql-host=$mysql_host --oltp-tables-count=$tables cleanup
+			content => "sysbench --db-driver=mysql --test=/usr/share/doc/sysbench/tests/db/oltp.lua  --mysql-table-engine=$engine --mysql-user=test --mysql-password=test --mysql-db=$schema --mysql-host=$mysql_host --oltp-tables-count=$tables cleanup
 sysbench --test=sysbench_tests/db/parallel_prepare.lua --db-driver=mysql --mysql-user=root --mysql-db=$schema --oltp-tables-count=$tables --oltp-table-size=$rows --oltp-auto-inc=off --num-threads=$threads run",
 			mode => 0755;
 		}
