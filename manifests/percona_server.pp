@@ -49,19 +49,26 @@ if $sysbench_load == 'true' {
 		schema => $schema,
 		tables => $tables,
 		rows => $rows,
-		threads => $threads
+		threads => $threads,
+		engine => $engine
 	}
 	
 	Class['percona::sysbench'] -> Class['test::sysbench_load']
 	Class['test::user'] -> Class['test::sysbench_load']
 }
 
-if $enable_tokudb == 'true' {
+if $tokudb_enable == 'true' {
 	include percona::tokudb_install
 	include percona::tokudb_enable
 	include percona::tokudb_config
 
-	Class['percona::service'] -> Class['percona::tokudb_install'] -> Class['percona::tokudb_config'] -> Class['percona::tokudb_enable']
+	Class['percona::server'] -> Class['percona::tokudb_install']
+	Class['percona::tokudb_install'] -> Class['percona::tokudb_enable'] -> 	Class['percona::tokudb_config']
+	Class['percona::service'] -> Class['percona::tokudb_enable']
+
+	if $sysbench_load == 'true' {
+		Class['percona::tokudb_enable'] -> Class['test::sysbench_load']
+	}
 }
 
 
