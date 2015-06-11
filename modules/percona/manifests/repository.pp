@@ -36,7 +36,7 @@ deb-src http://repo.percona.com/apt precise experimental
 		centos: {
 			package {
 				"percona-release":
-					source => "http://www.percona.com/redir/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm",
+					source => "http://www.percona.com/downloads/percona-release/redhat/0.1-3/percona-release-0.1-3.noarch.rpm",
 					provider => "rpm";
 			}
 
