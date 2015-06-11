@@ -2,7 +2,10 @@ include stdlib
 
 include base::packages
 include base::insecure
-include base::swappiness
+
+class {'base::swappiness':
+	swappiness => $swappiness
+}
 
 include percona::repository
 include percona::toolkit
@@ -17,7 +20,13 @@ include misc::myq_tools
 
 include test::user
 
-include mysql::datadir
+class { 'mysql::datadir':
+	datadir_dev => $datadir_dev,
+	datadir_dev_scheduler => $datadir_dev_scheduler,
+	datadir_fs => $datadir_fs,
+	datadir_fs_opts => $datadir_fs_opts,
+	datadir_mkfs_opts => $datadir_mkfs_opts
+}
 
 Class['mysql::datadir'] -> Class['percona::server']
 Class['percona::repository'] -> Class['percona::server'] -> Class['percona::config'] -> Class['percona::service']
@@ -40,12 +49,28 @@ if $sysbench_load == 'true' {
 		schema => $schema,
 		tables => $tables,
 		rows => $rows,
-		threads => $threads
+		threads => $threads,
+		engine => $engine
 	}
 	
 	Class['percona::sysbench'] -> Class['test::sysbench_load']
 	Class['test::user'] -> Class['test::sysbench_load']
 }
+
+if $tokudb_enable == 'true' {
+	include percona::tokudb_install
+	include percona::tokudb_enable
+	include percona::tokudb_config
+
+	Class['percona::server'] -> Class['percona::tokudb_install']
+	Class['percona::tokudb_install'] -> Class['percona::tokudb_enable'] -> 	Class['percona::tokudb_config']
+	Class['percona::service'] -> Class['percona::tokudb_enable']
+
+	if $sysbench_load == 'true' {
+		Class['percona::tokudb_enable'] -> Class['test::sysbench_load']
+	}
+}
+
 
 if $enable_consul == 'true' {
 	info( 'enabling consul agent' )
@@ -94,6 +119,17 @@ if $mha_node == 'true' or $mha_manager == 'true' {
     include mha::manager
     Class['mha::node'] -> Class['mha::manager']
   }
+}
+
+if $softraid == 'true' {
+	class { 'misc::softraid':
+		softraid_dev => $softraid_dev,
+		softraid_level => $softraid_level,
+		softraid_devices => $softraid_devices,
+		softraid_dev_str => $softraid_dev_str
+	}
+
+	Class['misc::softraid'] -> Class['mysql::datadir']
 }
 
 

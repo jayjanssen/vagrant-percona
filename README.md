@@ -43,6 +43,33 @@ This section should get you up and running.
  vagrant plugin install vagrant-hostmanager
 ```
 
+### Openstack Setup
+
+For this to run, you'll need a custom Vagrantbox with an image to boot from on your Openstack Cloud.  I've created a CentOS one here: https://github.com/jayjanssen/packer-percona, but it would need to be rebuilt in other clouds.
+
+Perconians can use a prebuilt image in our Openstack lab with this command: 
+
+```
+vagrant box add perconajayj/centos-x86_64 --provider openstack
+```
+
+You'll also need your secrets setup in ~/.openstack_secrets:
+
+```yaml
+---
+endpoint: http://controller:5000/v2.0/tokens
+tenant: tenant_name
+username: your_user
+password: your_pw
+keypair_name: your_keypair_name
+private_key_path: the_path_to_your_pem_file
+```
+
+Finally, you'll need the vagrant-openstack-plugin:
+
+```
+vagrant plugin install vagrant-openstack-plugin
+```
 
 ### AWS Setup
 
@@ -65,6 +92,7 @@ secret_access_key: THE_ASSOCIATED_SECRET_KEY
 keypair_name: KEYPAIR_ID
 keypair_path: PATH_TO_KEYPAIR_PEM
 instance_name_prefix: SOME_NAME_PREFIX
+default_vpc_subnet_id: subnet-896602d0
 ```
 
 
@@ -78,10 +106,12 @@ secret_access_key: THE_ASSOCIATED_SECRET_KEY
 keypair_name: jay
 keypair_path: /Users/jayj/.ssh/jay-us-east-1.pem
 instance_name_prefix: Jay
+default_vpc_subnet_id: subnet-896602d0
 regions:
   us-east-1:
     keypair_name: jay
     keypair_path: /Users/jayj/.ssh/jay-us-east-1.pem
+    default_vpc_subnet_id: subnet-896602d0
   us-west-1:
     keypair_name: jay
     keypair_path: /Users/jayj/.ssh/jay-us-west-1.pem
@@ -95,6 +125,14 @@ Note that the default 'keypair_name' and 'keypair_path' can still be used.  Regi
 #### Boxes and multi-region
 
 Note that the aws Vagrant boxes you use must include AMI's in each region.  For example, see the regions listed here: https://vagrantcloud.com/perconajayj/centos-x86_64.  Packer, which is used to build this box, can be configured to add more regions if desired, but it requires building a new box.  
+
+#### VPC integration
+
+The latest versions of my perconajayj/centos-x86-64 boxes require VPC.  Currently this software supports passing a vpc_subnet_id per instance in one of two ways:
+
+1. Set the default_vpc_subnet_id in the ~/.aws_secrets file.  This can either be global or per-region.
+1. Pass a subnet_id into the provider_aws method in the vagrant-common.rb file.
+
 
 ### Clone this repo
 

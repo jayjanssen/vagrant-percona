@@ -1,51 +1,39 @@
-class mysql::datadir {	
+class mysql::datadir (
+    $datadir_dev, 
+    $datadir_dev_scheduler = 'noop', 
+    $datadir_fs = 'xfs', 
+    $datadir_fs_opts = 'noatime',
+    $datadir_mkfs_opts = '-f'
+) {
 	# Need to set $datadir_dev from Vagrantfile for this to work right
 
-    if( $datadir_crappy )  {
-    	exec {
-    		"mkfs_mysql_datadir":
-    			command => "mkfs.ext3 /dev/$datadir_dev",
-    			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
-    			unless => "mount | grep '/var/lib/mysql'";
-    	}
-    	mount {
-    		"/var/lib/mysql":
-    			ensure => "mounted",
-    			device => "/dev/$datadir_dev",
-    			fstype => 'ext3',
-                options => 'defaults',
-    			atboot => "true",
-    			require => Exec["mkfs_mysql_datadir", "mkdir_mysql_datadir"];
-    	}
-    } else {
-    	package {
-    		'xfsprogs': ensure => 'present';
-    	}
-    	exec {
-    		"mkfs_mysql_datadir":
-    			command => "mkfs.xfs -f /dev/$datadir_dev",
-    			require => Package['xfsprogs'],
-    			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
-    			unless => "mount | grep '/var/lib/mysql'";
-    	}
-    	mount {
-    		"/var/lib/mysql":
-    			ensure => "mounted",
-    			device => "/dev/$datadir_dev",
-    			fstype => "xfs",
-    			options => "noatime",
-    			atboot => "true",
-    			require => Exec["mkfs_mysql_datadir", "mkdir_mysql_datadir"];
+	package {
+    	'xfsprogs': ensure => 'present';
+	}
+	exec {
+		"mkfs_mysql_datadir":
+			command => "mkfs.$datadir_fs $datadir_mkfs_opts /dev/$datadir_dev",
+			require => Package['xfsprogs'],
+			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
+			unless => "mount | grep '/var/lib/mysql'";
+	}
+	mount {
+		"/var/lib/mysql":
+			ensure => "mounted",
+			device => "/dev/$datadir_dev",
+			fstype => $datadir_fs,
+			options => $datadir_fs_opts,
+			atboot => "true",
+			require => Exec["mkfs_mysql_datadir", "mkdir_mysql_datadir"];
 
-    	}
-    	# IO scheduler
-    	exec {
-    		"datadir_dev_noop":
-    			command => "echo 'noop' > /sys/block/$datadir_dev/queue/scheduler",
-    			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
-    			unless => "grep -E '\\[noop\\]|none' /sys/block/$datadir_dev/queue/scheduler";
-    	}
-    }
+	}
+	# IO scheduler
+	exec {
+		"datadir_dev_scheduler":
+			command => "echo '$datadir_dev_scheduler' > /sys/block/$datadir_dev/queue/scheduler",
+			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
+			unless => "grep -E '\\[$datadir_dev_scheduler\\]|none' /sys/block/$datadir_dev/queue/scheduler";
+	}
     
     exec {
 		"mkdir_mysql_datadir":

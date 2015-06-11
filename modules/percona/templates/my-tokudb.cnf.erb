@@ -1,0 +1,10 @@
+[mysqld]
+<%= "tokudb_cache_size         = " + @tokudb_cache_size + "\n" if defined?( @tokudb_cache_size ) -%>
+<%= "tokudb_commit_sync         = " + @tokudb_commit_sync + "\n" if defined?( @tokudb_commit_sync ) -%>
+<%= "tokudb_directio         = " + @tokudb_directio + "\n" if defined?( @tokudb_directio ) -%>
+<%= "tokudb_loader_memory_size         = " + @tokudb_loader_memory_size + "\n" if defined?( @tokudb_loader_memory_size ) -%>
+<%= "tokudb_fsync_log_period         = " + @tokudb_fsync_log_period + "\n" if defined?( @tokudb_fsync_log_period ) -%>
+
+[mysqld_safe]
+thp-setting=never
+malloc-lib=/usr/lib64/libjemalloc.so.1

@@ -15,27 +15,27 @@ consul = {
 	'consul1' => {
 		'local_vm_ip' => '192.168.70.2',
 		'aws_region' => 'us-east-1',
-    'server_id' => 1,
+		'server_id' => 1,
 		'security_groups' => ['default','consul']
 	},
 	'consul2' => {
 		'local_vm_ip' => '192.168.70.3',
 		'aws_region' => 'us-east-1',
-    'server_id' => 2,
+		'server_id' => 2,
 		'security_groups' => ['default','consul'] 
 	},
 	'consul3' => {
 		'local_vm_ip' => '192.168.70.4',
 		'aws_region' => 'us-east-1',
-    'server_id' => 3,
+		'server_id' => 3,
 		'security_groups' => ['default','consul']
 	}
 }
 client = {
-  'client1' => {
+	'client1' => {
 		'local_vm_ip' => '192.168.70.10',
 		'aws_region' => 'us-east-1',
-    'server_id' => 1,
+		'server_id' => 1,
 		'security_groups' => ['default','pxc']
 	},
 }
@@ -46,7 +46,7 @@ hostmanager_aws_ips='private'
 
 Vagrant.configure("2") do |config|
 	config.vm.box = "perconajayj/centos-x86_64"
-	config.vm.box_version = "~> 7.0"
+	config.vm.box_version = "~> 7"
 	config.ssh.username = "root"
 
   config.hostmanager.enabled = false # Disable for AWS
@@ -85,7 +85,7 @@ Vagrant.configure("2") do |config|
 				}
 			}  
       
-			provider_aws( "consul #{name}", node_config, 'm1.small', node_params['aws_region'], node_params['security_groups'], hostmanager_aws_ips)
+			provider_aws( "consul #{name}", node_config, 't2.small', node_params['aws_region'], node_params['security_groups'], hostmanager_aws_ips)
 
 		end
 	}
@@ -119,7 +119,7 @@ Vagrant.configure("2") do |config|
 				}
 			}  
       
-			provider_aws( "consul #{name}", node_config, 'm1.small', node_params['aws_region'], node_params['security_groups'], hostmanager_aws_ips)
+			provider_aws( "consul #{name}", node_config, 't2.small', node_params['aws_region'], node_params['security_groups'], hostmanager_aws_ips)
 
 		end
 	}
