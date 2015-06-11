@@ -1,1 +1,1 @@
-include misc::mysql_datadir
+include mysql::datadir

@@ -13,3 +13,9 @@
 [submodule "modules/resolv_conf"]
 	path = modules/resolv_conf
 	url = https://github.com/saz/puppet-resolv_conf.git
+[submodule "modules/puppet-sysctl"]
+	path = modules/puppet-sysctl
+	url = https://github.com/thias/puppet-sysctl.git
+[submodule "modules/sysctl"]
+	path = modules/sysctl
+	url = https://github.com/thias/puppet-sysctl.git

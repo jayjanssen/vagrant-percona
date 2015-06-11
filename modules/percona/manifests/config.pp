@@ -25,5 +25,8 @@ class percona::config {
 		"/etc/my.cnf":
 			ensure  => present,
 			content => template("percona/my.cnf.erb"),
+			require => File['/etc/mysql.d'];
+		"/etc/mysql.d":
+			ensure => directory;
 	}                     
 }
