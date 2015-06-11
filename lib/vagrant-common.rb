@@ -6,7 +6,7 @@
 # -- hostmanager_aws_ips: when using hostmanager, should we use 'public' or 'private' ips?
 
 $aws_ip_cache = Hash.new
-def provider_aws( name, config, instance_type, region = nil, security_groups = nil, hostmanager_aws_ips = nil )
+def provider_aws( name, config, instance_type, region = nil, security_groups = nil, hostmanager_aws_ips = nil, subnet_id = nil )
 	require 'yaml'
 
 	aws_secrets_file = File.join( Dir.home, '.aws_secrets' )
@@ -22,16 +22,33 @@ def provider_aws( name, config, instance_type, region = nil, security_groups = n
 			aws.tags = {
 				'Name' => aws_config.fetch("instance_name_prefix") + " " + name
 			}
-		
+
+			# Used_subnet_id can be overridden if it is nil
+			used_subnet_id = subnet_id
+
 			if region == nil
 				aws.keypair_name = aws_config["keypair_name"]
 				override.ssh.private_key_path = aws_config["keypair_path"]
-      elsif aws_config['regions'][region] != nil
+
+				if used_subnet_id == nil 
+					used_subnet_id = aws_config.fetch("default_vpc_subnet_id")
+				end
+			elsif aws_config['regions'][region] != nil
 				aws.region = region
 				aws.keypair_name = aws_config['regions'][region]["keypair_name"]
 				override.ssh.private_key_path = aws_config['regions'][region]["keypair_path"]
-      else
-        # puts "Warning: AWS region #{region} not defined in your ~.aws_secrets file."
+
+				if used_subnet_id == nil 
+					used_subnet_id = aws_config['regions'][region]["default_vpc_subnet_id"]
+				end
+			else
+				puts "Warning: AWS region #{region} not defined in your ~/.aws_secrets file."
+			end
+
+			if used_subnet_id != nil
+				# We assume if the vpc_subnet_id is set, then we should use it.
+				aws.subnet_id = used_subnet_id
+				aws.associate_public_ip = true
 			end
 		
 			if security_groups != nil
@@ -98,14 +115,60 @@ end
 # -- ram: amount of RAM (in MB)
 def provider_vmware ( name, config, ram = 256, cpus = 1 )
 	config.vm.provider "vmware_fusion" do |v, override|
-    v.name = name
-    v.vmx["memsize"] = ram
-    v.vmx["numvcpus"] = cpus
+	    v.name = name
+	    v.vmx["memsize"] = ram
+	    v.vmx["numvcpus"] = cpus
 
-    if block_given?
-      yield( v, override )
-    end
+	    if block_given?
+	      yield( v, override )
+	    end
 	end	
+end
+
+
+# Configure this node for Vmware
+def provider_openstack( name, config, flavor, security_groups = nil, networks = nil, floating_ip = nil )
+    require 'yaml'
+    require 'vagrant-openstack-plugin'
+
+    os_secrets_file = File.join( Dir.home, '.openstack_secrets' )
+
+    if( File.readable?( os_secrets_file ))
+        config.vm.provider :openstack do |os, override|
+            os.flavor = flavor
+
+            os_config = YAML::load_file( os_secrets_file )
+
+            os.endpoint = os_config.fetch("endpoint")
+            os.username = os_config.fetch("username")
+            os.api_key = os_config.fetch("password")
+            os.tenant= os_config.fetch("tenant")
+
+            os.keypair_name = os_config.fetch("keypair_name")
+            override.ssh.private_key_path = os_config.fetch("private_key_path")
+
+
+            if security_groups != nil
+                os.security_groups = security_groups
+            end
+
+            if networks != nil
+                os.networks = networks
+            end
+
+
+            if floating_ip != nil
+                os.floating_ip = floating_ip
+                os.floating_ip_pool = :auto
+            end
+
+            if block_given?
+                yield( os, override )
+            end
+        end
+    else
+        puts "Skipping Openstack because of missing/non-readable #{os_secrets_file} file.  Read https://github.com/jayjanssen/vagrant-percona/blob/master/README.md#os-setup for more information about setting up Openstack."
+    end
 end
 
 # Provision this node with Puppet
@@ -114,11 +177,11 @@ end
 def provision_puppet( config, manifest_file )
   config.vm.provision manifest_file, type:"puppet", preserve_order: true do |puppet|
 		puppet.manifest_file = manifest_file
-    puppet.manifests_path = ["vm", "/vagrant/manifests"]
-    puppet.options = "--verbose --modulepath /vagrant/modules"
-    # puppet.options = "--verbose"
-    if block_given?  
-      yield( puppet )
-    end
+	    puppet.manifests_path = ["vm", "/vagrant/manifests"]
+	    puppet.options = "--verbose --modulepath /vagrant/modules"
+	    # puppet.options = "--verbose"
+	    if block_given?  
+	      yield( puppet )
+	    end
 	end
 end

@@ -17,10 +17,14 @@ class { 'mysql::repository':
 	57_enabled => $enable_57
 }
 
-include misc::mysql_datadir
+class { 'mysql::datadir':
+	datadir_dev => $datadir_dev,
+	datadir_dev_scheduler => $datadir_dev_scheduler,
+	datadir_fs => $datadir_fs,
+	datadir_fs_opts => $datadir_fs_opts
+}
 include mysql::server
 include mysql::config
 include mysql::service
-
-Class['misc::mysql_datadir'] -> Class['mysql::server']
+Class['mysql::datadir'] -> Class['mysql::server']
 Class['mysql::repository'] -> Class['mysql::server'] -> Class['mysql::config'] -> Class['mysql::service']

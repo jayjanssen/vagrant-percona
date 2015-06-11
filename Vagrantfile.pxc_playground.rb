@@ -109,7 +109,7 @@ Vagrant.configure("2") do |config|
 				}
 			}
 	
-			provider_aws( "PXC " + name, node_config, 'm1.small', node_params['aws_region'], node_params['security_groups'], hostmanager_aws_ips) { |aws, override|
+			provider_aws( "PXC #{name}", node_config, 't2.small', node_params['aws_region'], node_params['security_groups'], hostmanager_aws_ips) { |aws, override|
 				aws.block_device_mapping = [
 					{
 						'DeviceName' => "/dev/sdb",
