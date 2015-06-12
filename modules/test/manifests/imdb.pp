@@ -12,9 +12,9 @@ class test::imdb {
 
     exec {
         "mysql-download-imdb":
-            command => "/usr/bin/wget -O /tmp/imdb.sql.bz2 https://s3.amazonaws.com/imdb-db-sql/imdb.sql.bz2",
+            command => "/usr/bin/wget -O /tmp/imdb.sql.bz2 https://s3.amazonaws.com/imdb-db-sql/imdb.sql.bz2 && touch /tmp/imdb.sql.bz2.downloaded",
             timeout => 0,
-            creates => "/tmp/imdb.sql.bz2";
+            creates => "/tmp/imdb.sql.bz2.downloaded";
         "mysql-indexes-add":
             command => "/usr/bin/mysql -u root imdb < /tmp/my.indexes.sql && touch /tmp/my.indexes.sql.done",
             creates => "/tmp/my.indexes.sql.done",
