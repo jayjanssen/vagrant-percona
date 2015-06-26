@@ -7,7 +7,7 @@
 
 require File.dirname(__FILE__) + '/lib/vagrant-common.rb'
 
-pxc_version = "55"
+pxc_version = "56"
 
 # Node group counts and aws security groups (if using aws provider)
 pxc_nodes = 3
@@ -82,9 +82,18 @@ Vagrant.configure("2") do |config|
   
       provider_aws( "PXC #{name}", node_config, 'm3.xlarge', aws_region, pxc_security_groups, aws_ips) { |aws, override|
         aws.block_device_mapping = [
-          { 'DeviceName' => "/dev/sdb", 'VirtualName' => "ephemeral0" }
+          { 'DeviceName' => "/dev/sdb", 'VirtualName' => "ephemeral0" },
+          { 'DeviceName' => "/dev/sdc", 'VirtualName' => "ephemeral1" }
         ]
-        provision_puppet( override, "pxc_server.pp" ) {|puppet| puppet.facter = { 'datadir_dev' => 'xvdb' }}
+        provision_puppet( override, "pxc_server.pp" ) {|puppet| puppet.facter = { 
+            'softraid' => true,
+            'softraid_dev' => '/dev/md0',
+            'softraid_level' => 'stripe',
+            'softraid_devices' => '2',
+            'softraid_dev_str' => '/dev/xvdb /dev/xvdc',
+
+            'datadir_dev' => 'md0'
+          }}
       }
 
     end
