@@ -20,7 +20,13 @@ include misc::myq_tools
 
 include test::user
 
-include mysql::datadir
+class { 'mysql::datadir':
+	datadir_dev => $datadir_dev,
+	datadir_dev_scheduler => $datadir_dev_scheduler,
+	datadir_fs => $datadir_fs,
+	datadir_fs_opts => $datadir_fs_opts,
+	datadir_mkfs_opts => $datadir_mkfs_opts
+}
 
 Class['mysql::datadir'] -> Class['percona::cluster::server']
 
@@ -92,6 +98,18 @@ if ( $percona_agent_api_key ) {
 
 if $sysbench_skip_test_client != 'true' {
     include test::sysbench_test_script
+}
+
+
+if $softraid == 'true' {
+	class { 'misc::softraid':
+		softraid_dev => $softraid_dev,
+		softraid_level => $softraid_level,
+		softraid_devices => $softraid_devices,
+		softraid_dev_str => $softraid_dev_str
+	}
+
+	Class['misc::softraid'] -> Class['mysql::datadir']
 }
 
 
