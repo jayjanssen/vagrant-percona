@@ -35,6 +35,7 @@ Class['base::insecure'] -> Class['percona::repository']
 Class['percona::repository'] -> Class['percona::toolkit']
 Class['percona::repository'] -> Class['percona::sysbench']
 
+Class['percona::cluster::client'] -> Class['percona::toolkit']
 
 Class['percona::cluster::service'] -> Class['test::user']
 
@@ -46,6 +47,7 @@ if $sysbench_load == 'true' {
 		threads => $threads
 	}
 	
+	Class['percona::cluster::client'] -> Class['percona::sysbench']
 	Class['percona::sysbench'] -> Class['test::sysbench_load']
 	Class['test::user'] -> Class['test::sysbench_load']
 }

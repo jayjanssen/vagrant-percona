@@ -41,6 +41,9 @@ Class['base::insecure'] -> Class['percona::repository']
 Class['percona::repository'] -> Class['percona::toolkit']
 Class['percona::repository'] -> Class['percona::sysbench']
 
+Class['percona::server'] -> Class['percona::toolkit']
+
+
 
 Class['percona::service'] -> Class['test::user']
 
@@ -53,6 +56,7 @@ if $sysbench_load == 'true' {
 		engine => $engine
 	}
 	
+	Class['percona::server'] -> Class['percona::sysbench']
 	Class['percona::sysbench'] -> Class['test::sysbench_load']
 	Class['test::user'] -> Class['test::sysbench_load']
 }
