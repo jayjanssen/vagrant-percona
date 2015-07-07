@@ -183,5 +183,12 @@ def provision_puppet( config, manifest_file )
 	    if block_given?  
 	      yield( puppet )
 	    end
+
+	    # Check if the hostname is a proper string (won't be if config is an override config)
+	    # If string, then set the vagrant_hostname facter fact automatically so base::hostname works
+		if config.vm.hostname.is_a?(String)
+			puppet.facter["vagrant_hostname"] = config.vm.hostname 
+	    end
+
 	end
 end
