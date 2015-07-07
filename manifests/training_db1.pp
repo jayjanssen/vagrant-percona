@@ -1,5 +1,5 @@
 # script parameters
-$backup_to_recover = "var_lib_mysql-20150707.xbstream"
+$backup_to_restore = "var_lib_mysql-20150707.xbstream"
 $percona_server_version = 56
 
 # my.cnf parameters

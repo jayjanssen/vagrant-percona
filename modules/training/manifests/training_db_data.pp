@@ -1,5 +1,10 @@
 class training::training_db_data {
 	
+	if ($backup_to_restore == undef) {
+		fail("You must supply a \$backup_to_restore")
+	}
+	
+	
 	package { 'percona-xtrabackup': ensure => present }
 	
 	exec {
@@ -9,7 +14,8 @@ class training::training_db_data {
 			onlyif => "test -x /etc/init.d/mysql";
 		"empty-datadir":
 			command => "/bin/rm -rf /var/lib/mysql/*",
-			onlyif => "test -d /var/lib/mysql";
+			path => "/bin:/usr/bin",
+			onlyif => "test -d /var/lib/mysql/";
 	}
 	
 	file {
