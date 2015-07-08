@@ -1,11 +1,11 @@
-# script parameters
-$backup_to_restore = "var_lib_mysql-20150707.xbstream"
-$percona_server_version = 56
-
-# my.cnf parameters
-$server_id = 5
-$innodb_buffer_pool_size = "5G"
+# Some script parameters are defined in Vagrantfile.training.rb
+$sysbench_skip_test_client = true
 $extra_mysqld_config = "binlog_format = ROW\nlog-slave-updates\n"
+
+include base::packages
+include base::insecure
+
+class { 'base::swappiness': swappiness => $swappiness }
 
 include misc::aws_cli
 
@@ -16,7 +16,18 @@ include training::training_db_data
 
 include percona::server
 include percona::config
-include percona::service
 
-# Only these need a specific order
-Class['training::training_db_data'] -> Class['percona::config'] -> Class['percona::server'] -> Class['percona::service']
+class {
+	'mysql::datadir':
+		datadir_dev => $datadir_dev,
+		skip_mysql_install_db => true
+}
+
+# Mount the datadir XFS before downloading the backup
+Class['mysql::datadir'] -> Class['training::training_db_data']
+
+# Download backup before starting mysql
+Class['training::training_db_data'] -> Class['percona::server']
+
+# my.cnf exists before starting mysql
+Class['percona::config'] -> Class['percona::server']
