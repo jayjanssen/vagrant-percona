@@ -1,15 +1,17 @@
 class mysql::datadir (
-    $datadir_dev, 
-    $datadir_dev_scheduler = 'noop', 
-    $datadir_fs = 'xfs', 
+    $datadir_dev,
+    $datadir_dev_scheduler = 'noop',
+    $datadir_fs = 'xfs',
     $datadir_fs_opts = 'noatime',
-    $datadir_mkfs_opts = '-f'
+    $datadir_mkfs_opts = '-f',
+    $skip_mysql_install_db = false
 ) {
 	# Need to set $datadir_dev from Vagrantfile for this to work right
 
 	package {
     	'xfsprogs': ensure => 'present';
 	}
+
 	exec {
 		"mkfs_mysql_datadir":
 			command => "mkfs.$datadir_fs $datadir_mkfs_opts /dev/$datadir_dev",
@@ -17,6 +19,7 @@ class mysql::datadir (
 			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
 			unless => "mount | grep '/var/lib/mysql'";
 	}
+
 	mount {
 		"/var/lib/mysql":
 			ensure => "mounted",
@@ -27,6 +30,7 @@ class mysql::datadir (
 			require => Exec["mkfs_mysql_datadir", "mkdir_mysql_datadir"];
 
 	}
+
 	# IO scheduler
 	exec {
 		"datadir_dev_scheduler":
@@ -34,7 +38,7 @@ class mysql::datadir (
 			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
 			unless => "grep -E '\\[$datadir_dev_scheduler\\]|none' /sys/block/$datadir_dev/queue/scheduler";
 	}
-    
+
     exec {
 		"mkdir_mysql_datadir":
 			command => "mkdir /var/lib/mysql",
@@ -43,22 +47,16 @@ class mysql::datadir (
 
     }
 
-
-
-	# recreate the mysql datadir if it doesn't exist but mysql_install_db is present
-	# If mysql hasn't been installed yet, this will not run and let the package install create the datadir
-	exec {
-		"mysql_install_db":
-			command => "mysql_install_db --user=mysql --datadir=/var/lib/mysql",
-			path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
-",
-			require => Mount["/var/lib/mysql"],
-			onlyif => "which mysql_install_db && test ! -f /var/lib/mysql/mysql/user.frm";
+	if ($skip_mysql_install_db == undef or $skip_mysql_install_db == false)
+	{
+		# recreate the mysql datadir if it doesn't exist but mysql_install_db is present
+		# If mysql hasn't been installed yet, this will not run and let the package install create the datadir
+		exec {
+			"mysql_install_db":
+				command => "mysql_install_db --user=mysql --datadir=/var/lib/mysql",
+				path => "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin",
+				require => Mount["/var/lib/mysql"],
+				onlyif => "which mysql_install_db && test ! -f /var/lib/mysql/mysql/user.frm";
+		}
 	}
-
-
-
-	# mount
-
-
 }
