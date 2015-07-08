@@ -1,5 +1,6 @@
 include stdlib 
 
+include base::hostname
 include base::packages
 include base::insecure
 include base::swappiness

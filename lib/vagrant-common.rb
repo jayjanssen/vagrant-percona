@@ -184,15 +184,17 @@ end
 def provision_puppet( config, manifest_file )
   config.vm.provision manifest_file, type:"puppet", preserve_order: true do |puppet|
 		puppet.manifest_file = manifest_file
-		puppet.manifests_path = ["vm", "/vagrant/manifests"]
-		puppet.options = "--verbose --modulepath /vagrant/modules"
-		# puppet.options = "--verbose"
-		if block_given?
-		  yield( puppet )
-		end
+	    puppet.manifests_path = ["vm", "/vagrant/manifests"]
+	    puppet.options = "--verbose --modulepath /vagrant/modules"
+	    # puppet.options = "--verbose"
+	    if block_given?
+	      yield( puppet )
+	    end
 
+	    # Check if the hostname is a proper string (won't be if config is an override config)
+	    # If string, then set the vagrant_hostname facter fact automatically so base::hostname works
 		if config.vm.hostname.is_a?(String)
 			puppet.facter["vagrant_hostname"] = config.vm.hostname
-		end
+	    end
 	end
 end
