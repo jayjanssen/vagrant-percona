@@ -8,11 +8,7 @@ class training::training_db_data {
 		'percona-xtrabackup': ensure => present;
 		'qpress': ensure => present;
 	}
-
-	service { "mysql": ensure => "stopped" }
-
-	notice("MySQL has been stopped")
-
+	
 	# Download the MD5 checksum for the backup. This will be used to validate
 	# if the backup has been successfully downloaded and doesn't need to be redownloaded
 	# on repeat provisioning
@@ -44,7 +40,8 @@ class training::training_db_data {
 		"mysql-download-snapshot":
 			command => "/usr/bin/wget -O /tmp/${backup_to_restore} http://s3.amazonaws.com/percona-training/${backup_to_restore}",
 			unless => "/usr/bin/md5sum -c /tmp/${backup_to_restore}.md5 --status 2>/dev/null",
-			timeout => 0;
+			timeout => 0,
+			require => [ Exec["download-backup-hash"] ];
 
 		"extract-backup":
 			command => "/usr/bin/xbstream -x -C /var/lib/mysql/ < /tmp/$backup_to_restore",
@@ -69,7 +66,4 @@ class training::training_db_data {
 			timeout => 0,
 			require => [ Exec["apply-log"] ];
 	}
-
-	# Start MySQL
-	class { 'percona::service' }
 }

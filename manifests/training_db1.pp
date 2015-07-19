@@ -16,6 +16,8 @@ include training::training_db_data
 
 include percona::server
 include percona::config
+include percona::service
+include percona::toolkit
 
 class {
 	'mysql::datadir':
@@ -24,10 +26,11 @@ class {
 }
 
 # Mount the datadir XFS before downloading the backup
-Class['mysql::datadir'] -> Class['training::training_db_data']
+Class['mysql::datadir'] -> Class['percona::server'] -> Class['training::training_db_data'] -> Class['percona::config'] -> Class['percona::service']
 
-# Download backup before starting mysql
-Class['training::training_db_data'] -> Class['percona::server']
+# Must have the training repo before downloading/installing PS
+Class['training::local_percona_training_repo'] -> Class['percona::server']
+Class['training::local_percona_training_repo'] -> Class['percona::toolkit']
 
-# my.cnf exists before starting mysql
-Class['percona::config'] -> Class['percona::server']
+# Need to add sysbench to local training repo
+#Class['percona::repository'] -> Class['percona::sysbench']
