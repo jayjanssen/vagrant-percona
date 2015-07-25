@@ -1,8 +1,9 @@
 #!/usr/bin/perl
 
-print "Setup nodes with replication\n";
+# Setup all nodes in replication with the first node in `vagrant status` as the master.
+# This script intended for single cluster usage.
 
-# setup all nodes in replication with the first node in `vagrant status` as the master.
+print "Setup nodes with replication\n";
 
 my @running_nodes_lines = `vagrant status | grep running`;
 my @running_nodes;
