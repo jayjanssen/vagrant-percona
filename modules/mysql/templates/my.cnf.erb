@@ -17,7 +17,7 @@ innodb_flush_log_at_trx_commit	= <%= @innodb_flush_log_at_trx_commit %>
 <%=@extra_mysqld_config %>
 
 [mysql]
-prompt                          = "<%=@hostname %> mysql> "
+prompt                          = "<%=@hostname %> (\d) mysql> "
 
 [client]
 user                            = root

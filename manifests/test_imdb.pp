@@ -1,1 +1,1 @@
-include test::imdb
+include training::imdb::imdb

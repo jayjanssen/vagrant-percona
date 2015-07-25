@@ -154,7 +154,6 @@ def provider_openstack( name, config, flavor, security_groups = nil, networks = 
 			os.keypair_name = os_config.fetch("keypair_name")
 			override.ssh.private_key_path = os_config.fetch("private_key_path")
 
-
 			if security_groups != nil
 				os.security_groups = security_groups
 			end
@@ -162,7 +161,6 @@ def provider_openstack( name, config, flavor, security_groups = nil, networks = 
 			if networks != nil
 				os.networks = networks
 			end
-
 
 			if floating_ip != nil
 				os.floating_ip = floating_ip

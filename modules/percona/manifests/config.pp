@@ -20,7 +20,6 @@ class percona::config {
 		$extra_mysqld_config = ''
 	}
 
-
 	file {
 		"/etc/my.cnf":
 			ensure  => present,

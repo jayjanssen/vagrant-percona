@@ -1,4 +1,7 @@
-class test::imdb {
+# This class only installs the IMDB database
+# You will need training::my_movies class to get the PHP application
+
+class training::imdb::imdb {
     
     # DB Stuff
     file {
@@ -29,43 +32,9 @@ class test::imdb {
             creates => "/tmp/imdb.sql.bz2.imported",
             timeout => 0,
             require => [ Exec['mysql-create-schema'], File["/tmp/imdb.sql.bz2"] ];
-        "my-movies-get-branch":
-            command => "/usr/bin/bzr branch lp:my-movies && touch /tmp/my-movies.downloaded",
-            cwd => "/tmp",
-            creates => "/tmp/my-movies.downloaded",
-            require => [ Package["bzr"]];
         "mysql-create-schema":
             command => "/usr/bin/mysqladmin -u root create imdb",
             creates => "/var/lib/mysql/imdb";
 
     }
-    
-    
-    # App stuff
-    package {
-        "httpd":
-            ensure  => latest;
-        "php":
-            ensure  => latest;
-        "php-mysql":
-            ensure  => latest;
-        "bzr":
-            ensure  => latest;
-    }
-
-    service {
-        "httpd":
-            ensure  => running,
-            require => [ Package["httpd"], Package["php"], Package["php-mysql"] ];
-    }
-
-    exec {
-        "install-my-movies":
-            command => "/usr/bin/bzr branch lp:my-movies && touch /var/www/html/my-movies.ok",
-            cwd => "/var/www/html",
-            creates => "/var/www/html/my-movies.ok",
-            require => [ Package["httpd"], Package["bzr"] ];
-    }
-
-
 }

@@ -25,7 +25,7 @@ class {
 		skip_mysql_install_db => true
 }
 
-# Mount the datadir XFS before downloading the backup
+# Mount the datadir, then install Percona Server, then download the data then setup my.cnf then start mysql
 Class['mysql::datadir'] -> Class['percona::server'] -> Class['training::training_db_data'] -> Class['percona::config'] -> Class['percona::service']
 
 # Must have the training repo before downloading/installing PS
@@ -33,4 +33,4 @@ Class['training::local_percona_training_repo'] -> Class['percona::server']
 Class['training::local_percona_training_repo'] -> Class['percona::toolkit']
 
 # Need to add sysbench to local training repo
-#Class['percona::repository'] -> Class['percona::sysbench']
+#Class['training::local_percona_training_repo'] -> Class['percona::sysbench']

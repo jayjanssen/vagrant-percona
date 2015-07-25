@@ -29,7 +29,7 @@ include mysql::service
 include percona::repository
 include percona::sysbench
 
-include test::imdb
+include training::imdb::imdb
 include test::user
 include test::sysbench_test_script
 
@@ -38,7 +38,7 @@ Class['misc::mysql_datadir'] -> Class['mysql::server']
 Class['mysql::repository'] -> Class['mysql::server'] -> Class['mysql::config'] -> Class['mysql::service']
 
 
-Class['mysql::service'] -> Class['test::imdb']
+Class['mysql::service'] -> Class['training::imdb::imdb']
 
 
 Class['base::packages'] -> Class['percona::repository']

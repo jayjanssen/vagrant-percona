@@ -1,3 +1,6 @@
+# This class downloads an xtradb backup identified under $backup_to_restore
+# It will also attempt to stop a running mysql instance and delete the datadir
+
 class training::training_db_data {
 
 	if ($backup_to_restore == undef) {

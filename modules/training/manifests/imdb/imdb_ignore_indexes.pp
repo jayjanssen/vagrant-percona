@@ -1,6 +1,4 @@
-
-
-class test::imdb_ignore_indexes {
+class test::imdb::imdb_ignore_indexes {
 
 	file {
 		'/tmp/my.indexes.sql.done':

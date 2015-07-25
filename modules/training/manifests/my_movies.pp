@@ -1,3 +1,6 @@
+# This class only sets up the PHP application
+# You will need to include training::imdb::imdb to get the data
+
 class training::my_movies {
 	
 	package {

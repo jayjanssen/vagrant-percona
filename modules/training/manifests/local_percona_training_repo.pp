@@ -1,3 +1,5 @@
+# Create a repo that is an S3 bucket mirror of percona.com
+
 class training::local_percona_training_repo {
 	
 	case $operatingsystem {
